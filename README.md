@@ -11,6 +11,21 @@ A central concern in an interactive intelligent system is optimization of its ac
 ![final_UI_interface](https://user-images.githubusercontent.com/1292230/80922451-e0ce3a80-8d85-11ea-9b7b-f0c4bc428008.png)
 <figcaption><sup>Figure: User Interface of the application</sup></figcaption>
 
+### How to use
+##### Requirements for the Interactive Bayesian Optimisation
+**Python libraries**
+- `flask`
+- `numpy`
+- `scipy`
+You should also have a modern browser.
+
+From terminal, you can run the app with `./start-app.py`. It will show you an URL where the app is running, like for example http://127.0.0.1:5000/
+
+If you open it, you can select one of the following configurations:
+- `default`
+- `study_10`
+- `study_5`
+- `study_training`
 
 ### Implementation
 
