@@ -2,10 +2,8 @@
 This repository contains the code employed for the experiments and the analysis of *Human Strategic Steering Improves Performance of Interactive Optimization*
 
 ### Human Strategic Steering Improves Performance of Interactive Optimization
-Fabio Colella*, Pedram Daee*, Jussi Jokinen, Antti Oulasvirta, Samuel Kaski <sub>*Both authors contributed equally to this research.</sub>
+Fabio Colella*, Pedram Daee*, Jussi Jokinen, Antti Oulasvirta, Samuel Kaski
 <br>**UMAP 2020** *Link to be added once published*, also on arXiv *Link to be added*
-
-User study for ATOM project.
 
 ## Backend
 
