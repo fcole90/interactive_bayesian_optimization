@@ -1,0 +1,2 @@
+pub get
+dart2js -O2 -o numeric_dart.js main.dart --packages=.packages 

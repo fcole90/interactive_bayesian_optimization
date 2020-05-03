@@ -1,0 +1,9 @@
+# Data analysis configuration file
+
+# Name of the dataset folder, outputted with the script 'extract_data_to_dataset.py'
+dataset_name: "no_name_specified"
+
+# Plotting folder where the plots will be saved
+plotting_folder: "plots/no_name_specified"
+
+

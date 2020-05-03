@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="static/favicon.png">
+
+    <!-- Standard CSS style -->
+    <link rel="stylesheet" href="static/style.css">
+
+    <!--Import these scripts in this order until transition to modules is complete-->
+    <script src="static/3rd/jquery-3.3.1.min.js"></script>
+<!--    <script defer src="static/libs/numeric_dart/build/load_and_analyse.dart.js"></script>-->
+    <script>console.warn("Importing JQuery globally." +
+    " This is currently necessary as it's not distributed yet as an ES6 module.");</script>
+
+</head>
+<body>
+
+    <div id="output"></div>
+
+    <!------------------------------
+    | *** Interface definition *** |
+    ------------------------------->
+
+    <div class="div_flexible_container">
+
+
+            <!-- Text to display a generic error message, with a link to view the log-->
+            <p id="log_view_message" class="error_msg hidden">An error occurred. See the
+                <a class="error_msg" href="/log" target="_blank">log</a>
+                to check why.
+            </p>
+
+            <!-- Fake input form for storage purposes -->
+            <input type="hidden" id="f_data" value="null">
+
+            <!-- Title text -->
+            <h1 id="text_title" class="hidden">A<span style="color: red">!</span> - PML User Study</h1>
+
+
+        <div class="div_canvas_elements_container">
+            <!-- Text to display the current error -->
+            <p id="best_score_text" class="hidden inline_text top_text"></p>
+            <p id="current_score_text" class="hidden inline_text top_text"></p>
+            <!-- Text to tell the user to explore or exploit -->
+            <p id="exploration_text" class="hidden inline_text top_text" style="color: darkred;"></p>
+
+
+            <!-- Max indicator -->
+            <div id="max_indicator_container" class="max_indicator hidden">
+                <p id="max_indicator_text" class="max_indicator">MAX</p>
+                <div id="max_indicator_arrow" class="triangle_down max_indicator"></div>
+            </div>
+
+            <!-- Div that wraps the load_and_analyse canvas -->
+            <div id="main_canvas_div" class="canvas_div hidden">
+                <!-- Main canvas -->
+                <canvas id="plot"></canvas>
+            </div>
+
+            <!-- Cursor lines to indicate the height of the point -->
+            <div id="cursor_line_left" class="line_cursor hidden"></div>
+            <div id="cursor_line_right" class="line_cursor hidden"></div>
+            <div id="cursor_line_top" class="line_cursor hidden"></div>
+            <div id="cursor_line_bottom" class="line_cursor hidden"></div>
+
+            <!-- Text to display the current user ID -->
+            <p id="user_id_text" class="hidden inline_text bottom_text"></p>
+            <!-- Text to display the current iteration number and max iterations -->
+            <p id="iteration_text" class="hidden inline_text bottom_text"></p>
+            <!-- Text to display the current session number and max sessions -->
+            <p id="session_text" class="hidden inline_text bottom_text"></p>
+        </div>
+            <!-- Button to begin the session -->
+            <button id="start_button" class="hidden custom_button">Start</button>
+
+    </div>
+
+    <div id="top_container" class="horizontal_box">
+                <!-- Asks a question to the user -->
+                <p id="question_field" class="question_message hidden">Please, push <em>Start</em> when you are ready to begin.</p>
+    </div>
+
+    <!--  Modal dialogue for alerts  -->
+    <div class="modal_dialogue hidden" id="modal_dialogue">
+        <div class="modal_content_container" id="modal_content_container">
+            <div class="modal_content" id="modal_content">
+                <!-- Stuff -->
+            </div>
+            <div class="modal_buttons_container">
+                <button class="modal_buttons custom_button" id="button_cancel_modal">Cancel</button>
+                <button class="modal_buttons custom_button" id="button_ok_modal">Ok</button>
+            </div>
+        </div>
+    </div>
+
+    <!-------------------------------------
+    | *** End of Interface definition *** |
+    -------------------------------------->
+
+
+    <script type="module">
+        import {ui} from "./static/libs/ui.js";
+        let app = new ui.Application();
+        app.exec();
+    </script>
+</body>

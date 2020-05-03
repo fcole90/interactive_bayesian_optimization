@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="static/favicon.png">
+
+    <!-- Standard CSS style -->
+    <link rel="stylesheet" href="static/style.css">
+
+    <!--Import these scripts in this order until transition to modules is complete-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!-- Python-like functions -->
+    <script src="static/builtins.js"></script>
+
+    <!-- Numpy-like functions-->
+    <script src="static/np.js"></script>
+
+    <!-- Matplotlib-like functions -->
+    <script type="module" src="static/drawing.js"></script>
+
+</head>
+<body>
+
+    <!------------------------------
+    | *** Interface definition *** |
+    ------------------------------->
+
+    <!-- Text to display a generic error message, with a link to view the log-->
+    <p id="log_view_message" class="error_msg hidden">An error occurred. See the
+        <a class="error_msg" href="/log" target="_blank">log</a>
+        to check why.
+    </p>
+
+    <!-- Fake input form for storage purposes -->
+    <input type="hidden" id="f_data" value="null">
+
+    <!-- React JS testing -->
+    <!--<div id="like_button_container"></div>-->
+
+    <!-- Title text -->
+    <h1>A<span style="color: red">!</span> - PML User Study</h1>
+
+
+
+    <!-- Text to display the current user ID -->
+    <p id="user_id_text" class="hidden inline_text top_text"></p>
+    <!-- Text to display the current iteration number and max iterations -->
+    <p id="iteration_text" class="hidden inline_text top_text"></p>
+    <!-- Text to display the current session number and max sessions -->
+    <p id="session_text" class="hidden inline_text top_text"></p>
+    <!-- Text to display the current error -->
+    <p id="best_score_text" class="hidden inline_text top_text"></p>
+    <p id="current_score_text" class="hidden inline_text top_text"></p>
+    <!-- Text to tell the user to explore or exploit -->
+    <p id="exploration_text" class="hidden inline_text top_text" style="color: darkred;"></p>
+
+
+    <!-- Max indicator -->
+    <div id="max_indicator_container" class="max_indicator hidden">
+        <p id="max_indicator_text" class="max_indicator">MAX</p>
+        <div id="max_indicator_arrow" class="triangle_down max_indicator"></div>
+    </div>
+
+    <!-- Div that wraps the load_and_analyse canvas -->
+    <div id="main_canvas_div" class="canvas_div hidden">
+        <!-- Main canvas -->
+        <canvas id="plot"></canvas>
+    </div>
+
+    <!-- Cursor lines to indicate the height of the point -->
+    <div id="cursor_line_left" class="line_cursor hidden"></div>
+    <div id="cursor_line_right" class="line_cursor hidden"></div>
+
+
+
+    <!-- Asks a question to the user -->
+    <p id="question_field">Please, push <em>Start</em> when you are ready to begin.</p>
+
+    <!-- Button to begin the session -->
+    <button id="sample_gp">Start</button>
+
+    <!-------------------------------------
+    | *** End of Interface definition *** |
+    -------------------------------------->
+
+
+    <script type="module" defer src="../static/ui-legacy.js"></script>
+
+
+
+     <!--Load React. -->
+    <!--&lt;!&ndash; Note: when deploying, replace "development.js" with "production.min.js". &ndash;&gt;-->
+    <!--<script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>-->
+    <!--<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>-->
+
+    <!--&lt;!&ndash; Load our React component. &ndash;&gt;-->
+    <!--<script src="static/like_button.js"></script>-->
+</body>
