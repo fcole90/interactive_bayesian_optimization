@@ -1,3 +1,10 @@
+# Interactive Bayesian Optimization
+This repository contains the code employed for the experiments and the analysis of *Human Strategic Steering Improves Performance of Interactive Optimization*
+
+## Human Strategic Steering Improves Performance of Interactive Optimization
+Fabio Colella*, Pedram Daee*, Jussi Jokinen, Antti Oulasvirta, Samuel Kaski
+<small>Both authors contributed equally to this research.</small> 
+
 User study for ATOM project.
 
 ## Backend
