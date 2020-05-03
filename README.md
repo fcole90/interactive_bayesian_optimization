@@ -17,8 +17,10 @@ A central concern in an interactive intelligent system is optimization of its ac
 - `flask`
 - `numpy`
 - `scipy`
+
 You should also have a modern browser.
 
+##### Running the application
 From terminal, you can run the app with `./start-app.py`. It will show you an URL where the app is running, like for example http://127.0.0.1:5000/
 
 If you open it, you can select one of the following configurations:
