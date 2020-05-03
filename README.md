@@ -8,11 +8,8 @@ Fabio Colella*, Pedram Daee*, Jussi Jokinen, Antti Oulasvirta, Samuel Kaski
 #### Abstract
 A central concern in an interactive intelligent system is optimization of its actions, to be maximally helpful to its human user. In recommender systems for instance, the action is to choose what to recommend, and the optimization task is to recommend items the user prefers. The optimization is done based on earlier user's feedback (e.g. "likes" and "dislikes"), and the algorithms assume the feedback to be faithful. That is, when the user clicks “like,” they actually prefer the item. We argue that this fundamental assumption can be extensively violated by human users, who are not passive feedback sources. Instead, they are in control, actively steering the system towards their goal. To verify this hypothesis, that humans steer and are able to improve performance by steering, we designed a function optimization task where a human and an optimization algorithm collaborate to find the maximum of a 1-dimensional function. At each iteration, the optimization algorithm queries the user for the value of a hidden function *f* at a point *x*, and the user, who sees the hidden function, provides an answer about *f*(*x*). Our study on 21 participants shows that users who understand how the optimization works, strategically provide biased answers (answers not equal to *f*(*x*)), which results in the algorithm finding the optimum significantly faster. Our work highlights that next-generation intelligent systems will need user models capable of helping users who steer systems to pursue their goals.
 
-<figure>
-  <img src="https://user-images.githubusercontent.com/1292230/80922451-e0ce3a80-8d85-11ea-9b7b-f0c4bc428008.png" 
-       alt="User Interface of the application" style="width:100%">
-  <figcaption>User Interface of the application</figcaption>
-</figure>
+![final_UI_interface](https://user-images.githubusercontent.com/1292230/80922451-e0ce3a80-8d85-11ea-9b7b-f0c4bc428008.png)
+<figcaption><sup>User Interface of the application</sup></figcaption>
 
 
 ### Implementation
