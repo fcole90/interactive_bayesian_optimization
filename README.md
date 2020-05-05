@@ -2,7 +2,7 @@
 This repository contains the code employed for the experiments and the analysis of *Human Strategic Steering Improves Performance of Interactive Optimization*
 
 ### Human Strategic Steering Improves Performance of Interactive Optimization
-Fabio Colella*, Pedram Daee*, Jussi Jokinen, Antti Oulasvirta, Samuel Kaski
+Fabio Colella, Pedram Daee, Jussi Jokinen, Antti Oulasvirta, Samuel Kaski
 <br>**UMAP 2020** *Link to be added once published*, also on arXiv https://arxiv.org/abs/2005.01291
 
 #### Abstract
@@ -23,7 +23,7 @@ You should also have a modern browser.
 ##### Running the application
 From terminal, you can run the app with `./start-app.py`. It will show you an URL where the app is running, like for example http://127.0.0.1:5000/
 
-If you open it, you can select one of the following configurations:
+If you open it, you can select (type) one of the following configurations:
 - `default`
 - `study_10`
 - `study_5`
