@@ -29,7 +29,7 @@ var onmessage = function (e) {
       print(dir(interactive_bayesian_optimisation))
   
   import micropip
-  micropip.install('https://github.com/fcole90/interactive_bayesian_optimization/releases/download/1.0/interactive_bayesian_optimisation-1.2.1-py3-none-any.whl').then(do_work)
+  micropip.install('https://fcole90.github.io/interactive_bayesian_optimization/public/interactive_bayesian_optimisation-1.2.1-py3-none-any.whl').then(do_work)
   `
 
 
