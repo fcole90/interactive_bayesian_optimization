@@ -24,12 +24,12 @@ var onmessage = function (e) {
 
   const some_code = `
   def do_work(*args):
-      import snowballstemmer
-      stemmer = snowballstemmer.stemmer('english')
-      print(stemmer.stemWords('go goes going gone'.split()))
+      print("Installed!")
+      import interactive_bayesian_optimisation
+      print(dir(interactive_bayesian_optimisation))
   
   import micropip
-  micropip.install('http://localhost:63343/public/interactive_bayesian_optimisation-1.2.1-py3-none-any.whl').then(do_work)
+  micropip.install('https://github.com/fcole90/interactive_bayesian_optimization/releases/download/1.0/interactive_bayesian_optimisation-1.2.1-py3-none-any.whl').then(do_work)
   `
 
 
