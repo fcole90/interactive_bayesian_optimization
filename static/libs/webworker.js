@@ -34,7 +34,7 @@ var onmessage = function (e) {
 
 
   languagePluginLoader.then(() => {
-    self.pyodide.loadPackage(['numpy', 'micropip']).then(() => {
+    self.pyodide.loadPackage(['numpy', 'micropip', 'https://github.com/fcole90/interactive_bayesian_optimization/releases/download/1.0/interactive_bayesian_optimisation-1.2.1-py3-none-any.whl']).then(() => {
 
       // Obtain the js parameters to run the code
       const data = e.data;
@@ -55,6 +55,7 @@ var onmessage = function (e) {
         })
         .catch((err) => {
           // if you prefer messages with the error
+          console.log("Something went wrong...");
           self.postMessage({error: err.message});
           // if you prefer onerror events
           // setTimeout(() => { throw err; });
