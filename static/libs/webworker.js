@@ -25,8 +25,11 @@ var onmessage = function (e) {
   const some_code = `
   def do_work(*args):
       print("Installed!")
-      import interactive_bayesian_optimisation
-      print(dir(interactive_bayesian_optimisation))
+      import interactive_bayesian_optimisation as ibo
+      s = "NaN a NaN Nan naN bob"
+      print(s)
+      s_ = ibo.utils.remove_nan()
+      print(s_)
   
   import micropip
   micropip.install('https://fcole90.github.io/interactive_bayesian_optimization/public/interactive_bayesian_optimisation-1.2.1-py3-none-any.whl').then(do_work)
