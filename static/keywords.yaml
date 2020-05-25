@@ -1,0 +1,126 @@
+# Definition for keywords used in the application
+
+keywords:
+
+  #  Keywords related to function values
+  x:
+    comment: "list of sampled points for plotting the true function."
+    type: "list of float"
+
+  y:
+    comment: "list of f(x) for each sampled point of the true function"
+    type: "list of float"
+
+  mean:
+    comment: "list of means for the AI belief for each sampled point."
+    type: "list of float"
+
+  std:
+    comment: "list of f(x) for each sampled point of the true function **WARNING:** list of std + mean for the AI belief for each sampled point,
+           followed by a list of std - mean for the AI belief for each sampled point.
+           The list is hence long twice the number of sampled points."
+    type: "list of float"
+
+  new_point_x:
+    comment: "index of the `x`-list for the new queried point. **WARNING:** Not the actual x point,
+              if you want the actual query point you need to do `query_point = x[new_point_x]`."
+    type: "int"
+
+  x_data:
+    comment: "list of queried points. **WARNING:** Not the indices of the points, but the actual points."
+    type: "list of float"
+
+  y_data:
+    comment: "list of user feedback values, one for each query point."
+    type: "list of float"
+
+  y_data_actual:
+    comment: "list of true function values,f(x), for each each query point."
+    type: "list of float"
+
+  # Keywords related to the current UI state
+  iteration:
+    comment: "iteration number, 1-based."
+    type: "int"
+
+  session:
+    comment: "session number, 1-based."
+    type: "int"
+
+  settings:
+    comment: "settings dictionary."
+    type: "dict"
+
+  # Keywords for the settings dictionary
+  settings_name:
+    comment: "name of the settings file. If must not contain spaces."
+    type: "str"
+    extra:
+      - no-space
+
+  display_uncertaintyy:
+    comment: "(Optional) boolean to display or not the uncertainty. Defaults to true."
+    type: "bool"
+    default: true
+
+  exploration_sessions:
+    comment: "(Optional) integer value to set that the first *n* sessions are for practice. Defaults to 0."
+    type: "int"
+    default: 0
+
+  max_iterations:
+    comment: "integer, the amount of iterations to run in each session."
+    type: "int"
+
+  max_sessions:
+    comment: "integer, the amount of sessions to run in the study."
+    type: "int"
+
+  n_points:
+    comment: "integer, number of points in the sample space. You can use it like `np.linspace(start=x_limits[0], stop=x_limits[1], num=n_points)`."
+    type: "int"
+
+  x_limits:
+    comment: "list of two elements (integers) containing the first and last point of the `x`-list.
+              You can use it like `np.linspace(start=x_limits[0], stop=x_limits[1], num=n_points)`."
+    type: "list of int"
+
+  kernel:
+    comment: "string for the name of the kernel."
+    type: "string"
+    options:
+      - "rbf_kernel"
+
+  kernel_args:
+    comment: "dictionary of kernel arguments. E.g. if you are using `rbf_kernel`
+               you can set it to `{'sigma': 0.5, 'theta': 500}`."
+    type: "dict"
+
+  noise:
+    comment: "gaussian noise over the feedback values."
+    type: "float"
+
+  save_split:
+    comment: "(Optional) boolean to split the save files between iterations or not. Defaults to false.
+              When disabled it creates a single save file containing a list of data dictionaries, one for each iteration."
+    type: "bool"
+    default: false
+
+  scaling value:
+    comment: "float retrieved from the UI which represents the visual scaling of the function with respect to
+              the original."
+    type: "float"
+
+  session_id:
+    comment: "(Optional) session number 1-based. If not set a new one is created automatically."
+    type: "int"
+
+  user_id:
+    comment: "(Optional) user number 1-based. If not set a new one is created automatically."
+    type: "int"
+
+  update_session:
+    comment: "(Optional) boolean to determine if at the end of the session a new session should be generated.
+              If defaults to false. If running a user study, it's updated automatically to match the session and iteration
+              requirements."
+    type: "bool"
