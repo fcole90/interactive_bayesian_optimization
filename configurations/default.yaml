@@ -15,8 +15,10 @@ save: yes
 save_split: no  # saves iterations in different JSON files
 session_score_as_max: yes
 
-max_iterations: 25
-max_sessions: 15
+max_iterations: 5
+max_sessions: 10
+# of which
+exploration_sessions: 5
 
 # Intervals of the function
 x_limits: [1, 500]

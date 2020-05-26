@@ -1,1 +1,1 @@
-{"settings_name": "default", "save": true, "save_split": false, "session_score_as_max": true, "max_iterations": 2, "max_sessions": 2, "x_limits": [1, 500], "n_points": 500, "kernel": "rbf_kernel", "kernel_args": {"sigma": 2.0, "theta": 1000}, "noise": 0.005}
+{"settings_name": "default", "save": true, "save_split": false, "session_score_as_max": true, "max_iterations": 5, "max_sessions": 10, "exploration_sessions": 5, "x_limits": [1, 500], "n_points": 500, "kernel": "rbf_kernel", "kernel_args": {"sigma": 2.0, "theta": 1000}, "noise": 0.005}
