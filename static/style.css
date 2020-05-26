@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Press+Start+2P');
 
 /* Font settings */
-h1, h2, h3, h4, h5, h6, p, label, button {
+h1, h2, h3, h4, h5, h6, p, label, button, a {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 

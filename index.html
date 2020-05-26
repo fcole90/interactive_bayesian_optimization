@@ -1,48 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <script type="text/javascript">
-      // set the pyodide files URL (packages.json, pyodide.asm.data etc)
-      // window.languagePluginUrl = 'https://pyodide-cdn2.iodide.io/v0.15.0/full/';
-    </script>
-<!--    <script src="https://pyodide-cdn2.iodide.io/v0.15.0/full/pyodide.js"></script>-->
-<!--    <script src="static/js/webworker.js"></script>-->
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="static/favicon.ico">
+
+    <!-- Standard CSS style -->
+    <link rel="stylesheet" href="static/style.css">
+
+    <!--Import these scripts in this order until transition to modules is complete-->
+    <script src="static/3rd/jquery-3.3.1.min.js"></script>
+    <!--    <script defer src="static/libs/numeric_dart/build/load_and_analyse.dart.js"></script>-->
+    <script>console.warn("Importing JQuery globally." +
+      " This is currently necessary as it's not distributed yet as an ES6 module.");</script>
+
 </head>
 <body>
-<h3>Work in progress...</h3>
-Pyodide test page <br>
-Open your browser console to see pyodide output
-<script type="text/javascript">
-  // languagePluginLoader.then(function () {
-  //   console.log(pyodide.runPython('import sys\nsys.version'));
-  //   console.log(pyodide.runPython('print(1 + 2)'));
-  // });
-
-
-  // Webworker code
-  var pyodideWorker = new Worker('./static/libs/webworker.js');
-
-  pyodideWorker.onerror = (e) => {
-    console.log(`Error in pyodideWorker at ${e.filename}, Line: ${e.lineno}, ${e.message}`);
-  }
-
-  pyodideWorker.onmessage = (e) => {
-    const {results, error} = e.data
-    if (results) {
-      console.log('pyodideWorker return results: ', results)
-    } else if (error) {
-      console.log('pyodideWorker error: ', error)
-    }
-  }
-
-  const data = {
-    A_rank: [0.8, 0.4, 1.2, 3.7, 2.6, 5.8],
-    python:
-      'import statistics\n' +
-      'from js import A_rank\n' +
-      'statistics.stdev(A_rank)'
-  }
-
-  pyodideWorker.postMessage(data)
-</script>
+    <header style="width: 70%; margin: auto">
+        <h1 id="text_title">
+            A<span style="color: red">!</span> - Human Strategic Steering Improves Performance of Interactive Optimization
+        </h1>
+    </header>
+    <main style="width: 50%; margin: auto">
+        <p style="font-size: larger; line-height: 1.5">
+            Website demoing the user-interaction software employed in the UMAP 2020 paper
+            <a href="https://arxiv.org/abs/2005.01291"><em>Human Strategic Steering Improves Performance of Interactive Optimization</em>
+            </a> by Fabio Colella, Pedram Daee, Jussi Jokinen, Antti Oulasvirta, Samuel Kaski.
+            <br><br>
+            This demo is slightly modified to run entirely in a modern web browser using
+            <a href="https://pyodide.readthedocs.io/en/latest/using_pyodide_from_javascript.html">Pyodide</a>
+            to run the required Python code.
+            <br><br>
+            You can select one of four configurations in the demo:
+        </p>
+        <ul>
+            <li>
+                <p><code style="background-color: #edf6f8">default</code> default setting, for demo purposes. Features
+                    5 practice sessions and 5 normal sessions, each of 5 iterations</p>
+            </li>
+            <li>
+                <p><code style="background-color: #edf6f8">study_training</code> used for training before the actual
+                    study. Features 5 practice sessions each of 10 iterations</p>
+            </li>
+            <li>
+                <p><code style="background-color: #edf6f8">study_10</code> used in the study.
+                    Features 5 practice sessions and 15 normal sessions, each of 10 iterations</p>
+            </li>
+            <li>
+                <p><code style="background-color: #edf6f8">study_5</code> used in the study.
+                    Features 5 practice sessions and 20 normal sessions, each of 5 iterations</p>
+            </li>
+        </ul>
+        <a href="/study.html" class="custom_button" style="float: right">Begin</a>
+    </main>
 </body>
