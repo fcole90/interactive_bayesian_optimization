@@ -1,0 +1,1 @@
+{"settings_name": "study_10", "save_split": false, "session_score_as_max": true, "max_iterations": 10, "max_sessions": 20, "exploration_sessions": 5, "display_uncertainty": true, "x_limits": [1, 500], "n_points": 500, "kernel": "rbf_kernel", "kernel_args": {"sigma": 2.0, "theta": 1000}, "noise": 0.005}

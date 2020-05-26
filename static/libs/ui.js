@@ -25,11 +25,13 @@ pyodideWorker.onmessage = (e) => {
     console.log("Received message from webworker");
     console.log(e);
     const {success, error} = e.data
+
+
     if (success) {
-        console.log('pyodideWorker return results: ', success.results);
+        // console.log('pyodideWorker return results: ', success.results);
         console.log('pyodideWorker return url: ', success.url);
         const success_event = new CustomEvent(success.url + "_success", {
-            detail: success.results
+            detail: JSON.parse(success.results)
         });
         window.dispatchEvent(success_event);
     } else if (error) {
@@ -75,13 +77,12 @@ const EL = {
 
 const MESSAGES = {
     "press_start_message": "Please, push 'Start' when you are ready to begin.",
+    "loading_message": "Loading. Please, wait..",
     "in_session_select_height": "Can you tell me the height of the dark line at the point indicated by the yellow line?",
     "in_session_select_x_prediction": "Can you guess the point you believe I'm selecting next?",
     "session_complete_text": "Thank you for completing this study task.",
     "practice_complete_text": "You completed your practice sessions. Now try to do your best!"
 };
-
-
 /**
  * Dictionary with api function names
  * @type {{}}
@@ -206,6 +207,8 @@ class CustomAppController extends mvc.Controller {
         this.only_predictive = new Switch(false);
         this.wait_time_before_resizing = 1000;
         this.resize_timeout = null;
+        this.config = null;
+        this.save_data = [];
 
         // Add some extra properties to the model and provide initial values
         this.model.add("margin_x", 0.008);
@@ -272,6 +275,9 @@ class CustomAppController extends mvc.Controller {
 
         // Triggers an event for a successful response to 'api_initialise_gp_and_sample'
         window.addEventListener("api_initialise_gp_and_sample_success", $.proxy(this.handle_api_sample_success_response, this));
+
+        // Triggers an event for a successful response to 'api_initialise_gp_and_sample'
+        window.addEventListener("api_update_gp_success", $.proxy(this.handle_api_update_gp_success_response, this));
     }
 
 
@@ -316,8 +322,27 @@ class CustomAppController extends mvc.Controller {
      */
     handle_api_sample_success_response(response) {
 
+        // Unlock ajax lock
+        if (this.ajax_lock.is_on()) {
+            this.ajax_lock.turn_off();
+        } else {
+            console.warn("Found lock unexpectedly off.");
+        }
+
+        // Start a new session
+        if (this.running_session.is_off()) {
+            this.running_session.turn_on();
+            console.log("Session turned on!");
+        }
+
+        // Save data
+        this.save_data.push(response.detail)
+        if (bs.is_null_or_undefined(this.config)) {
+            this.config = response.detail.settings;
+        }
+
         // Update the model from the response
-        let response_dict = new bs.Dictionary(response);
+        let response_dict = new bs.Dictionary(response.detail);
         this.model.update_full_data(response_dict);
         this.model.update("current_score", 0);
         this.model.update("session_score", 0);
@@ -433,8 +458,19 @@ class CustomAppController extends mvc.Controller {
      * @param {Object} response - An object obtained from parsing server's JSON response.
      */
     handle_api_update_gp_success_response(response) {
+
+        // Unlock ajax lock
+        if (this.ajax_lock.is_on()) {
+            this.ajax_lock.turn_off();
+        } else {
+            console.warn("Found lock unexpectedly off.");
+        }
+
+        // Save data
+        this.save_data.push(response.detail)
+
         // Update the full model using the new data from the server
-        let response_dict = new bs.Dictionary(response);
+        let response_dict = new bs.Dictionary(response.detail);
         this.model.update_full_data(response_dict);
 
         // Update model for properties to be computed
@@ -609,7 +645,6 @@ class CustomAppController extends mvc.Controller {
      */
     handle_session_complete() {
         console.log("Session complete!");
-
         this.view.get(EL.canvas_plot).enable_cursor();
 
         const is_study_complete = (bs.is_null_or_undefined(this.model.get("settings")["max_sessions"]) === false &&
@@ -653,7 +688,21 @@ class CustomAppController extends mvc.Controller {
                 }, this)
             );
         } else {
-            // Session complete message
+            // Session complete
+
+            // Save JSON
+            console.log("Should now download the results");
+            let json_text = JSON.stringify(this.save_data);
+            let hidden_element = document.createElement('a');
+            hidden_element.setAttribute('href',
+              'data:text/plain;charset=utf-8,' + encodeURIComponent(json_text));
+            hidden_element.setAttribute('download', "your_results.json");
+            hidden_element.style.display = 'none';
+            document.body.appendChild(hidden_element);
+            hidden_element.click();
+            document.body.removeChild(hidden_element);
+            console.log("Should have download the results");
+
             let message;
             if (this.only_predictive.is_off()) {
                 message = (
@@ -729,6 +778,7 @@ class CustomAppController extends mvc.Controller {
             this.canvas_click_listener.turn_off();
         }
         this.start_button_enter_key_listener.turn_off();
+
         this.view.get(EL.modal_dialogue).prompt(
             "Please, insert the current study code. Keep" +
             " the default value if undecided.\n" +
@@ -736,6 +786,8 @@ class CustomAppController extends mvc.Controller {
             "default",
             $.proxy(function (input) {
                 // noinspection JSPotentiallyInvalidUsageOfClassThis
+                this.view.get(EL.text_question).set_text(MESSAGES.loading_message);
+                this.view.get(EL.button_start).hide();
                 this.send_ajax_gp_sample_request(input);
                 console.log("Moving line cursor to last know position");
                 // noinspection JSPotentiallyInvalidUsageOfClassThis
@@ -1078,23 +1130,22 @@ class CustomAppController extends mvc.Controller {
             this.ajax_lock.turn_on();
         }
 
-        let inner_success_function = function (response) {
-            if (this.ajax_lock.is_on()) {
-                this.ajax_lock.turn_off();
-            } else {
-                console.warn("Found lock unexpectedly off.");
-            }
-            success_function(response);
-        };
+        // let inner_success_function = function (response) {
+        //     if (this.ajax_lock.is_on()) {
+        //         this.ajax_lock.turn_off();
+        //     } else {
+        //         console.warn("Found lock unexpectedly off.");
+        //     }
+        //     success_function(response);
+        // };
+
 
         const data = {
-            type: "POST",
             dataType: 'json',
             url: url,
-            data: {'ajax_data': JSON.stringify(ajax_data)},
-            success: success_function.name,
-            global: true
-        }
+            config: bs.is_null_or_undefined(this.config) ? null : JSON.stringify(this.config),
+            ajax_data: JSON.stringify(ajax_data)
+        };
 
         // Use webworker here instead
         console.log("Static server, using a pyodide webworker instead.");
@@ -1416,6 +1467,7 @@ class CustomAppController extends mvc.Controller {
      */
     send_ajax_gp_sample_request(input_dialogue_value = null) {
         let study_settings_name;
+
         let keep_current_study = this.model.get("update_session");
         if (keep_current_study === true) {
             // When advancing from the previous session, keep the same settings-name without any dialogue
@@ -1433,9 +1485,9 @@ class CustomAppController extends mvc.Controller {
                 this.start_button_enter_key_listener.turn_on();
                 return;
             } else {
-                // Start a new session
-                this.running_session.turn_on();
-                console.log("Session turned on!");
+                // // Start a new session
+                // this.running_session.turn_on();
+                // console.log("Session turned on!");
             }
         }
 
@@ -1443,7 +1495,8 @@ class CustomAppController extends mvc.Controller {
         // Ajax data to send to the server
         let ajax_data = {
             "settings_name": study_settings_name,
-            "update_session": this.model.get("update_session")
+            "update_session": this.model.get("update_session"),
+            "load_config": true
         };
 
 
@@ -1453,6 +1506,7 @@ class CustomAppController extends mvc.Controller {
         if (update_sampling) {
             ajax_data["session"] = this.model.get("session");
             ajax_data["user_id"] = this.model.get("settings")["user_id"];
+            ajax_data["load_config"] = false;
         }
 
         this.send_ajax_and_run(

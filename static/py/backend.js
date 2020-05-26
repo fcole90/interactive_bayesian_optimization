@@ -1,3 +1,5 @@
+const python_script = `
+from js import request
 import json
 
 import numpy as np
@@ -167,8 +169,8 @@ def user_study_data_gp_initialisation(start: float,
     start: Initial point of the function
     stop: Final point of the function
     num: Amount of points of the function (for discretisation)
-    kernel_name: Name of the kernel function to use, it must be one of those present in the `kernel_functions` package,
-        like `rbf_kernel`.
+    kernel_name: Name of the kernel function to use, it must be one of those present in the \`kernel_functions\` package,
+        like \`rbf_kernel\`.
     kernel_args: Named arguments to be passed to the function.
     noise: Amount of noise of the GP
 
@@ -289,7 +291,7 @@ def api_initialise_gp_and_sample(config=None, ajax_data=None):
         session_id = data["session"]
 
     #     if "save" in settings and settings["save"] == False:
-    #         logging.debug("Not saving data because of settings[\"save\"] = False")
+    #         logging.debug("Not saving data because of settings[\\"save\\"] = False")
     #     else:
     #         io.save_data(data,
     #                      study_name=settings_file_name,
@@ -352,20 +354,5 @@ def js_main():
         raise Exception(f"unrecognised url: {request_url}")
 
 
-if __name__ == "builtins":
-    js_main()
-
-
-if __name__ == '__main__':
-    import os
-
-    current_dir = os.path.dirname(os.path.realpath(__file__))
-    config_dir = os.path.abspath(os.path.join(current_dir, os.path.pardir, os.path.pardir, "configurations"))
-
-    with open(os.path.join(config_dir, "default.json")) as f:
-        config = f.read()
-
-    iter_0_answer = api_initialise_gp_and_sample(config, config)
-    print(iter_0_answer)
-    iter_1_answer = api_update_gp(iter_0_answer)
-    print(iter_1_answer)
+js_main()
+`

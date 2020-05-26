@@ -1,52 +1,71 @@
 self.languagePluginUrl = 'https://pyodide-cdn2.iodide.io/v0.15.0/full/';
 importScripts('https://pyodide-cdn2.iodide.io/v0.15.0/full/pyodide.js');
+importScripts('../py/backend.js');
 
-var onmessage = function (e) {
-  // eslint-disable-line no-unused-vars
-  const some_code__ = `
+function get_config(file_name="default") {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      console.log("Fetching json config..");
+      fetch(`../../configurations/${file_name}.json`)
+        .then(response => response.text())
+        .then(json => {
+          resolve(json);
+        })
+        .catch((err) => { console.error(err) });
+    }, 2000);
+  });
+}
+
+var onmessage = async function (e) {
+  const some_code = `
   from js import request
-    
-  DIST_URL = 'public/interactive_bayesian_optimisation-1.2.1-py3-none-any.whl'
+  import json
   
   def main():
-    print("Installed!")
-    import interactive_bayesian_optimisation
-    print(dir(interactive_bayesian_optimisation))
-    print("A print from python")
-    print(dir(request))
-    print(request["success"])
-    print(request["url"])
-    return "bob"
+    print("url:", request["url"])
+    print("config:", json.loads(request["config"]).keys())
+    print("ajax_data:", request["ajax_data"])
+    print("__name__:", __name__)
+    return "OK PYTHON"
+
+  def js_main():
+      print(request)
   
-  import micropip
-  micropip.install(numpy).then(main)
+  
+  if __name__ == "builtins":
+      js_main()
+
+  main()
   `
 
-  const some_code = `
-  def do_work(*args):
-      print("Installed!")
-      import interactive_bayesian_optimisation as ibo
-      s = "NaN a NaN Nan naN bob"
-      print(s)
-      s_ = ibo.utils.remove_nan()
-      print(s_)
-  
-  import micropip
-  micropip.install('https://fcole90.github.io/interactive_bayesian_optimization/public/interactive_bayesian_optimisation-1.2.1-py3-none-any.whl').then(do_work)
-  `
-
+  // Obtain the js parameters to run the code
+  let data = e.data;
+  if (data.url === "api_initialise_gp_and_sample") {
+    if (data.config === null) {
+      let settings_name = JSON.parse(data.ajax_data).settings_name;
+      console.log(data.ajax_data);
+      switch (settings_name) {
+        case "study_5":
+        case "study_10":
+        case "study_training":
+          console.log("Loading from:", settings_name)
+          data.config = await get_config(settings_name);
+          break;
+        default:
+          console.log("Loading from default, requested:", settings_name);
+          data.config = await get_config();
+      }
+    } else {
+      console.log("Config required but available.")
+    }
+  }
 
   languagePluginLoader.then(() => {
-    self.pyodide.loadPackage(['numpy', 'micropip']).then(() => {
-
-      // Obtain the js parameters to run the code
-      const data = e.data;
-
       // Create a python package named request
       self["request"] = data;
-
       // Start the chain of promises
-      self.pyodide.runPythonAsync(some_code, () => {})
+      // self.pyodide.runPythonAsync(some_code, () => {})
+      self.pyodide.runPythonAsync(python_script, () => {})
         .then((results) => {
           console.log("Should post a message..");
           self.postMessage({
@@ -58,11 +77,12 @@ var onmessage = function (e) {
         })
         .catch((err) => {
           // if you prefer messages with the error
-          console.log("Something went wrong...");
-          self.postMessage({error: err.message});
+          // console.log("Something went wrong...");
+          // self.postMessage({error: err.message});
           // if you prefer onerror events
-          // setTimeout(() => { throw err; });
+          setTimeout(() => { throw err; });
         });
     });
-  });
+  // });
 };
+
