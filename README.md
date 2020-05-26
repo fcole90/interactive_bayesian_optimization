@@ -1,5 +1,5 @@
 # Interactive Bayesian Optimization
-This repository contains the code employed for the experiments and the analysis of *Human Strategic Steering Improves Performance of Interactive Optimization*
+This repository contains the code employed for the experiments and the analysis of *Human Strategic Steering Improves Performance of Interactive Optimization*. [Try demo online.](https://fcole90.github.io/interactive_bayesian_optimization/)
 
 ### Human Strategic Steering Improves Performance of Interactive Optimization
 Fabio Colella, Pedram Daee, Jussi Jokinen, Antti Oulasvirta, Samuel Kaski
@@ -12,13 +12,15 @@ A central concern in an interactive intelligent system is optimization of its ac
 <figcaption><sup>Figure: User Interface of the application</sup></figcaption>
 
 ### How to use
-##### Requirements for the Interactive Bayesian Optimisation
+You can try the application online at https://fcole90.github.io/interactive_bayesian_optimization/.
+
+##### Requirements
 **Python libraries**
 - `flask`
 - `numpy`
 - `scipy`
 
-You should also have a modern browser.
+You should also have a modern browser (e.g. Google Chrome 81).
 
 ##### Running the application
 From terminal, you can run the app with `./start-app.py`. It will show you an URL where the app is running, like for example http://127.0.0.1:5000/
@@ -29,7 +31,7 @@ If you open it, you can select (type) one of the following configurations:
 - `study_5`
 - `study_training`
 
-### Implementation
+### Implementation details
 
 #### Backend
 
@@ -44,6 +46,8 @@ Libraries for the python backend are under `ai_tom/libs/`.
 
 The evaluation function is `ai_tom/evaluation.py` and needs a folder of user studies to be specified 
 the end of the script. It will produce plots under `instance/plots/`. 
+
+In the online demo the backend is run in a webworker which invokes a wasm python interpreter using [Pyodide](https://pyodide.readthedocs.io/en/latest/index.html).
 
 
 #### Frontend
