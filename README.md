@@ -11,6 +11,11 @@ A central concern in an interactive intelligent system is optimization of its ac
 ![final_UI_interface](https://user-images.githubusercontent.com/1292230/80922451-e0ce3a80-8d85-11ea-9b7b-f0c4bc428008.png)
 <figcaption><sup>Figure: User Interface of the application</sup></figcaption>
 
+### Libraries derived from this project
+ - [pyutils.js](https://github.com/fcole90/pyutils)
+ - [canvasplotlib.js](https://github.com/fcole90/canvasplotlib)
+ - [simple_numeric.js](https://github.com/fcole90/interactive_bayesian_optimization/blob/master/interactive_bayesian_optimisation/static/libs/simple_numeric.js)
+
 ### How to use
 You can try the application online at https://fcole90.github.io/interactive_bayesian_optimization/.
 
