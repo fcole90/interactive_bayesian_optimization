@@ -1,5 +1,5 @@
 # Interactive Bayesian Optimization
-This repository contains the code employed for the experiments and the analysis of *Human Strategic Steering Improves Performance of Interactive Optimization*. [Try demo online.](https://fcole90.github.io/interactive_bayesian_optimization/)
+This repository contains the code employed for the experiments and the analysis of *Human Strategic Steering Improves Performance of Interactive Optimization*. [Presentation website](https://fcole90.github.io/interactive_bayesian_optimization/)[Try demo online.](https://fcole90.github.io/interactive_bayesian_optimization/demo.html)
 
 ### Human Strategic Steering Improves Performance of Interactive Optimization
 Fabio Colella, Pedram Daee, Jussi Jokinen, Antti Oulasvirta, Samuel Kaski
