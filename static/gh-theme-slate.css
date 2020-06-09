@@ -370,7 +370,7 @@ hr {
     height: 1px;
     margin-bottom: 5px;
     border: none;
-    background: url("../images/bg_hr.png") repeat-x center
+    background: url("images/bg_hr.png") repeat-x center
 }
 
 table {
@@ -415,7 +415,7 @@ form {
     z-index: 10;
     padding: 0.6rem 3rem 0.6rem 0.6rem;
     color: #2d2d2d;
-    background: url("../images/GitHub-Mark-32px.png") var(--secondary-bg-color) no-repeat 95% 50%;
+    background: url("images/GitHub-Mark-32px.png") var(--secondary-bg-color) no-repeat 95% 50%;
     font-weight: bold;
     /*box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);*/
 }
@@ -459,7 +459,7 @@ form {
     bottom: -40px;
     right: 0;
     height: 70px;
-    background: url("../images/icon_download.png") no-repeat 0% 90%
+    background: url("images/icon_download.png") no-repeat 0% 90%
 }
 
 .zip_download_link, .tar_download_link {
@@ -471,7 +471,7 @@ form {
     padding-top: 2.6rem;
     text-indent: 0.4rem;
     overflow: hidden;
-    background: url(../images/aalto_package_bg_white.png);
+    background: url(images/aalto_package_bg_white.png);
     background-repeat: no-repeat;
     background-size: contain;
     color: white;
@@ -480,7 +480,7 @@ form {
 
 
 .zip_download_link:hover, .tar_download_link:hover {
-    background: url(../images/aalto_package_bg_white_light.png);
+    background: url(images/aalto_package_bg_white_light.png);
     background-repeat: no-repeat;
     background-size: contain;
     text-decoration: none;
