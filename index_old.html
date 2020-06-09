@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="static/favicon.ico">
+
+    <!-- Standard CSS style -->
+    <link rel="stylesheet" href="static/style.css">
+
+    <!--Import these scripts in this order until transition to modules is complete-->
+    <script src="static/3rd/jquery-3.3.1.min.js"></script>
+    <!--    <script defer src="static/libs/numeric_dart/build/load_and_analyse.dart.js"></script>-->
+    <script>console.warn("Importing JQuery globally." +
+      " This is currently necessary as it's not distributed yet as an ES6 module.");</script>
+
+</head>
+<body>
+    <header style="width: 70%; margin: auto">
+        <h1 id="text_title">
+            A<span style="color: red">!</span> - Aalto University
+        </h1>
+        <h2 style="text-align: center">
+            Human Strategic Steering Improves Performance of Interactive Optimization
+        </h2>
+    </header>
+    <main style="width: 50%; margin: auto">
+        <p style="line-height: 1.5">
+            Website demoing the user-interaction software employed in the UMAP 2020 paper
+            <a href="https://arxiv.org/abs/2005.01291"><em>Human Strategic Steering Improves Performance of Interactive Optimization</em>
+            </a> by Fabio Colella, Pedram Daee, Jussi Jokinen, Antti Oulasvirta, Samuel Kaski.
+            <br><br>
+            This demo has been slightly modified from the original to run entirely in a modern web browser using
+            <a href="https://pyodide.readthedocs.io/en/latest/using_pyodide_from_javascript.html">Pyodide</a>
+            to use the required Python code.
+            <br><br>
+            You can select one of four configurations in the demo:
+        </p>
+        <ul>
+            <li>
+                <p><code style="background-color: #edf6f8">default</code> default settings, for demo purposes. Features
+                    5 practice sessions and 5 normal sessions, each of 5 iterations;</p>
+            </li>
+            <li>
+                <p><code style="background-color: #edf6f8">study_training</code> used for training before the actual
+                    study. Features 5 practice sessions each of 10 iterations;</p>
+            </li>
+            <li>
+                <p><code style="background-color: #edf6f8">study_10</code> used in the study.
+                    Features 5 practice sessions and 15 normal sessions, each of 10 iterations;</p>
+            </li>
+            <li>
+                <p><code style="background-color: #edf6f8">study_5</code> used in the study.
+                    Features 5 practice sessions and 20 normal sessions, each of 5 iterations.</p>
+            </li>
+        </ul>
+        <p style="line-height: 1.5">At the end of the study, a json containing your
+            interaction data will be downloaded. You can analyse it using the python scripts provided in the repository.
+            <br><br>
+            <em>No data is collected by us, everything happens in your browser.</em>
+        </p>
+        <a href="/interactive_bayesian_optimization/study.html" class="custom_button" style="float: right; padding: 1rem">Begin</a>
+        <div id="spacer" style="height: 5rem"></div>
+    </main>
+</body>

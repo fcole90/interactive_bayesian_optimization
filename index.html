@@ -1,66 +1,430 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-US">
 
 <head>
-
-    <!-- Favicon -->
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,maximum-scale=2">
     <link rel="icon" type="image/png" href="static/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="static/gh-theme-slate.css">
 
-    <!-- Standard CSS style -->
-    <link rel="stylesheet" href="static/style.css">
-
-    <!--Import these scripts in this order until transition to modules is complete-->
-    <script src="static/3rd/jquery-3.3.1.min.js"></script>
-    <!--    <script defer src="static/libs/numeric_dart/build/load_and_analyse.dart.js"></script>-->
-    <script>console.warn("Importing JQuery globally." +
-      " This is currently necessary as it's not distributed yet as an ES6 module.");</script>
+    <!-- Begin Jekyll SEO tag v2.6.1 -->
+    <title>Human Strategic Steering Improves Performance of Interactive Optimization</title>
+    <meta property="og:title" content="Human Strategic Steering Improves Performance of Interactive Optimization" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="description" content="Website presenting the homonym paper" />
+    <meta property="og:description" content="Website presenting the homonym paper" />
+    <link rel="canonical" href="https://fcole90.github.io/interactive_bayesian_optimization/" />
+    <meta property="og:url" content="https://fcole90.github.io/interactive_bayesian_optimization/" />
+    <meta property="og:site_name" content="Presentation" />
+    <script type="application/ld+json">
+        {
+            "@type":"WebSite",
+            "url":"https://fcole90.github.io/interactive_bayesian_optimization/",
+            "name":"Human Strategic Steering Improves Performance of Interactive Optimization",
+            "headline":"Human Strategic Steering Improves Performance of Interactive Optimization",
+            "description":"Website presenting the homonym paper.",
+            "@context":"https://schema.org"}
+    </script>
+    <!-- End Jekyll SEO tag -->
 
 </head>
+
 <body>
-    <header style="width: 70%; margin: auto">
-        <h1 id="text_title">
-            A<span style="color: red">!</span> - Aalto University
-        </h1>
-        <h2 style="text-align: center">
-            Human Strategic Steering Improves Performance of Interactive Optimization
+
+<!-- HEADER -->
+<div id="header_wrap" class="outer">
+    <header class="inner">
+
+        <a id="forkme_banner" href="https://github.com/fcole90/interactive_bayesian_optimization">View on GitHub</a>
+
+
+        <h1 id="project_title">Human Strategic Steering Improves Performance of Interactive Optimization</h1>
+        <h2 class="project_tagline">
+            <a href="https://um.org/umap2020/">UMAP 2020</a>
         </h2>
+
+
+        <section id="downloads">
+            <a class="zip_download_link" href="https://github.com/fcole90/interactive_bayesian_optimization/zipball/master">.zip</a>
+            <a class="tar_download_link" href="https://github.com/fcole90/interactive_bayesian_optimization/tarball/master">.tar</a>
+        </section>
+
     </header>
-    <main style="width: 50%; margin: auto">
-        <p style="line-height: 1.5">
-            Website demoing the user-interaction software employed in the UMAP 2020 paper
-            <a href="https://arxiv.org/abs/2005.01291"><em>Human Strategic Steering Improves Performance of Interactive Optimization</em>
-            </a> by Fabio Colella, Pedram Daee, Jussi Jokinen, Antti Oulasvirta, Samuel Kaski.
-            <br><br>
-            This demo has been slightly modified from the original to run entirely in a modern web browser using
-            <a href="https://pyodide.readthedocs.io/en/latest/using_pyodide_from_javascript.html">Pyodide</a>
-            to use the required Python code.
-            <br><br>
-            You can select one of four configurations in the demo:
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="main_content_wrap" class="outer">
+    <section id="main_content" class="inner">
+        <p>This website presents the paper Human Strategic Steering Improves Performance of Interactive Optimization.
+            <a href="https://arxiv.org/abs/2005.01291"><em>Preprint</em></a>
         </p>
-        <ul>
-            <li>
-                <p><code style="background-color: #edf6f8">default</code> default settings, for demo purposes. Features
-                    5 practice sessions and 5 normal sessions, each of 5 iterations;</p>
-            </li>
-            <li>
-                <p><code style="background-color: #edf6f8">study_training</code> used for training before the actual
-                    study. Features 5 practice sessions each of 10 iterations;</p>
-            </li>
-            <li>
-                <p><code style="background-color: #edf6f8">study_10</code> used in the study.
-                    Features 5 practice sessions and 15 normal sessions, each of 10 iterations;</p>
-            </li>
-            <li>
-                <p><code style="background-color: #edf6f8">study_5</code> used in the study.
-                    Features 5 practice sessions and 20 normal sessions, each of 5 iterations.</p>
-            </li>
-        </ul>
-        <p style="line-height: 1.5">At the end of the study, a json containing your
-            interaction data will be downloaded. You can analyse it using the python scripts provided in the repository.
-            <br><br>
-            <em>No data is collected by us, everything happens in your browser.</em>
+
+        <a href="/interactive_bayesian_optimization/demo.html" class="custom_button">Try the online demo.</a>
+
+        <section id="what_is_about">
+            <h2>What is it about?</h2>
+            <p>
+                We wanted to study how users behave when using interactive optimisation system
+                (e.g. recommender systems), where they need to provide some feedback in order to
+                reach some goal.
+            </p>
+            <p class="no_margin_bottom">
+                The main points are:
+            </p>
+            <ul>
+                <li>Users are not always truthful in their feedback</li>
+                <li>Some users <a href="#steering">steer</a>  the AI towards their goal, and hence reach the maximum
+                    in fewer iterations</li>
+                <li>Users may leak information when having a steering behaviour</li>
+            </ul>
+        </section>
+
+        <section id="example">
+            <h2>Explanatory example</h2>
+            <p>
+                Suppose a user is interacting with a music recommender system like that of <em>Spotify</em>.
+                We would expect the user to be truthful, so to press like for items he or she likes.
+            </p>
+            <figure>
+                <img src="images/spotify_example_recomm.png" alt="User pressing like on a song in Spotify">
+                <figcaption>User feedback behaviour influences the obtained recommendations.</figcaption>
+            </figure>
+            <p>
+                However some users may instead try to "lie" in order to reach some goal earlier. In this case
+                the goal could be to get more recommendations of some specific music genre. If the user models
+                the system as recommending songs similarly to the liked ones, he or she might then start giving
+                feedback to song similar to the wanted genre but which the user doesn't actually like. The meaning
+                of the feedback is now no longer just a preference on the item, but also a mean to steer the system
+                towards the user's (and system's as well) goal.
+            </p>
+        </section>
+
+
+        <section id="steering">
+            <h2>Steering</h2>
+            <p>We here define the concept of <em>steering</em>.</p>
+            <p class="same_section">If a user collaborating with an interactive optimisation system</p>
+            <ul>
+                <li>learns a model of the system</li>
+                <li>provides untruthful feedback with a strategy aimed at reaching the goal earlier</li>
+            </ul>
+            <p class="same_section">We say that the user is trying to <em>steer</em> the system towards their goal.</p>
+        </section>
+
+        <section>
+            <h2>System implementation</h2>
+            <p>
+                In order to study this behaviour in the most simple yet flexible way, we implemented our
+                system as an interactive 1D Bayesian Optimisation using a Gaussian kernel and Upper Confidence Bound
+                as acquisition function.
+            </p>
+            <figure>
+                <img src="images/study_plot.png" alt="Schematic of the system.">
+                <figcaption>Schematic of the system.</figcaption>
+            </figure>
+            <ul>
+                <li>
+                    AI <strong>cannot</strong> see the function, so it tries to find the maximum by asking the user
+                    the height of some query point <em>x</em>;
+                </li>
+                <li>
+                    User <strong>can</strong> see function, and provides some <em>y<sub>u</sub></em> for each
+                    point <em>x</em> asked by AI
+                </li>
+                <li>
+                    User’s <em>y<sub>u</sub></em> may differ from <em>f(x)</em>
+                </li>
+            </ul>
+        </section>
+
+        <section id="Results">
+            <h2>Results</h2>
+            <ul>
+                <li>Steering users perform statistically significantly better than baseline<br>
+                    t(599) = 4.1, p < 0.001
+                </li>
+                <li>Steering users’ scores increased faster than the baseline<br>
+                    t(596) = 2.2, p = 0.031</li>
+                <li>Next generation intelligent systems could exploit such steering behavior to further improve performance</li>
+                <li>Exploiting steering requires user models capable of anticipating such behaviour</li>
+            </ul>
+            <figure>
+                <img src="images/results.png" alt="Performance comparison of users against BO baseline.">
+                <figcaption>Performance comparison of users against BO baseline.</figcaption>
+            </figure>
+        </section>
+
+        <section id="conclusions">
+            <h2>Conclusions</h2>
+            <ul>
+                <li>Users strategically steer intelligent systems to control them</li>
+                <li>Steering users can achieve performance improvements</li>
+                <li>Next generation intelligent systems could exploit such steering behavior to further improve performance</li>
+                <li>Exploiting steering requires user models capable of anticipating such behaviour</li>
+            </ul>
+            <figure>
+                <img src="images/user_interaction_normal_speed.gif"
+                     alt="Example of user learning a steering behaviour to reach the maximum earlier.">
+                <figcaption>Example of user learning a steering behaviour to reach the maximum earlier.</figcaption>
+            </figure>
+        </section>
+
+        <a href="/interactive_bayesian_optimization/demo.html" class="custom_button">Try the online demo.</a>
+
+        <section id="abstract">
+            <h2>Abstract</h2>
+            <p>
+                A central concern in an interactive intelligent system is optimization of its actions, to be maximally
+                helpful to its human user. In recommender systems for instance, the action is to choose what to
+                recommend, and the optimization task is to recommend items the user prefers. The optimization is done
+                based on earlier user's feedback (e.g. "likes" and "dislikes"), and the algorithms assume the feedback
+                to be faithful. That is, when the user clicks “like,” they actually prefer the item. We argue that this
+                fundamental assumption can be extensively violated by human users, who are not passive feedback sources.
+                Instead, they are in control, actively steering the system towards their goal. To verify this
+                hypothesis, that humans steer and are able to improve performance by steering,
+                we designed a function optimization task where a human and an optimization algorithm collaborate
+                to find the maximum of a 1-dimensional function. At each iteration, the optimization algorithm queries
+                the user for the value of a hidden function <em>f</em> at a point <em>x</em>, and the user, who sees
+                the hidden function, provides an answer about <em>f</em>(<em>x</em>). Our study on 21 participants
+                shows that users who understand how the optimization works, strategically provide biased answers
+                (answers not equal to <em>f</em>(<em>x</em>)), which results in the algorithm finding the optimum
+                significantly faster. Our work highlights that next-generation intelligent systems will need user
+                models capable of helping users who steer systems to pursue their goals.
+            </p>
+        </section>
+
+        <section id="reference">
+            <h2>Reference</h2>
+            <p>
+                Fabio Colella, Pedram Daee, Jussi Jokinen, Antti Oulasvirta, Samuel Kaski<br>
+                <strong>Human Strategic Steering Improves Performance of Interactive Optimization</strong><br>
+                UMAP 2020
+            </p>
+        </section>
+
+        <section id="contact">
+            <h2>Contact</h2>
+            <p>Each author: <code>name.surname@aalto.fi</code></p>
+            <p>
+                Work done in the <a href="https://research.cs.aalto.fi/pml/">
+                Probabilistic Machine Learning research group at Aalto University.</a>
+                The research group is a part of <a href="http://www.fcai.fi/">Finnish Center for Artificial
+                Intelligence (FCAI)</a> and <a href="https://www.hiit.fi/"> Helsinki Institute for Information
+                Technology (HIIT).</a>
+            </p>
+        </section>
+
+        <section id="acknowledgments">
+            <h2>Acknowledgments</h2>
+
+            <p>
+                We thank Mustafa Mert Çelikok, Tomi Peltola, Antti Keurulainen, Petrus Mikkola, Kashyap Todi for
+                helpful discussions. This work was supported by the Academy of Finland (Flagship programme: Finnish
+                Center for Artificial Intelligence, FCAI; grants 310947, 319264, 292334, 313195; project BAD: grant
+                318559). AO was additionally supported by HumaneAI (761758) and the European Research Council StG
+                project COMPUTED. We acknowledge the computational resources provided by the Aalto Science-IT Project.
+            </p>
+        </section>
+
+
+<!--        &lt;!&ndash; Examples &ndash;&gt;-->
+<!--        <h2>&#45;&#45;&#45;&#45; Examples -&#45;&#45;&#45;&#45;&#45;&#45;</h2>-->
+<!--        <p>Text can be <strong>bold</strong>, <em>italic</em>, or <del>strikethrough</del>.</p>-->
+
+<!--        <p><a href="./another-page.html">Link to another page</a>.</p>-->
+
+<!--        <p>There should be whitespace between paragraphs.</p>-->
+
+<!--        <p>There should be whitespace between paragraphs. We recommend including a README, or a file with information about your project.</p>-->
+
+<!--        <h1 id="header-1">Header 1</h1>-->
+
+<!--        <p>This is a normal paragraph following a header. GitHub is a code hosting platform for version control and collaboration. It lets you and others work together on projects from anywhere.</p>-->
+
+<!--        <h2 id="header-2">Header 2</h2>-->
+
+<!--        <blockquote>-->
+<!--            <p>This is a blockquote following a header.</p>-->
+
+<!--            <p>When something is important enough, you do it even if the odds are not in your favor.</p>-->
+<!--        </blockquote>-->
+
+<!--        <h3 id="header-3">Header 3</h3>-->
+
+<!--        <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Javascript code with syntax highlighting.</span>-->
+<!--<span class="kd">var</span> <span class="nx">fun</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">lang</span><span class="p">(</span><span class="nx">l</span><span class="p">)</span> <span class="p">{</span>-->
+<!--  <span class="nx">dateformat</span><span class="p">.</span><span class="nx">i18n</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">./lang/</span><span class="dl">'</span> <span class="o">+</span> <span class="nx">l</span><span class="p">)</span>-->
+<!--  <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>-->
+<!--<span class="p">}</span>-->
+<!--</code></pre></div></div>-->
+
+<!--        <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Ruby code with syntax highlighting</span>-->
+<!--<span class="no">GitHubPages</span><span class="o">::</span><span class="no">Dependencies</span><span class="p">.</span><span class="nf">gems</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">gem</span><span class="p">,</span> <span class="n">version</span><span class="o">|</span>-->
+<!--  <span class="n">s</span><span class="p">.</span><span class="nf">add_dependency</span><span class="p">(</span><span class="n">gem</span><span class="p">,</span> <span class="s2">"= </span><span class="si">#{</span><span class="n">version</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>-->
+<!--<span class="k">end</span>-->
+<!--</code></pre></div></div>-->
+
+<!--        <h4 id="header-4">Header 4</h4>-->
+
+<!--        <ul>-->
+<!--            <li>This is an unordered list following a header.</li>-->
+<!--            <li>This is an unordered list following a header.</li>-->
+<!--            <li>This is an unordered list following a header.</li>-->
+<!--        </ul>-->
+
+<!--        <h5 id="header-5">Header 5</h5>-->
+
+<!--        <ol>-->
+<!--            <li>This is an ordered list following a header.</li>-->
+<!--            <li>This is an ordered list following a header.</li>-->
+<!--            <li>This is an ordered list following a header.</li>-->
+<!--        </ol>-->
+
+<!--        <h6 id="header-6">Header 6</h6>-->
+
+<!--        <table>-->
+<!--            <thead>-->
+<!--            <tr>-->
+<!--                <th style="text-align: left">head1</th>-->
+<!--                <th style="text-align: left">head two</th>-->
+<!--                <th style="text-align: left">three</th>-->
+<!--            </tr>-->
+<!--            </thead>-->
+<!--            <tbody>-->
+<!--            <tr>-->
+<!--                <td style="text-align: left">ok</td>-->
+<!--                <td style="text-align: left">good swedish fish</td>-->
+<!--                <td style="text-align: left">nice</td>-->
+<!--            </tr>-->
+<!--            <tr>-->
+<!--                <td style="text-align: left">out of stock</td>-->
+<!--                <td style="text-align: left">good and plenty</td>-->
+<!--                <td style="text-align: left">nice</td>-->
+<!--            </tr>-->
+<!--            <tr>-->
+<!--                <td style="text-align: left">ok</td>-->
+<!--                <td style="text-align: left">good <code class="language-plaintext highlighter-rouge">oreos</code></td>-->
+<!--                <td style="text-align: left">hmm</td>-->
+<!--            </tr>-->
+<!--            <tr>-->
+<!--                <td style="text-align: left">ok</td>-->
+<!--                <td style="text-align: left">good <code class="language-plaintext highlighter-rouge">zoute</code> drop</td>-->
+<!--                <td style="text-align: left">yumm</td>-->
+<!--            </tr>-->
+<!--            </tbody>-->
+<!--        </table>-->
+
+<!--        <h3 id="theres-a-horizontal-rule-below-this">There’s a horizontal rule below this.</h3>-->
+
+<!--        <hr />-->
+
+<!--        <h3 id="here-is-an-unordered-list">Here is an unordered list:</h3>-->
+
+<!--        <ul>-->
+<!--            <li>Item foo</li>-->
+<!--            <li>Item bar</li>-->
+<!--            <li>Item baz</li>-->
+<!--            <li>Item zip</li>-->
+<!--        </ul>-->
+
+<!--        <h3 id="and-an-ordered-list">And an ordered list:</h3>-->
+
+<!--        <ol>-->
+<!--            <li>Item one</li>-->
+<!--            <li>Item two</li>-->
+<!--            <li>Item three</li>-->
+<!--            <li>Item four</li>-->
+<!--        </ol>-->
+
+<!--        <h3 id="and-a-nested-list">And a nested list:</h3>-->
+
+<!--        <ul>-->
+<!--            <li>level 1 item-->
+<!--                <ul>-->
+<!--                    <li>level 2 item</li>-->
+<!--                    <li>level 2 item-->
+<!--                        <ul>-->
+<!--                            <li>level 3 item</li>-->
+<!--                            <li>level 3 item</li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
+<!--                </ul>-->
+<!--            </li>-->
+<!--            <li>level 1 item-->
+<!--                <ul>-->
+<!--                    <li>level 2 item</li>-->
+<!--                    <li>level 2 item</li>-->
+<!--                    <li>level 2 item</li>-->
+<!--                </ul>-->
+<!--            </li>-->
+<!--            <li>level 1 item-->
+<!--                <ul>-->
+<!--                    <li>level 2 item</li>-->
+<!--                    <li>level 2 item</li>-->
+<!--                </ul>-->
+<!--            </li>-->
+<!--            <li>level 1 item</li>-->
+<!--        </ul>-->
+
+<!--        <h3 id="small-image">Small image</h3>-->
+
+<!--        <p><img src="https://github.githubassets.com/images/icons/emoji/octocat.png" alt="Octocat" /></p>-->
+
+<!--        <h3 id="large-image">Large image</h3>-->
+
+<!--        <p><img src="https://guides.github.com/activities/hello-world/branching.png" alt="Branching" /></p>-->
+
+<!--        <h3 id="definition-lists-can-be-used-with-html-syntax">Definition lists can be used with HTML syntax.</h3>-->
+
+<!--        <dl>-->
+<!--            <dt>Name</dt>-->
+<!--            <dd>Godzilla</dd>-->
+<!--            <dt>Born</dt>-->
+<!--            <dd>1952</dd>-->
+<!--            <dt>Birthplace</dt>-->
+<!--            <dd>Japan</dd>-->
+<!--            <dt>Color</dt>-->
+<!--            <dd>Green</dd>-->
+<!--        </dl>-->
+
+<!--        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Long, single-line code blocks should not wrap. They should horizontally scroll if they are too long. This line should be long enough to demonstrate this.-->
+<!--</code></pre></div></div>-->
+
+<!--        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>The final element.-->
+<!--</code></pre></div></div>-->
+
+    </section>
+</div>
+
+<!-- FOOTER  -->
+<div id="footer_wrap" class="outer">
+    <footer class="inner">
+        <p class="copyright">
+            Human Strategic Steering Improves Performance of Interactive Optimization, project developed by the
+            <a href="https://research.cs.aalto.fi/pml/">Probabilistic Machine Learning Group</a>.<br>
+            © Copyright 2020 Aalto University. Licensed under
+            <a href="https://choosealicense.com/licenses/mit/">MIT License</a>.
+
         </p>
-        <a href="/interactive_bayesian_optimization/study.html" class="custom_button" style="float: right; padding: 1rem">Begin</a>
-        <div id="spacer" style="height: 5rem"></div>
-    </main>
+        <h2 class="project_tagline">
+            <!-- Aalto Logo-->
+            <a href="https://www.aalto.fi/en" style="white-space: nowrap;">A!
+                <span style="font-size: 0.7em">Aalto University</span>
+            </a> |
+            <!-- FCAI Logo-->
+            <a href="https://fcai.fi/">
+                <span style="font-family: 'Roboto Mono', monospace; white-space: nowrap;">FCAI
+                <span style="font-size: 0.6em">Finnish Center for Artificial Intelligence</span></span>
+            </a>
+        </h2>
+
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+    </footer>
+</div>
+
+
 </body>
+</html>

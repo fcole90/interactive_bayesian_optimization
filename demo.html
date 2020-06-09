@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,maximum-scale=2">
+    <link rel="icon" type="image/png" href="static/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="static/gh-theme-slate.css">
+
+    <!-- Begin Jekyll SEO tag v2.6.1 -->
+    <title>Demo Instructions | Human Strategic Steering Improves Performance of Interactive Optimization</title>
+    <meta property="og:title" content="Human Strategic Steering Improves Performance of Interactive Optimization" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="description" content="Website presenting the homonym paper" />
+    <meta property="og:description" content="Website presenting the homonym paper" />
+    <link rel="canonical" href="https://fcole90.github.io/interactive_bayesian_optimization/" />
+    <meta property="og:url" content="https://fcole90.github.io/interactive_bayesian_optimization/" />
+    <meta property="og:site_name" content="Presentation" />
+    <script type="application/ld+json">
+        {
+            "@type":"WebSite",
+            "url":"https://fcole90.github.io/interactive_bayesian_optimization/",
+            "name":"Human Strategic Steering Improves Performance of Interactive Optimization",
+            "headline":"Human Strategic Steering Improves Performance of Interactive Optimization",
+            "description":"Website presenting the homonym paper.",
+            "@context":"https://schema.org"}
+    </script>
+    <!-- End Jekyll SEO tag -->
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div id="header_wrap" class="outer">
+    <header class="inner">
+
+        <a id="forkme_banner" href="https://github.com/fcole90/interactive_bayesian_optimization">View on GitHub</a>
+
+
+        <h1 id="project_title">Human Strategic Steering Improves Performance of Interactive Optimization</h1>
+        <h2 class="project_tagline">
+            <a href="https://um.org/umap2020/">UMAP 2020</a>
+        </h2>
+
+
+        <section id="downloads">
+            <a class="zip_download_link" href="https://github.com/fcole90/interactive_bayesian_optimization/zipball/master">.zip</a>
+            <a class="tar_download_link" href="https://github.com/fcole90/interactive_bayesian_optimization/tarball/master">.tar</a>
+        </section>
+
+    </header>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="main_content_wrap" class="outer">
+    <section id="main_content" class="inner">
+
+        <section id="Instructions">
+            <h2>Instructions</h2>
+            <p>You can learn here how to use the system we used in our study.
+                <a href="https://arxiv.org/abs/2005.01291"><em>Preprint</em></a>
+                <br>
+                This demo has been slightly modified from the original to run entirely in a modern web browser using
+                <a href="https://pyodide.readthedocs.io/en/latest/using_pyodide_from_javascript.html">Pyodide</a>
+                to use the required Python code. Note however that <em>Pyodide</em> does not support Safari
+                (on any platform)
+                nor iOS browsers. In general we recommend to use the demo on a laptop using the latest version of
+                Google Chrome or Firefox which are known to work.
+            </p>
+        </section>
+
+
+        <section id="Task">
+            <h3>Task</h3>
+            <p>
+                The task you need to accomplish is to guide the AI, using your feedback, to find the maximum of a
+                function (i.e. the AI queries the highest peak of the function) in the shown interval,
+                with the least number of iterations.
+            </p>
+        </section>
+
+        <section id="Setting">
+            <h3>Setting</h3>
+            <p>
+                The AI you will collaborate with, is smart but blind. This means that the only thing the
+                AI can see is your feedback, while only you will be able to see the function
+                (the solid line
+                <span style="color: black; white-space: pre; font-weight: 900;">──</span>).
+                Therefore it needs your help to find the maximum.
+                You will also be able to see what the AI thinks: both its estimate of the function
+                (dashed line <span style="color: blue; white-space: pre;">╍╍</span>) and
+                its uncertainty (blue shadow
+                <span style="color: #7e9bce; background-color: #cbddfb; white-space: pre;">     </span>)
+                are visualised.
+            </p>
+            <figure>
+                <img src="images/user_interface.png" alt="User interface of the system.">
+                <figcaption>User interface of the system.</figcaption>
+            </figure>
+        </section>
+
+        <section id="Interaction">
+            <h3>Interaction</h3>
+            <p>
+                During each iteration the AI will try to guess on which point, along the x-axis,
+                the maximum lies, and it will query it to you, asking for your feedback about
+                the y-value of the function in that queried point. You can move your cursor up
+                and down over the plot, and then answer by clicking at the height that you consider
+                the most appropriate. The AI uses your feedback to figure out which point to query next,
+                so the value you choose is extremely important. You are free to answer the exact height of
+                that point, or to tell the AI any other value, if you think it will help the AI more. If
+                the AI queries the maximum, try to keep it querying on that same point.
+            </p>
+        </section>
+
+        <section id="Score">
+            <h3>Score</h3>
+            <p>
+                Your score is not the height of your feedback, but the height of
+                the highest point the AI queried (indicated by a red dot <span style="color: red">●</span>).
+                It ranges between 0 and 100 (0 at the minimum of the function, 100 at its maximum).
+                The initial query is random, so your initial score is random as well.
+            </p>
+        </section>
+
+        <section id="Configurations">
+            <h3>Configurations</h3>
+            <p class="no_margin_bottom">
+                Upon beginning you can select different configurations:
+            </p>
+            <ul>
+                <li>
+                    <p><code style="background-color: #edf6f8">default</code> default settings, for demo purposes. Features
+                        5 practice sessions and 5 normal sessions, each of 5 iterations;</p>
+                </li>
+                <li>
+                    <p><code style="background-color: #edf6f8">study_training</code> used for training before the actual
+                        study. Features 5 practice sessions each of 10 iterations;</p>
+                </li>
+                <li>
+                    <p><code style="background-color: #edf6f8">study_10</code> used in the study.
+                        Features 5 practice sessions and 15 normal sessions, each of 10 iterations;</p>
+                </li>
+                <li>
+                    <p><code style="background-color: #edf6f8">study_5</code> used in the study.
+                        Features 5 practice sessions and 20 normal sessions, each of 5 iterations.</p>
+                </li>
+            </ul>
+        </section>
+
+        <p>At the end of the study, a json containing your interaction data will be downloaded.
+            You can analyse it using the Python scripts provided in the repository.
+            <br><br>
+            <em>No data is collected by us, everything happens in your browser.</em>
+        </p>
+
+        <div style="text-align: right; padding-right: 2rem;">
+            <a class="custom_button" href="/interactive_bayesian_optimization/study.html">Begin</a>
+        </div>
+
+
+    </section>
+</div>
+
+<!-- FOOTER  -->
+<div id="footer_wrap" class="outer">
+    <footer class="inner">
+        <p class="copyright">
+            Human Strategic Steering Improves Performance of Interactive Optimization, project developed by the
+            <a href="https://research.cs.aalto.fi/pml/">Probabilistic Machine Learning Group</a>.<br>
+            © Copyright 2020 Aalto University. Licensed under
+            <a href="https://choosealicense.com/licenses/mit/">MIT License</a>.
+
+        </p>
+        <h2 class="project_tagline">
+            <!-- Aalto Logo-->
+            <a href="https://www.aalto.fi/en" style="white-space: nowrap;">A!
+                <span style="font-size: 0.7em">Aalto University</span>
+            </a> |
+            <!-- FCAI Logo-->
+            <a href="https://fcai.fi/">
+                <span style="font-family: 'Roboto Mono', monospace; white-space: nowrap;">FCAI
+                <span style="font-size: 0.6em">Finnish Center for Artificial Intelligence</span></span>
+            </a>
+        </h2>
+
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+    </footer>
+</div>
+
+
+</body>
+</html>
