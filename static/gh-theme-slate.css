@@ -96,11 +96,6 @@ video {
     vertical-align: baseline
 }
 
-sub {
-    vertical-align: sub;
-    font-size: smaller;
-}
-
 
 article,
 aside,
@@ -137,6 +132,11 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+}
+
+sub {
+    vertical-align: sub;
+    font-size: smaller;
 }
 
 #project_title::selection, .project_tagline::selection, .project_tagline a::selection {
