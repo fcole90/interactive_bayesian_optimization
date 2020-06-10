@@ -162,15 +162,15 @@ h1 {
 }
 
 h2 {
-    font-size: 2rem;
-}
-
-h3 {
     font-size: 1.8rem;
 }
 
+h3 {
+    font-size: 1.6rem;
+}
+
 h4 {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
 }
 
 h5 {
@@ -187,7 +187,7 @@ p {
 }
 
 li {
-    line-height: 1.55;
+    line-height: 1.6;
 }
 
 section {
@@ -518,6 +518,53 @@ form {
 
 #footer_wrap {
     background: var(--main-bg-color)
+}
+
+/*
+    Modified from original on: https://jsfiddle.net/eu81273/jmw3w74v/
+	css-only-tooltip version 1.0.0
+	ⓒ 2015 AHN JAE-HA http://github.com/eu81273
+	MIT License
+*/
+
+/*[data-tooltip-text]:hover {*/
+[data-tooltip-text] {
+    display: inline-block;
+    position: relative;
+}
+
+/*[data-tooltip-text]:hover::before {*/
+[data-tooltip-text]::before {
+    /* Content */
+    content: attr(data-tooltip-text);
+    text-align: center;
+
+    /* Cosmetic */
+    background-color: var(--main-text-color);
+    color: #FFFFFF;
+    font-size: 0.8em;
+    word-wrap: break-word;
+    border: 1px solid white;
+    box-shadow: 0 0 2.5rem 0.35rem rgba(0,0,0,0.08);
+    line-height: 1em;
+    vertical-align: middle;
+
+    /* Positioning */
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -6px;
+    transform: translateX(-50%);
+
+    z-index: 9999;
+
+    margin-bottom: 0.1rem;
+    padding: 0.3em 0.3em 0.1em 0.3em;
+
+
+    width: fit-content;
+    min-width: 5rem;
+    max-width: 80vw;
 }
 
 @media screen and (max-width: 992px) {
