@@ -527,14 +527,14 @@ form {
 	MIT License
 */
 
-/*[data-tooltip-text]:hover {*/
-[data-tooltip-text] {
+[data-tooltip-text]:hover {
+/*[data-tooltip-text] {*/
     display: inline-block;
     position: relative;
 }
 
-/*[data-tooltip-text]:hover::before {*/
-[data-tooltip-text]::before {
+[data-tooltip-text]:hover::before {
+/*[data-tooltip-text]::before {*/
     /* Content */
     content: attr(data-tooltip-text);
     text-align: center;
@@ -559,7 +559,7 @@ form {
     z-index: 9999;
 
     margin-bottom: 0.1rem;
-    padding: 0.3em 0.3em 0.1em 0.3em;
+    padding: 0.5em 0.3em 0.2em 0.3em;
 
 
     width: fit-content;
