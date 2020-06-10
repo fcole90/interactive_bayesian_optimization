@@ -527,9 +527,6 @@ form {
 	MIT License
 */
 
-[data-tooltip-text] {
-    display: none;
-}
 
 [data-tooltip-text]:hover {
 /*[data-tooltip-text] {*/
