@@ -2,16 +2,6 @@
 <html lang="en-US">
 
 <head>
-    <!-- IP-Anonymized GDPR-compliant traffic counting with Google Analytics  -->
-    <!-- See more: https://developers.google.com/analytics/devguides/collection/gtagjs/ip-anonymization  -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-169195653-1"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'UA-169195653-1', { 'anonymize_ip': true });
-    </script>
-
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
@@ -41,8 +31,16 @@
             "@context":"https://schema.org"}
     </script>
     <!-- End Jekyll SEO tag -->
-
 </head>
+<!-- IP-Anonymized GDPR-compliant traffic counting with Google Analytics  -->
+<!-- See more: https://developers.google.com/analytics/devguides/collection/gtagjs/ip-anonymization  -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-169195653-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-169195653-1', { 'anonymize_ip': true });
+</script>
 
 <body>
 
