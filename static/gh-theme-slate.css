@@ -139,6 +139,10 @@ sub {
     font-size: smaller;
 }
 
+small {
+    font-size: smaller;
+}
+
 #project_title::selection, .project_tagline::selection, .project_tagline a::selection {
     background-color: #b1c4ec;
 }
