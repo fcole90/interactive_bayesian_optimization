@@ -1,11 +1,11 @@
 # Interactive Bayesian Optimization
-This repository contains the code employed for the experiments and the analysis of *Human Strategic Steering Improves Performance of Interactive Optimization*. [Presentation website](https://fcole90.github.io/interactive_bayesian_optimization/) | [Try demo online.](https://fcole90.github.io/interactive_bayesian_optimization/demo.html)
+This repository contains the code employed for the experiments and the analysis of *Human Strategic Steering Improves Performance of Interactive Optimization*. [Presentation Website](https://fcole90.github.io/interactive_bayesian_optimization/) | [Try Online Demo](https://fcole90.github.io/interactive_bayesian_optimization/demo.html) | [Video Presentation](https://youtu.be/4noJRNVK9Ro)
 
 ### Human Strategic Steering Improves Performance of Interactive Optimization
 Fabio Colella, Pedram Daee, Jussi Jokinen, Antti Oulasvirta, Samuel Kaski
 <br>**UMAP 2020** https://dl.acm.org/doi/10.1145/3340631.3394883, also on arXiv https://arxiv.org/abs/2005.01291
 
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/4noJRNVK9Ro" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 
 #### Abstract
 A central concern in an interactive intelligent system is optimization of its actions, to be maximally helpful to its human user. In recommender systems for instance, the action is to choose what to recommend, and the optimization task is to recommend items the user prefers. The optimization is done based on earlier user's feedback (e.g. "likes" and "dislikes"), and the algorithms assume the feedback to be faithful. That is, when the user clicks “like,” they actually prefer the item. We argue that this fundamental assumption can be extensively violated by human users, who are not passive feedback sources. Instead, they are in control, actively steering the system towards their goal. To verify this hypothesis, that humans steer and are able to improve performance by steering, we designed a function optimization task where a human and an optimization algorithm collaborate to find the maximum of a 1-dimensional function. At each iteration, the optimization algorithm queries the user for the value of a hidden function *f* at a point *x*, and the user, who sees the hidden function, provides an answer about *f*(*x*). Our study on 21 participants shows that users who understand how the optimization works, strategically provide biased answers (answers not equal to *f*(*x*)), which results in the algorithm finding the optimum significantly faster. Our work highlights that next-generation intelligent systems will need user models capable of helping users who steer systems to pursue their goals.
