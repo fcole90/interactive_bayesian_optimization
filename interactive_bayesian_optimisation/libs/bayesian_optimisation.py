@@ -5,7 +5,8 @@ import numpy as np
 from scipy.cluster.vq import kmeans
 
 from interactive_bayesian_optimisation.libs import gaussian_processes as gp
-from interactive_bayesian_optimisation.libs import user_study_gp  # TODO: solve this circular dependancy
+# TODO: solve this circular dependancy
+from interactive_bayesian_optimisation.libs import user_study_gp
 
 from interactive_bayesian_optimisation.libs.utils import recreate_antisymmetric_matrix_from_list, get_vertical_visual_boundaries
 
@@ -29,7 +30,7 @@ def random_sample(x: List[float], size: int = 1) -> List[float]:
 
 def upper_confidence_bound(mean_list: List[float],
                            variance_list: List[float],
-                           full_max_list: bool = False) -> Union[np.int, np.ndarray]:
+                           full_max_list: bool = False) -> Union[int, np.ndarray]:
     """Samples a point using UCB.
 
     If there's more than one maximum, then it samples one of the maxima uniformly at random.

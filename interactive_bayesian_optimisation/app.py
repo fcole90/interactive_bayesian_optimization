@@ -39,7 +39,7 @@ def create_app():
     app = Flask(__name__, instance_path=instance_path)
 
     # Logging utility setup
-    if app.config['ENV'] == 'development' or app.config['DEBUG'] is True:
+    if app.config.get('ENV') == 'development' or app.config.get('DEBUG') is True:
         log_level = logging.DEBUG
     else:
         if hasattr(logging, config.DEBUG_LOG_LEVEL):
@@ -165,7 +165,8 @@ def create_app():
 
         # Fail early and provide some error message when crucial data is missing.
         try:
-            utils.assert_required_data(settings, ['x_limits', 'n_points', 'noise'])
+            utils.assert_required_data(
+                settings, ['x_limits', 'n_points', 'noise'])
         except AssertionError as e:
             logging.error(str(e))
             logging.error("Provided keys: {}".format(settings.keys()))
@@ -178,7 +179,8 @@ def create_app():
 
         # Ensure save dir exists
         if not ("save" in settings and settings["save"] == False):
-            io.ensure_savedir_exists(study_name=settings_file_name, sub_path=str(user_id))
+            io.ensure_savedir_exists(
+                study_name=settings_file_name, sub_path=str(user_id))
 
         session_id: int = settings['session_id'] if 'session_id' in settings else io.get_new_session_id(user_id,
                                                                                                         study_name=settings_file_name)
@@ -202,7 +204,8 @@ def create_app():
             "new_point_index": query_index,  # index of new point to be queried
             "new_point_x": x[query_index],  # new point to be queried
             'x_data': [],  # queried data points (initially empty)
-            'y_data': [],  # values given by the user for the queried points (initially empty)
+            # values given by the user for the queried points (initially empty)
+            'y_data': [],
             'y_data_actual': [],  # actual value of f(queried point)
             'x_limits': settings['x_limits'],
             'n_points': settings['n_points'],
@@ -221,7 +224,8 @@ def create_app():
             session_id = data["session"]
 
         if "save" in settings and settings["save"] == False:
-            logging.debug("Not saving data because of settings[\"save\"] = False")
+            logging.debug(
+                "Not saving data because of settings[\"save\"] = False")
         else:
             io.save_data(data,
                          study_name=settings_file_name,
@@ -287,7 +291,8 @@ def create_app():
 
         data_json = utils.remove_nan(json.dumps(data))
         if "save" in settings and settings["save"] == False:
-            logging.debug("Not saving data because of settings[\"save\"] = False")
+            logging.debug(
+                "Not saving data because of settings[\"save\"] = False")
         else:
             logging.debug(f'Study name: {settings["settings_name"]}')
             io.save_data(data,

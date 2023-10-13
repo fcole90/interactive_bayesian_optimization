@@ -1,5 +1,7 @@
-from setuptools import setup
 from os import path
+
+from setuptools import find_packages, setup
+
 here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
@@ -8,12 +10,12 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name="interactive_bayesian_optimisation",
-    packages=["interactive_bayesian_optimisation"],
+    packages=find_packages(),
     version="1.2.1",
     description="Interactive Bayesian Optimisation, environment and data analysis",
     long_description_content_type='text/markdown',
     author="Fabio Colella",
-    author_email="fabio.colella@aalto.fi",
+    author_email="fcole90@gmail.com",
     url="https://github.com/fcole90/interactive_bayesian_optimisation",
     download_url="https://github.com/fcole90/interactive_bayesian_optimisation",
     keywords=[
@@ -42,14 +44,16 @@ setup(
         "Programming Language :: R",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
         "Topic :: Scientific/Engineering :: Human Machine Interfaces"
-        ],
+    ],
     # Uses the README file imported in the beginning
     long_description=long_description,
     install_requires=[
         'flask',
         'numpy',
+        'pyyaml',
         'scipy',
-        'scikit-learn'
+        'scikit-learn',
+        'simplejson',
     ],
     python_requires='>=3.6',
     entry_points={
