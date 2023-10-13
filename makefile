@@ -1,7 +1,7 @@
 PYTHON := ./.venv/bin/python
 
 .venv:
-	virtualenv -p python3 .venv
+	python -m venv ./.venv
 
 start: .venv
 	${PYTHON} ./start.py

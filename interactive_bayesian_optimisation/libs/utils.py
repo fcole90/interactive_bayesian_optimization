@@ -4,12 +4,15 @@ import functools
 import json
 import logging
 import warnings
-from typing import Union, List
+from typing import Any, Callable
 
 import numpy as np
+from numpy import typing as npt
+from flask import Request
+from typing import TYPE_CHECKING
 
 
-def remove_nan(json_string):
+def remove_nan(json_string: str):
     """Replaces NaN with null values
 
     Parameters
@@ -26,15 +29,13 @@ def remove_nan(json_string):
     return json_string.replace("NaN", "null")
 
 
-def get_response_and_log(request, type="post"):
+def get_response_and_log(request: Request):
     """Parse a response and return it as a data dictionary
 
     Parameters
     ----------
     request:
         request object containing the requests received by the server
-    type:
-        request type: 'post', 'get'
 
     Returns
     -------
@@ -54,11 +55,10 @@ def get_response_and_log(request, type="post"):
         logging.warning("Content (data): {}".format(str(request.data)))
         logging.warning("Content (form): {}".format(str(dict(request.form))))
         logging.warning("Content (values): {}".format(str(dict(request.values))))
-        # logging.warning("Content: {}".format(str(dict(request.args))))
         return None
 
 
-def deprecated(deprecated_function):
+def deprecated(deprecated_function: Callable[..., Any]) -> Callable[..., Any]:
     """Decorator for deprecated functions.
 
     It warns the user whenever the function is called.
@@ -66,7 +66,7 @@ def deprecated(deprecated_function):
     """
     functools.wraps(deprecated_function)
 
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: list[Any], **kwargs: list[Any]):
         warnings.warn(
             "Function {} is deprecated, and will be removed.".format(
                 deprecated_function
@@ -78,7 +78,7 @@ def deprecated(deprecated_function):
     return wrapper
 
 
-def assert_required_data(data, keys):
+def assert_required_data(data: dict[str, Any] | None, keys: list[str]):
     """Asserts the required keys exist in the data dictionary.
 
     Parameters
@@ -111,23 +111,32 @@ def assert_required_data(data, keys):
             )
 
 
-# noinspection PyUnboundLocalVariable
-def get_vertical_visual_boundaries(y, y_margin):
-    # Find the allowed y visual
-    # See `myplotlib.js` -> `get_best_box(...)`
+def get_vertical_visual_boundaries(
+    y: list[np.float64], y_margin: np.float64
+) -> tuple[np.float64, np.float64]:
+    """Find the allowed y visual
+
+    See `myplotlib.js` -> `get_best_box(...)`
+
+    """
     y_min, y_max = np.min(y), np.max(y)
-    y_max_min_distance = np.abs(y_max - y_min)
+    y_max_min_distance: np.float64 = np.abs(y_max - y_min)
     y_increment = y_max_min_distance * y_margin
     y_bottom = y_min - y_increment
     y_top = y_max + y_increment
     return y_bottom, y_top
 
 
-# noinspection PyUnboundLocalVariable
-def recreate_antisymmetric_matrix_from_list(el_list, size):
-    if "np" not in globals():
-        import numpy as np
-    m = np.ndarray((size, size))
+def recreate_antisymmetric_matrix_from_list(
+    el_list: list[np.float64], size: int
+) -> npt.NDArray[np.float64]:
+    try:
+        globals()["np"]
+    except Exception:
+        if not TYPE_CHECKING:
+            import numpy as np
+
+    m: npt.NDArray[np.float64] = np.ndarray((size, size))
     i, j = 0, 0
     for el in el_list:
         m[i, j] = el
@@ -141,10 +150,10 @@ def recreate_antisymmetric_matrix_from_list(el_list, size):
 
 
 def get_scaled_distance_from_true_f(
-    y_true: Union[np.ndarray, list],
-    y_1: Union[np.ndarray, list],
-    y_2: Union[np.ndarray, list],
-) -> Union[float, np.ndarray]:
+    y_true: npt.NDArray[np.float64] | list[np.float64],
+    y_1: npt.NDArray[np.float64] | list[np.float64],
+    y_2: npt.NDArray[np.float64] | list[np.float64] | np.float64,
+) -> np.float64:
     """
     let y = this.model.get("y");
     let scaling_value = this.model.get("scaling_value");
@@ -163,8 +172,9 @@ def get_scaled_distance_from_true_f(
 
 
 def get_score_from_x_index(
-    x_index: Union[int, List[int], np.ndarray], y_true: Union[np.ndarray, list]
-) -> Union[float, np.ndarray]:
+    x_index: int | npt.NDArray[np.int64] | list[np.int64],
+    y_true: npt.NDArray[np.float64] | list[np.float64],
+) -> np.float64:
     """
     let y = this.model.get("y");
     let scaling_value = this.model.get("scaling_value");

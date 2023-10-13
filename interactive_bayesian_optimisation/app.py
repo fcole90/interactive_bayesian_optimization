@@ -1,4 +1,5 @@
 """Main application access point"""
+
 import logging
 import os
 
@@ -59,15 +60,15 @@ def create_app():
         filename=config.LOG_PATH,
     )
 
-    # Intercepts generic server errors and logs them
     @app.errorhandler(werkzeug.exceptions.HTTPException)
-    def handle_errors(e):
+    def handle_errors(e: Exception):  # type: ignore
+        """Intercepts generic server errors and logs them."""
         logging.error(str(e))
         return str(e), 500
 
-    # Handles correct favicon
     @app.route("/favicon.ico")
-    def favicon():
+    def favicon():  # type: ignore
+        """Handles correct favicon."""
         return send_from_directory(
             os.path.join(app.root_path, "static"),
             "favicon.ico",
@@ -80,7 +81,7 @@ def create_app():
 
     # Root page
     @app.route("/")
-    def index():
+    def index():  # type: ignore
         """Simple root page.
 
         The "@app.route('/')" decorator assigns this function
@@ -97,11 +98,11 @@ def create_app():
         return render_template("index.html")
 
     @app.route("/test_drawing")
-    def test_drawing_page():
+    def test_drawing_page():  # type: ignore
         return render_template("test_drawing.html")
 
     @app.route("/log", methods=["GET"])
-    def view_log():
+    def view_log():  # type: ignore
         """Display the log"""
         if request.values.get("clear") == "True":
             with open(config.LOG_PATH, "w") as log_file:
@@ -113,7 +114,7 @@ def create_app():
         return render_template("log.html", log_text=log_text)
 
     @app.route("/study_legacy")
-    def study_legacy():
+    def study_legacy():  # type: ignore
         """Renders the study page.
 
         Returns
@@ -124,7 +125,7 @@ def create_app():
         return render_template("study-legacy.html")
 
     @app.route("/study")
-    def study():
+    def study():  # type: ignore
         """Renders the study page.
 
         Returns
@@ -139,7 +140,7 @@ def create_app():
     # --------------------- #
 
     @app.route("/api_initialise_gp_and_sample", methods=["GET", "POST"])
-    def api_initialise_gp_and_sample():
+    def api_initialise_gp_and_sample():  # type: ignore
         """Initialises a GP based on the given parameters.
 
         The parameters are retrieved from the settings file. After initialising
@@ -161,7 +162,7 @@ def create_app():
         # Loads the settings file
         settings_file_name = interface_settings[
             "settings_name"
-        ]  # if 'settings_name' in interface_settings else 'default'
+        ]
         settings = io.load_settings(settings_file_name)
         logging.debug("File settings: {}".format(str(settings)))
 
@@ -260,7 +261,7 @@ def create_app():
         return utils.remove_nan(json.dumps(data))
 
     @app.route("/api_update_gp", methods=["GET", "POST"])
-    def api_update_gp():
+    def api_update_gp():  # type: ignore
         """Updates a GP based on the given parameters.
 
         The parameters are retrieved from the request object. It updates the GP with the new points. Finally it chooses
