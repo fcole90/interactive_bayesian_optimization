@@ -5,11 +5,7 @@
  * @module libs/interface_elements
  */
 
-import '../3rd/jquery-3.3.1.min.js';
 import {bs} from './basic_utils.js'
-
-console.warn("Importing JQuery as side effect!" +
-    " This is currently necessary as it's not distributed yet as an ES6 module.");
 
 let interface_elements = {};
 
