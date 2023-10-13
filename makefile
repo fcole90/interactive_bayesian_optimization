@@ -1,21 +1,22 @@
 PYTHON := ./.venv/bin/python
 
-start:
+.venv:
+	virtualenv -p python3 .venv
+
+start: .venv
 	${PYTHON} ./start.py
 
-install:
-	./install.sh
+install: .venv
+	${PYTHON} -m pip install -e .
 
-lint:
-	${PYTHON} -m flake8 --max-line-length=120 interactive_bayesian_optimisation
+lint: .venv
+	${PYTHON} -m black interactive_bayesian_optimisation
 
-which:
+which: .venv
 	which ${PYTHON}
 
 install-dev: .venv
-	pip install --ignore-installed pip flake8 autopep8
+	${PYTHON} install --upgrade pip black
 
-.venv:
-	virtualenv -p python3 .venv
 
 .PHONY: start, install, lint, which, setup-dev
