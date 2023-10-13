@@ -26,7 +26,7 @@ def compute_dist_to_max(x_true, y_true, x_indices):
     # y_true is the true function and x_int are the queried points
     dist_to_max = np.zeros(len(x_indices))
     opt_y = np.max(y_true)
-    current_min_dist = -1 # This value is meant to be overridden
+    current_min_dist = -1  # This value is meant to be overridden
     for it in range(len(x_indices)):
         # idx = x_true.index(x_int[it])
         dist = opt_y - y_true[x_indices[it]]

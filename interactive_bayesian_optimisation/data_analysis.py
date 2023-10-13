@@ -30,19 +30,28 @@ def main(path_to_analyse=None):
 
 
 def load_and_analyse(analysis_config):
-    plotting_folder = os.path.join(config.INSTANCE_PATH, analysis_config["plotting_folder"])
+    plotting_folder = os.path.join(
+        config.INSTANCE_PATH, analysis_config["plotting_folder"]
+    )
     os.makedirs(plotting_folder, exist_ok=True)
 
     dataframe = pd.read_csv(
-        filepath_or_buffer=os.path.join(config.INSTANCE_PATH, "dataset", analysis_config["dataset_name"], "dataset.csv")
+        filepath_or_buffer=os.path.join(
+            config.INSTANCE_PATH,
+            "dataset",
+            analysis_config["dataset_name"],
+            "dataset.csv",
+        )
     )
     print("Dataset loaded:", analysis_config["dataset_name"])
 
     # Reconvert each string to a list of floats
     try:
         dataframe["la_all_expected_future_scores"] = dataframe.apply(
-            lambda row: [float(el) for el in row["la_all_expected_future_scores"][1:-1].split()],
-            axis=1
+            lambda row: [
+                float(el) for el in row["la_all_expected_future_scores"][1:-1].split()
+            ],
+            axis=1,
         )
     except Exception as e:
         warnings.warn(
@@ -62,19 +71,43 @@ def create_means(data, fields):
     user_id_series = data["user_id"].unique()
     if len(user_id_series) > 1:
         # Means by user: for each user, have a list of their average score. The whole is an ndarray
-        fields_mean_by_user_list_list = [np.array([
-            # Each element of the list is the average score for a given user at a specific iteration
-            [np.mean(data[(data["iteration"] == i) & (data["user_id"] == user)][field]) for i in iterations]
-            for user in user_id_series])
-            for field in fields]
+        fields_mean_by_user_list_list = [
+            np.array(
+                [
+                    # Each element of the list is the average score for a given user at a specific iteration
+                    [
+                        np.mean(
+                            data[(data["iteration"] == i) & (data["user_id"] == user)][
+                                field
+                            ]
+                        )
+                        for i in iterations
+                    ]
+                    for user in user_id_series
+                ]
+            )
+            for field in fields
+        ]
     else:
         session_series = data["session"].unique()
         # Means by session: for each user, have a list of the session score. The whole is an ndarray
-        fields_mean_by_user_list_list = [np.array([
-            # Each element of the list is the average score for a given user at a specific iteration
-            [np.mean(data[(data["iteration"] == i) & (data["session"] == session)][field]) for i in iterations]
-            for session in session_series])
-            for field in fields]
+        fields_mean_by_user_list_list = [
+            np.array(
+                [
+                    # Each element of the list is the average score for a given user at a specific iteration
+                    [
+                        np.mean(
+                            data[
+                                (data["iteration"] == i) & (data["session"] == session)
+                            ][field]
+                        )
+                        for i in iterations
+                    ]
+                    for session in session_series
+                ]
+            )
+            for field in fields
+        ]
 
     assert len(fields_mean_by_user_list_list) == len(fields)
 
@@ -102,18 +135,31 @@ def plot_averages(data, plotting_folder, plot_filename, title, fields):
     user_id_series = data["user_id"].unique()
 
     fields_by_user_list_list = create_means(data, fields)
-    sample_size = fields_by_user_list_list[0].shape[0]  # len(data[(data["iteration"] == 0)])
+    sample_size = fields_by_user_list_list[0].shape[
+        0
+    ]  # len(data[(data["iteration"] == 0)])
 
     # Get the mean of the score for each iteration
-    fields_mean_score_list_list = [np.mean(fields_by_user_list, 0) for fields_by_user_list in fields_by_user_list_list]
+    fields_mean_score_list_list = [
+        np.mean(fields_by_user_list, 0)
+        for fields_by_user_list in fields_by_user_list_list
+    ]
 
     # Get the standard deviation of the score for each iteration
-    fields_se_score_list_list = [(np.std(fields_by_user_list, 0) / np.sqrt(sample_size)) for fields_by_user_list in
-                                 fields_by_user_list_list]
+    fields_se_score_list_list = [
+        (np.std(fields_by_user_list, 0) / np.sqrt(sample_size))
+        for fields_by_user_list in fields_by_user_list_list
+    ]
 
-    for field_mean, field_se, field_name in zip(fields_mean_score_list_list, fields_se_score_list_list, fields):
-        plt.fill_between(iterations, np.array(field_mean) + np.array(field_se),
-                         np.array(field_mean) - np.array(field_se), alpha=0.2)
+    for field_mean, field_se, field_name in zip(
+        fields_mean_score_list_list, fields_se_score_list_list, fields
+    ):
+        plt.fill_between(
+            iterations,
+            np.array(field_mean) + np.array(field_se),
+            np.array(field_mean) - np.array(field_se),
+            alpha=0.2,
+        )
         plt.plot(iterations, field_mean, label=field_name)
 
     plt.legend()
@@ -122,18 +168,16 @@ def plot_averages(data, plotting_folder, plot_filename, title, fields):
     plt.xticks(iterations, [i + 1 for i in iterations])
     plt.title(title)
     plt.tight_layout()
-    figure_path = os.path.join(
-        plotting_folder,
-        plot_filename
-    )
+    figure_path = os.path.join(plotting_folder, plot_filename)
     plt.savefig(figure_path)
     print("Plot completed:", figure_path)
     plt.close()
 
     if len(user_id_series) > 1:
         plt.plot(iterations, [0] * len(iterations), "--")
-        assert len(user_id_series) == fields_by_user_list_list[0].shape[
-            0], f"{len(user_id_series)}, {fields_mean_score_list_list[0].shape[0]}"
+        assert (
+            len(user_id_series) == fields_by_user_list_list[0].shape[0]
+        ), f"{len(user_id_series)}, {fields_mean_score_list_list[0].shape[0]}"
         for i, user in zip(range(fields_by_user_list_list[0].shape[0]), user_id_series):
             for field_mean, field_name in zip(fields_by_user_list_list, fields):
                 plt.plot(iterations, field_mean[i, :], label=f"{user}_{field_name}")
@@ -143,30 +187,29 @@ def plot_averages(data, plotting_folder, plot_filename, title, fields):
         plt.xticks(iterations, [i + 1 for i in iterations])
         plt.title("All " + title)
         plt.tight_layout()
-        figure_path = os.path.join(
-            plotting_folder,
-            "ALL__" + plot_filename
-        )
+        figure_path = os.path.join(plotting_folder, "ALL__" + plot_filename)
         plt.savefig(figure_path)
         print("Plot completed:", figure_path)
         plt.close()
 
 
-def plot_averages_naive_vs_user_special(data, plotting_folder, plot_filename, title, fields=None, also_utility=False):
+def plot_averages_naive_vs_user_special(
+    data, plotting_folder, plot_filename, title, fields=None, also_utility=False
+):
     """
 
-        Parameters
-        ----------
-        data
-        plotting_folder
-        plot_filename
-        title
-        fields
+    Parameters
+    ----------
+    data
+    plotting_folder
+    plot_filename
+    title
+    fields
 
-        Returns
-        -------
+    Returns
+    -------
 
-        """
+    """
 
     # Fields to be plotted
     if fields is None:
@@ -185,55 +228,79 @@ def plot_averages_naive_vs_user_special(data, plotting_folder, plot_filename, ti
     data_5 = data[data["study_name"] == "study_5"]
     iterations_5 = sorted(list(data_5["iteration"].unique()))
 
-    fields_mean_by_user_list_list = create_means(data_5, fields)  # Shaped (users, iterations)
+    fields_mean_by_user_list_list = create_means(
+        data_5, fields
+    )  # Shaped (users, iterations)
     sample_size = fields_mean_by_user_list_list[0].shape[0]
 
     naive_mean_by_user_list_list_5 = fields_mean_by_user_list_list[0]
     user_mean_by_user_list_list_5 = fields_mean_by_user_list_list[1]
     abs_steering_mean_by_user_list_list = fields_mean_by_user_list_list[2]
     steering_mean_by_user_list_list = fields_mean_by_user_list_list[3]
-    difference_mean_by_user_list_list_5 = np.array(user_mean_by_user_list_list_5) - np.array(
-        naive_mean_by_user_list_list_5)
+    difference_mean_by_user_list_list_5 = np.array(
+        user_mean_by_user_list_list_5
+    ) - np.array(naive_mean_by_user_list_list_5)
 
     # Get the mean of the score for each iteration
     naive_mean_score_list_5 = np.mean(naive_mean_by_user_list_list_5, 0)
     user_mean_score_list_5 = np.mean(user_mean_by_user_list_list_5, 0)
 
     # Get the standard deviation of the score for each iteration
-    naive_se_score_list_5 = np.std(naive_mean_by_user_list_list_5, 0) / np.sqrt(sample_size)
-    user_se_score_list_5 = np.std(user_mean_by_user_list_list_5, 0) / np.sqrt(sample_size)
+    naive_se_score_list_5 = np.std(naive_mean_by_user_list_list_5, 0) / np.sqrt(
+        sample_size
+    )
+    user_se_score_list_5 = np.std(user_mean_by_user_list_list_5, 0) / np.sqrt(
+        sample_size
+    )
 
     # Part for study 10
     data_10 = data[data["study_name"] == "study_10"]
     iterations_10 = sorted(list(data_10["iteration"].unique()))
 
-    fields_mean_by_user_list_list = create_means(data_10, fields)  # Shaped (users, iterations)
+    fields_mean_by_user_list_list = create_means(
+        data_10, fields
+    )  # Shaped (users, iterations)
     sample_size = fields_mean_by_user_list_list[0].shape[0]
 
     naive_mean_by_user_list_list_10 = fields_mean_by_user_list_list[0]
     user_mean_by_user_list_list_10 = fields_mean_by_user_list_list[1]
     abs_steering_mean_by_user_list_list = fields_mean_by_user_list_list[2]
     steering_mean_by_user_list_list = fields_mean_by_user_list_list[3]
-    difference_mean_by_user_list_list_10 = np.array(user_mean_by_user_list_list_10) - np.array(
-        naive_mean_by_user_list_list_10)
+    difference_mean_by_user_list_list_10 = np.array(
+        user_mean_by_user_list_list_10
+    ) - np.array(naive_mean_by_user_list_list_10)
 
     # Get the mean of the score for each iteration
     naive_mean_score_list_10 = np.mean(naive_mean_by_user_list_list_10, 0)
     user_mean_score_list_10 = np.mean(user_mean_by_user_list_list_10, 0)
 
     # Get the standard deviation of the score for each iteration
-    naive_se_score_list_10 = np.std(naive_mean_by_user_list_list_10, 0) / np.sqrt(sample_size)
-    user_se_score_list_10 = np.std(user_mean_by_user_list_list_10, 0) / np.sqrt(sample_size)
+    naive_se_score_list_10 = np.std(naive_mean_by_user_list_list_10, 0) / np.sqrt(
+        sample_size
+    )
+    user_se_score_list_10 = np.std(user_mean_by_user_list_list_10, 0) / np.sqrt(
+        sample_size
+    )
 
     # ANCHOR PLOTS_SP
     # Two subplots, 1 figure
-    fig, (sub_10, sub_5) = plt.subplots(nrows=1, ncols=2, sharey=True, constrained_layout=True)
+    fig, (sub_10, sub_5) = plt.subplots(
+        nrows=1, ncols=2, sharey=True, constrained_layout=True
+    )
     # In order of execution
     # Sublplot 10
-    sub_10.fill_between(iterations_10, np.array(naive_mean_score_list_10) + np.array(naive_se_score_list_10),
-                        np.array(naive_mean_score_list_10) - np.array(naive_se_score_list_10), alpha=0.2)
-    sub_10.fill_between(iterations_10, np.array(user_mean_score_list_10) + np.array(user_se_score_list_10),
-                        np.array(user_mean_score_list_10) - np.array(user_se_score_list_10), alpha=0.2)
+    sub_10.fill_between(
+        iterations_10,
+        np.array(naive_mean_score_list_10) + np.array(naive_se_score_list_10),
+        np.array(naive_mean_score_list_10) - np.array(naive_se_score_list_10),
+        alpha=0.2,
+    )
+    sub_10.fill_between(
+        iterations_10,
+        np.array(user_mean_score_list_10) + np.array(user_se_score_list_10),
+        np.array(user_mean_score_list_10) - np.array(user_se_score_list_10),
+        alpha=0.2,
+    )
     sub_10.plot(iterations_10, naive_mean_score_list_10, label="BO baseline")
     sub_10.plot(iterations_10, user_mean_score_list_10, label="Human user")
     sub_10.set_title("Study with 10 iterations")
@@ -242,10 +309,18 @@ def plot_averages_naive_vs_user_special(data, plotting_folder, plot_filename, ti
     sub_10.set_xticks(iterations_10)
     sub_10.set_xticklabels([i + 1 for i in iterations_10])
     # Sublplot 5
-    sub_5.fill_between(iterations_5, np.array(naive_mean_score_list_5) + np.array(naive_se_score_list_5),
-                       np.array(naive_mean_score_list_5) - np.array(naive_se_score_list_5), alpha=0.2)
-    sub_5.fill_between(iterations_5, np.array(user_mean_score_list_5) + np.array(user_se_score_list_5),
-                       np.array(user_mean_score_list_5) - np.array(user_se_score_list_5), alpha=0.2)
+    sub_5.fill_between(
+        iterations_5,
+        np.array(naive_mean_score_list_5) + np.array(naive_se_score_list_5),
+        np.array(naive_mean_score_list_5) - np.array(naive_se_score_list_5),
+        alpha=0.2,
+    )
+    sub_5.fill_between(
+        iterations_5,
+        np.array(user_mean_score_list_5) + np.array(user_se_score_list_5),
+        np.array(user_mean_score_list_5) - np.array(user_se_score_list_5),
+        alpha=0.2,
+    )
     sub_5.plot(iterations_5, naive_mean_score_list_5, label="BO baseline")
     sub_5.plot(iterations_5, user_mean_score_list_5, label="Human user")
     sub_5.set_title("Study with 5 iterations")
@@ -257,10 +332,7 @@ def plot_averages_naive_vs_user_special(data, plotting_folder, plot_filename, ti
     # General
     fig.suptitle("Performance comparison of Users against BO baseline")
     # fig.tight_layout(pad=2, w_pad=.3, h_pad=.3)
-    figure_path = os.path.join(
-        plotting_folder,
-        "final_performance_users_baseline.pdf"
-    )
+    figure_path = os.path.join(plotting_folder, "final_performance_users_baseline.pdf")
     fig.savefig(figure_path)
     print("Plot completed:", figure_path)
     plt.close()
@@ -268,20 +340,30 @@ def plot_averages_naive_vs_user_special(data, plotting_folder, plot_filename, ti
     # MODIFY
     # ANCHOR PLOTS_SP
     # Two subplots, 1 figure
-    fig, (gp_thing, steer_thing) = plt.subplots(nrows=1, ncols=2, sharey=True, constrained_layout=True)
+    fig, (gp_thing, steer_thing) = plt.subplots(
+        nrows=1, ncols=2, sharey=True, constrained_layout=True
+    )
     # In order of execution
     # Sublplot gp
     for gp_level in data["gp_knowledge"].unique():
-        fields_mean_by_user_list_list = create_means(data[data["gp_knowledge"] == gp_level],
-                                                     fields)  # Shaped (users, iterations)
+        fields_mean_by_user_list_list = create_means(
+            data[data["gp_knowledge"] == gp_level], fields
+        )  # Shaped (users, iterations)
         sample_size_steer_level = fields_mean_by_user_list_list[0].shape[0]
         user_mean_by_user_list_list_steer_level = fields_mean_by_user_list_list[1]
-        user_mean_score_list_steer_level = np.mean(user_mean_by_user_list_list_steer_level, 0)
-        user_se_score_list_steer_level = np.std(user_mean_by_user_list_list_steer_level, 0) / np.sqrt(
-            sample_size_steer_level)
+        user_mean_score_list_steer_level = np.mean(
+            user_mean_by_user_list_list_steer_level, 0
+        )
+        user_se_score_list_steer_level = np.std(
+            user_mean_by_user_list_list_steer_level, 0
+        ) / np.sqrt(sample_size_steer_level)
         # plt.fill_between(iterations_10, np.array(user_mean_score_list_steer_level) + np.array(user_se_score_list_steer_level),
         #                     np.array(user_mean_score_list_steer_level) - np.array(user_se_score_list_steer_level), alpha=0.2)
-        gp_thing.plot(iterations_10, user_mean_score_list_steer_level, label=gp_level + " GP knowledge")
+        gp_thing.plot(
+            iterations_10,
+            user_mean_score_list_steer_level,
+            label=gp_level + " GP knowledge",
+        )
 
     gp_thing.set_title("Performance by GP knowledge")
     gp_thing.set_xlabel("Iterations")
@@ -292,16 +374,22 @@ def plot_averages_naive_vs_user_special(data, plotting_folder, plot_filename, ti
     # Sublplot steer
     steer_thing.plot(iterations_10, naive_mean_score_list_10, label="baseline")
     for gp_level in data["steer_level"].unique():
-        fields_mean_by_user_list_list = create_means(data[data["steer_level"] == gp_level],
-                                                     fields)  # Shaped (users, iterations)
+        fields_mean_by_user_list_list = create_means(
+            data[data["steer_level"] == gp_level], fields
+        )  # Shaped (users, iterations)
         sample_size_steer_level = fields_mean_by_user_list_list[0].shape[0]
         user_mean_by_user_list_list_steer_level = fields_mean_by_user_list_list[1]
-        user_mean_score_list_steer_level = np.mean(user_mean_by_user_list_list_steer_level, 0)
-        user_se_score_list_steer_level = np.std(user_mean_by_user_list_list_steer_level, 0) / np.sqrt(
-            sample_size_steer_level)
+        user_mean_score_list_steer_level = np.mean(
+            user_mean_by_user_list_list_steer_level, 0
+        )
+        user_se_score_list_steer_level = np.std(
+            user_mean_by_user_list_list_steer_level, 0
+        ) / np.sqrt(sample_size_steer_level)
         # plt.fill_between(iterations_10, np.array(user_mean_score_list_steer_level) + np.array(user_se_score_list_steer_level),
         #                     np.array(user_mean_score_list_steer_level) - np.array(user_se_score_list_steer_level), alpha=0.2)
-        steer_thing.plot(iterations_10, user_mean_score_list_steer_level, label=gp_level)
+        steer_thing.plot(
+            iterations_10, user_mean_score_list_steer_level, label=gp_level
+        )
     steer_thing.set_title("Performance by steering amplitude")
     steer_thing.set_xlabel("Iterations")
     steer_thing.set_xticks(iterations_10)
@@ -311,10 +399,7 @@ def plot_averages_naive_vs_user_special(data, plotting_folder, plot_filename, ti
     # General
     # fig.suptitle("Performance comparison of Users against BO baseline")
     # fig.tight_layout(pad=2, w_pad=.3, h_pad=.3)
-    figure_path = os.path.join(
-        plotting_folder,
-        "final_gp_and_steering.pdf"
-    )
+    figure_path = os.path.join(plotting_folder, "final_gp_and_steering.pdf")
     fig.savefig(figure_path)
     print("Plot completed:", figure_path)
     plt.close()
@@ -323,27 +408,36 @@ def plot_averages_naive_vs_user_special(data, plotting_folder, plot_filename, ti
     plt.plot(iterations_10, [0] * len(iterations_10), "--")
     assert len(user_id_series) == naive_mean_by_user_list_list_10.shape[0]
     for i, user in zip(range(naive_mean_by_user_list_list_10.shape[0]), user_id_series):
-        plt.plot(iterations_10, user_mean_by_user_list_list_10[i, :] - naive_mean_by_user_list_list_10[i, :])
+        plt.plot(
+            iterations_10,
+            user_mean_by_user_list_list_10[i, :]
+            - naive_mean_by_user_list_list_10[i, :],
+        )
     plt.ylabel("Score difference")
     plt.xlabel("Iterations")
     plt.xticks(iterations_10, [i + 1 for i in iterations_10])
     plt.title("Performance difference between users and baseline on Study 10")
     plt.tight_layout()
     figure_path = os.path.join(
-        plotting_folder,
-        "final_user_difference_from_baseline.pdf"
+        plotting_folder, "final_user_difference_from_baseline.pdf"
     )
     plt.savefig(figure_path)
     print("Plot completed:", figure_path)
     plt.close()
 
     # Difference from baseline in 2 side by side figures
-    fig, (sub_10, sub_5) = plt.subplots(nrows=1, ncols=2, sharey=True, constrained_layout=True)
+    fig, (sub_10, sub_5) = plt.subplots(
+        nrows=1, ncols=2, sharey=True, constrained_layout=True
+    )
     # Study 10
     sub_10.plot(iterations_10, [0] * len(iterations_10), "--")
     assert len(user_id_series) == naive_mean_by_user_list_list_10.shape[0]
     for i, user in zip(range(naive_mean_by_user_list_list_10.shape[0]), user_id_series):
-        sub_10.plot(iterations_10, user_mean_by_user_list_list_10[i, :] - naive_mean_by_user_list_list_10[i, :])
+        sub_10.plot(
+            iterations_10,
+            user_mean_by_user_list_list_10[i, :]
+            - naive_mean_by_user_list_list_10[i, :],
+        )
     sub_10.set_title("Study with 10 iterations")
     sub_10.set_ylabel("Score difference")
     sub_10.set_xlabel("Iterations")
@@ -353,7 +447,10 @@ def plot_averages_naive_vs_user_special(data, plotting_folder, plot_filename, ti
     sub_5.plot(iterations_5, [0] * len(iterations_5), "--")
     assert len(user_id_series) == naive_mean_by_user_list_list_5.shape[0]
     for i, user in zip(range(naive_mean_by_user_list_list_5.shape[0]), user_id_series):
-        sub_5.plot(iterations_5, user_mean_by_user_list_list_5[i, :] - naive_mean_by_user_list_list_5[i, :])
+        sub_5.plot(
+            iterations_5,
+            user_mean_by_user_list_list_5[i, :] - naive_mean_by_user_list_list_5[i, :],
+        )
     sub_5.set_title("Study with 5 iterations")
     sub_5.set_xlabel("Iterations")
     sub_5.set_xticks(iterations_5)
@@ -361,8 +458,7 @@ def plot_averages_naive_vs_user_special(data, plotting_folder, plot_filename, ti
     # All figure
     fig.suptitle("Performance difference between users and baseline")
     figure_path = os.path.join(
-        plotting_folder,
-        "final_user_difference_from_baseline_split_5_10.pdf"
+        plotting_folder, "final_user_difference_from_baseline_split_5_10.pdf"
     )
     plt.savefig(figure_path)
     print("Plot completed:", figure_path)
@@ -373,39 +469,46 @@ def plot_averages_naive_vs_user_special(data, plotting_folder, plot_filename, ti
     #                  np.array(naive_mean_score_list_10) - np.array(naive_se_score_list_10), alpha=0.2)
     plt.plot(iterations_10, naive_mean_score_list_10, label="baseline")
     for gp_level in data["steer_level"].unique():
-        fields_mean_by_user_list_list = create_means(data[data["steer_level"] == gp_level],
-                                                     fields)  # Shaped (users, iterations)
+        fields_mean_by_user_list_list = create_means(
+            data[data["steer_level"] == gp_level], fields
+        )  # Shaped (users, iterations)
         sample_size_steer_level = fields_mean_by_user_list_list[0].shape[0]
         user_mean_by_user_list_list_steer_level = fields_mean_by_user_list_list[1]
-        user_mean_score_list_steer_level = np.mean(user_mean_by_user_list_list_steer_level, 0)
-        user_se_score_list_steer_level = np.std(user_mean_by_user_list_list_steer_level, 0) / np.sqrt(
-            sample_size_steer_level)
+        user_mean_score_list_steer_level = np.mean(
+            user_mean_by_user_list_list_steer_level, 0
+        )
+        user_se_score_list_steer_level = np.std(
+            user_mean_by_user_list_list_steer_level, 0
+        ) / np.sqrt(sample_size_steer_level)
         # plt.fill_between(iterations_10, np.array(user_mean_score_list_steer_level) + np.array(user_se_score_list_steer_level),
         #                     np.array(user_mean_score_list_steer_level) - np.array(user_se_score_list_steer_level), alpha=0.2)
         plt.plot(iterations_10, user_mean_score_list_steer_level, label=gp_level)
     plt.legend()
-    plt.title("Performance comparison in groups by steering amplitude in the study with 10 iterations")
+    plt.title(
+        "Performance comparison in groups by steering amplitude in the study with 10 iterations"
+    )
     plt.ylabel("Score")
     plt.xlabel("Iterations")
     plt.xticks(iterations_10, [i + 1 for i in iterations_10])
     plt.tight_layout()
-    figure_path = os.path.join(
-        plotting_folder,
-        "final_steering_level_performance.pdf"
-    )
+    figure_path = os.path.join(plotting_folder, "final_steering_level_performance.pdf")
     plt.savefig(figure_path)
     print("Plot completed:", figure_path)
     plt.close()
 
     # Plot for GP knowledge groups
     for gp_level in data["gp_knowledge"].unique():
-        fields_mean_by_user_list_list = create_means(data[data["gp_knowledge"] == gp_level],
-                                                     fields)  # Shaped (users, iterations)
+        fields_mean_by_user_list_list = create_means(
+            data[data["gp_knowledge"] == gp_level], fields
+        )  # Shaped (users, iterations)
         sample_size_steer_level = fields_mean_by_user_list_list[0].shape[0]
         user_mean_by_user_list_list_steer_level = fields_mean_by_user_list_list[1]
-        user_mean_score_list_steer_level = np.mean(user_mean_by_user_list_list_steer_level, 0)
-        user_se_score_list_steer_level = np.std(user_mean_by_user_list_list_steer_level, 0) / np.sqrt(
-            sample_size_steer_level)
+        user_mean_score_list_steer_level = np.mean(
+            user_mean_by_user_list_list_steer_level, 0
+        )
+        user_se_score_list_steer_level = np.std(
+            user_mean_by_user_list_list_steer_level, 0
+        ) / np.sqrt(sample_size_steer_level)
         # plt.fill_between(iterations_10, np.array(user_mean_score_list_steer_level) + np.array(user_se_score_list_steer_level),
         #                     np.array(user_mean_score_list_steer_level) - np.array(user_se_score_list_steer_level), alpha=0.2)
         plt.plot(iterations_10, user_mean_score_list_steer_level, label=gp_level)
@@ -415,16 +518,15 @@ def plot_averages_naive_vs_user_special(data, plotting_folder, plot_filename, ti
     plt.xlabel("Iterations")
     plt.xticks(iterations_10, [i + 1 for i in iterations_10])
     plt.tight_layout()
-    figure_path = os.path.join(
-        plotting_folder,
-        "final_GP_knowledge_performance.pdf"
-    )
+    figure_path = os.path.join(plotting_folder, "final_GP_knowledge_performance.pdf")
     plt.savefig(figure_path)
     print("Plot completed:", figure_path)
     plt.close()
 
 
-def plot_averages_naive_vs_user(data, plotting_folder, plot_filename, title, fields=None, also_utility=False):
+def plot_averages_naive_vs_user(
+    data, plotting_folder, plot_filename, title, fields=None, also_utility=False
+):
     """
 
     Parameters
@@ -453,14 +555,18 @@ def plot_averages_naive_vs_user(data, plotting_folder, plot_filename, title, fie
     iterations = sorted(list(data["iteration"].unique()))
     user_id_series = data["user_id"].unique()
 
-    fields_mean_by_user_list_list = create_means(data, fields)  # Shaped (users, iterations)
+    fields_mean_by_user_list_list = create_means(
+        data, fields
+    )  # Shaped (users, iterations)
     sample_size = fields_mean_by_user_list_list[0].shape[0]
 
     naive_mean_by_user_list_list = fields_mean_by_user_list_list[0]
     user_mean_by_user_list_list = fields_mean_by_user_list_list[1]
     abs_steering_mean_by_user_list_list = fields_mean_by_user_list_list[2]
     steering_mean_by_user_list_list = fields_mean_by_user_list_list[3]
-    difference_mean_by_user_list_list = np.array(user_mean_by_user_list_list) - np.array(naive_mean_by_user_list_list)
+    difference_mean_by_user_list_list = np.array(
+        user_mean_by_user_list_list
+    ) - np.array(naive_mean_by_user_list_list)
 
     # Get the mean of the score for each iteration
     naive_mean_score_list = np.mean(naive_mean_by_user_list_list, 0)
@@ -470,10 +576,18 @@ def plot_averages_naive_vs_user(data, plotting_folder, plot_filename, title, fie
     naive_se_score_list = np.std(naive_mean_by_user_list_list, 0) / np.sqrt(sample_size)
     user_se_score_list = np.std(user_mean_by_user_list_list, 0) / np.sqrt(sample_size)
 
-    plt.fill_between(iterations, np.array(naive_mean_score_list) + np.array(naive_se_score_list),
-                     np.array(naive_mean_score_list) - np.array(naive_se_score_list), alpha=0.2)
-    plt.fill_between(iterations, np.array(user_mean_score_list) + np.array(user_se_score_list),
-                     np.array(user_mean_score_list) - np.array(user_se_score_list), alpha=0.2)
+    plt.fill_between(
+        iterations,
+        np.array(naive_mean_score_list) + np.array(naive_se_score_list),
+        np.array(naive_mean_score_list) - np.array(naive_se_score_list),
+        alpha=0.2,
+    )
+    plt.fill_between(
+        iterations,
+        np.array(user_mean_score_list) + np.array(user_se_score_list),
+        np.array(user_mean_score_list) - np.array(user_se_score_list),
+        alpha=0.2,
+    )
     plt.plot(iterations, naive_mean_score_list, label="BO baseline")
     plt.plot(iterations, user_mean_score_list, label="Human user")
 
@@ -484,10 +598,7 @@ def plot_averages_naive_vs_user(data, plotting_folder, plot_filename, title, fie
     plt.yticks(range(111))
     plt.title(title)
     plt.tight_layout()
-    figure_path = os.path.join(
-        plotting_folder,
-        plot_filename
-    )
+    figure_path = os.path.join(plotting_folder, plot_filename)
     plt.savefig(figure_path)
     print("Plot completed:", figure_path)
     plt.close()
@@ -522,10 +633,7 @@ def plot_averages_naive_vs_user(data, plotting_folder, plot_filename, title, fie
     plt.xticks(iterations, [i + 1 for i in iterations])
     plt.title("(Difference) " + title)
     plt.tight_layout()
-    figure_path = os.path.join(
-        plotting_folder,
-        "DIFF__" + plot_filename
-    )
+    figure_path = os.path.join(plotting_folder, "DIFF__" + plot_filename)
     plt.savefig(figure_path)
     print("Plot completed:", figure_path)
     plt.close()
@@ -554,12 +662,18 @@ def plot_averages_naive_vs_user(data, plotting_folder, plot_filename, title, fie
             for session in sessions:
                 for iteration in iterations[1:]:
                     sub = data[
-                        (data["user_id"] == user) & (data["session"] == session) & (data["iteration"] == iteration)]
+                        (data["user_id"] == user)
+                        & (data["session"] == session)
+                        & (data["iteration"] == iteration)
+                    ]
                     # naive_all.append(sub["naive_bo_score"].values[0])
                     user_all_plus_1.append(sub["user_score"].values[0])
                 for iteration in iterations[:-1]:
                     sub = data[
-                        (data["user_id"] == user) & (data["session"] == session) & (data["iteration"] == iteration)]
+                        (data["user_id"] == user)
+                        & (data["session"] == session)
+                        & (data["iteration"] == iteration)
+                    ]
                     scaled_steering_all.append(sub["scaled_steering"].values[0])
                     user_all.append(sub["user_score"].values[0])
 
@@ -585,8 +699,12 @@ def plot_averages_naive_vs_user(data, plotting_folder, plot_filename, title, fie
             #                                 for session in sessions
             #                                 for iteration in iterations[:-1]])
             # difference_all = naive_all - user_all
-            plt.scatter(scaled_steering_all, user_all_plus_1 - user_all,
-                        label=str(user), alpha=0.8)
+            plt.scatter(
+                scaled_steering_all,
+                user_all_plus_1 - user_all,
+                label=str(user),
+                alpha=0.8,
+            )
 
             plt.legend()
             # i += 1  # Only for text
@@ -608,8 +726,12 @@ def plot_averages_naive_vs_user(data, plotting_folder, plot_filename, title, fie
         plt.axhline(alpha=0.2)
         plt.axvline(alpha=0.2)
         for u, user in enumerate(user_id_series):
-            plt.scatter(steering_mean_by_user_list_list[u, :-1], difference_mean_by_user_list_list[u, 1:],
-                        label=str(user), alpha=0.8)
+            plt.scatter(
+                steering_mean_by_user_list_list[u, :-1],
+                difference_mean_by_user_list_list[u, 1:],
+                label=str(user),
+                alpha=0.8,
+            )
 
         # lr_coeff = LinearRegression().fit(steering_mean_by_user_list_list[:, i].reshape(-1, 1),
         #                                   difference_mean_by_user_list_list[:, i+1])
@@ -635,9 +757,13 @@ def plot_averages_naive_vs_user(data, plotting_folder, plot_filename, title, fie
         plt.axhline(alpha=0.2)
         plt.axvline(alpha=0.2)
         for u, user in enumerate(user_id_series):
-            plt.scatter(steering_mean_by_user_list_list[u, :-1],
-                        user_mean_by_user_list_list[u, 1:] - user_mean_by_user_list_list[u, :-1],
-                        label=str(user), alpha=0.8)
+            plt.scatter(
+                steering_mean_by_user_list_list[u, :-1],
+                user_mean_by_user_list_list[u, 1:]
+                - user_mean_by_user_list_list[u, :-1],
+                label=str(user),
+                alpha=0.8,
+            )
 
         # lr_coeff = LinearRegression().fit(steering_mean_by_user_list_list[:, i].reshape(-1, 1),
         #                                   user_mean_by_user_list_list[:, i + 1] - user_mean_by_user_list_list[:, i])
@@ -651,8 +777,7 @@ def plot_averages_naive_vs_user(data, plotting_folder, plot_filename, title, fie
         plt.title(f"Score increase at {i + '+1'} when steering at {i} " + title)
         plt.tight_layout()
         figure_path = os.path.join(
-            plotting_folder,
-            f"UTIL__INC__{i}-{i + '+1'}__" + plot_filename
+            plotting_folder, f"UTIL__INC__{i}-{i + '+1'}__" + plot_filename
         )
         plt.savefig(figure_path)
         print("Plot completed:", figure_path)
@@ -662,8 +787,12 @@ def plot_averages_naive_vs_user(data, plotting_folder, plot_filename, title, fie
         plt.axhline(alpha=0.2)
         plt.axvline(alpha=0.2)
         for u, user in enumerate(user_id_series):
-            plt.scatter(abs_steering_mean_by_user_list_list[u, :-1], difference_mean_by_user_list_list[u, 1:],
-                        label=str(user), alpha=0.8)
+            plt.scatter(
+                abs_steering_mean_by_user_list_list[u, :-1],
+                difference_mean_by_user_list_list[u, 1:],
+                label=str(user),
+                alpha=0.8,
+            )
 
         # lr_coeff = LinearRegression().fit(abs_steering_mean_by_user_list_list[:, i].reshape(-1, 1),
         #                                   difference_mean_by_user_list_list[:, i + 1])
@@ -677,8 +806,7 @@ def plot_averages_naive_vs_user(data, plotting_folder, plot_filename, title, fie
         plt.title(f"Diff at {i + '+1'} when abs steering at {i} " + title)
         plt.tight_layout()
         figure_path = os.path.join(
-            plotting_folder,
-            f"UTIL__ABS__{i}-{i + '+1'}__" + plot_filename
+            plotting_folder, f"UTIL__ABS__{i}-{i + '+1'}__" + plot_filename
         )
         plt.savefig(figure_path)
         print("Plot completed:", figure_path)
@@ -688,9 +816,13 @@ def plot_averages_naive_vs_user(data, plotting_folder, plot_filename, title, fie
         plt.axhline(alpha=0.2)
         plt.axvline(alpha=0.2)
         for u, user in enumerate(user_id_series):
-            plt.scatter(abs_steering_mean_by_user_list_list[u, :-2],
-                        difference_mean_by_user_list_list[u, 1:-1] + difference_mean_by_user_list_list[u, 2:],
-                        label=str(user), alpha=0.8)
+            plt.scatter(
+                abs_steering_mean_by_user_list_list[u, :-2],
+                difference_mean_by_user_list_list[u, 1:-1]
+                + difference_mean_by_user_list_list[u, 2:],
+                label=str(user),
+                alpha=0.8,
+            )
 
         # lr_coeff = LinearRegression().fit(abs_steering_mean_by_user_list_list[:, i].reshape(-1, 1),
         #                                   difference_mean_by_user_list_list[:, i + 1])
@@ -701,11 +833,12 @@ def plot_averages_naive_vs_user(data, plotting_folder, plot_filename, title, fie
         # i += 1  # Only for text
         plt.ylabel(f"User score - avg naive BO score at {i + '+1'} + {i + '+1'}")
         plt.xlabel(f"Abs Steering at iteration i={i}")
-        plt.title(f"Sum of difference {i + '+1'}+{i + '+2'} when abs steering at {i} " + title)
+        plt.title(
+            f"Sum of difference {i + '+1'}+{i + '+2'} when abs steering at {i} " + title
+        )
         plt.tight_layout()
         figure_path = os.path.join(
-            plotting_folder,
-            f"UTIL2__ABS__{i}-{i + '+1'}+{i + '+2'}__" + plot_filename
+            plotting_folder, f"UTIL2__ABS__{i}-{i + '+1'}+{i + '+2'}__" + plot_filename
         )
         plt.savefig(figure_path)
         print("Plot completed:", figure_path)
@@ -715,11 +848,14 @@ def plot_averages_naive_vs_user(data, plotting_folder, plot_filename, title, fie
         plt.axhline(alpha=0.2)
         plt.axvline(alpha=0.2)
         for u, user in enumerate(user_id_series):
-            plt.scatter(abs_steering_mean_by_user_list_list[u, :-3],
-                        difference_mean_by_user_list_list[u, 1:-2] +
-                        difference_mean_by_user_list_list[u, 2:-1] +
-                        difference_mean_by_user_list_list[u, 3:],
-                        label=str(user), alpha=0.8)
+            plt.scatter(
+                abs_steering_mean_by_user_list_list[u, :-3],
+                difference_mean_by_user_list_list[u, 1:-2]
+                + difference_mean_by_user_list_list[u, 2:-1]
+                + difference_mean_by_user_list_list[u, 3:],
+                label=str(user),
+                alpha=0.8,
+            )
 
         # lr_coeff = LinearRegression().fit(abs_steering_mean_by_user_list_list[:, i].reshape(-1, 1),
         #                                   difference_mean_by_user_list_list[:, i + 1])
@@ -728,15 +864,18 @@ def plot_averages_naive_vs_user(data, plotting_folder, plot_filename, title, fie
 
         plt.legend()
         # i += 1  # Only for text
-        plt.ylabel(f"User score - avg naive BO score at i+1+2+3")  # ={i + 1} + {i + 2} + {i + 3}")
+        plt.ylabel(
+            f"User score - avg naive BO score at i+1+2+3"
+        )  # ={i + 1} + {i + 2} + {i + 3}")
         plt.xlabel(f"Abs Steering at iteration {i}")
-        plt.title(f"Sum of difference i=1+2+3"  # i={i + 1} + {i + 2} + {i+3}"
-                  f"when abs steering at {i} " + title)
+        plt.title(
+            f"Sum of difference i=1+2+3"  # i={i + 1} + {i + 2} + {i+3}"
+            f"when abs steering at {i} " + title
+        )
         plt.tight_layout()
         figure_path = os.path.join(
             plotting_folder,
-            f"UTIL3__ABS__i-1+2+3"  # {i}-{i + 1}+{i + 2}+{i+3}"
-            f"__" + plot_filename
+            f"UTIL3__ABS__i-1+2+3" f"__" + plot_filename,  # {i}-{i + 1}+{i + 2}+{i+3}"
         )
         plt.savefig(figure_path)
         print("Plot completed:", figure_path)
@@ -746,9 +885,13 @@ def plot_averages_naive_vs_user(data, plotting_folder, plot_filename, title, fie
         plt.axhline(alpha=0.2)
         plt.axvline(alpha=0.2)
         for u, user in enumerate(user_id_series):
-            plt.scatter(abs_steering_mean_by_user_list_list[u, :-1],
-                        user_mean_by_user_list_list[u, 1:] - user_mean_by_user_list_list[u, :-1],
-                        label=str(user), alpha=0.8)
+            plt.scatter(
+                abs_steering_mean_by_user_list_list[u, :-1],
+                user_mean_by_user_list_list[u, 1:]
+                - user_mean_by_user_list_list[u, :-1],
+                label=str(user),
+                alpha=0.8,
+            )
 
         # lr_coeff = LinearRegression().fit(abs_steering_mean_by_user_list_list[:, i].reshape(-1, 1),
         #                                   user_mean_by_user_list_list[:,
@@ -763,8 +906,7 @@ def plot_averages_naive_vs_user(data, plotting_folder, plot_filename, title, fie
         plt.title(f"Score increase at {i + '+1'} when abs steering at {i} " + title)
         plt.tight_layout()
         figure_path = os.path.join(
-            plotting_folder,
-            f"UTIL__ABS__INC__{i}-{i + '+1'}__" + plot_filename
+            plotting_folder, f"UTIL__ABS__INC__{i}-{i + '+1'}__" + plot_filename
         )
         plt.savefig(figure_path)
         print("Plot completed:", figure_path)
@@ -773,44 +915,51 @@ def plot_averages_naive_vs_user(data, plotting_folder, plot_filename, title, fie
     if len(user_id_series) > 1:
         plt.plot(iterations, [0] * len(iterations), "--")
         assert len(user_id_series) == naive_mean_by_user_list_list.shape[0]
-        for i, user in zip(range(naive_mean_by_user_list_list.shape[0]), user_id_series):
-            plt.plot(iterations, user_mean_by_user_list_list[i, :] - naive_mean_by_user_list_list[i, :],
-                     label=str(user))
+        for i, user in zip(
+            range(naive_mean_by_user_list_list.shape[0]), user_id_series
+        ):
+            plt.plot(
+                iterations,
+                user_mean_by_user_list_list[i, :] - naive_mean_by_user_list_list[i, :],
+                label=str(user),
+            )
         plt.legend()
         plt.ylabel("User score - avg naive BO score")
         plt.xlabel("Iterations")
         plt.xticks(iterations, [i + 1 for i in iterations])
         plt.title("(Difference all) " + title)
         plt.tight_layout()
-        figure_path = os.path.join(
-            plotting_folder,
-            "DIFF__ALL__" + plot_filename
-        )
+        figure_path = os.path.join(plotting_folder, "DIFF__ALL__" + plot_filename)
         plt.savefig(figure_path)
         print("Plot completed:", figure_path)
         plt.close()
 
-        for i, user in zip(range(naive_mean_by_user_list_list.shape[0]), user_id_series):
-            plt.plot(iterations, user_mean_by_user_list_list[i, :],
-                     label=f"user {str(user)}")
-            plt.plot(iterations, naive_mean_by_user_list_list[i, :],
-                     label=f"standard BO {str(user)}")
+        for i, user in zip(
+            range(naive_mean_by_user_list_list.shape[0]), user_id_series
+        ):
+            plt.plot(
+                iterations, user_mean_by_user_list_list[i, :], label=f"user {str(user)}"
+            )
+            plt.plot(
+                iterations,
+                naive_mean_by_user_list_list[i, :],
+                label=f"standard BO {str(user)}",
+            )
         # plt.legend()
         plt.ylabel("Score at Max")
         plt.xlabel("Iterations")
         plt.xticks(iterations, [i + 1 for i in iterations])
         plt.title("Score all " + title)
         plt.tight_layout()
-        figure_path = os.path.join(
-            plotting_folder,
-            "ALL__" + plot_filename
-        )
+        figure_path = os.path.join(plotting_folder, "ALL__" + plot_filename)
         plt.savefig(figure_path)
         print("Plot completed:", figure_path)
         plt.close()
 
 
-def two_way_anova_testing_user_vs_naive_bo(dataframe, criteria, plotting_folder, plot_filename, title):
+def two_way_anova_testing_user_vs_naive_bo(
+    dataframe, criteria, plotting_folder, plot_filename, title
+):
     # fields = [
     #     "naive_bo_score",
     #     "user_score",
@@ -824,19 +973,28 @@ def two_way_anova_testing_user_vs_naive_bo(dataframe, criteria, plotting_folder,
     # Convert the dataset to accommodate the analysis needs
     # data_user = dataframe[fields].copy()
     data_user = dataframe.copy()
-    renamed_criteria = "_" + criteria[:10].replace(" ", "_").replace(".", "").replace(",", "").replace("?", "").replace(
-        "(", "").replace(")", "").lower()
+    renamed_criteria = (
+        "_"
+        + criteria[:10]
+        .replace(" ", "_")
+        .replace(".", "")
+        .replace(",", "")
+        .replace("?", "")
+        .replace("(", "")
+        .replace(")", "")
+        .lower()
+    )
     # data_user[renamed_criteria] = data_user[criteria].apply(func=lambda x: "high" if x > 3 else "low")
     # data_user = data_user.drop(columns=[criteria])
     data_naive = data_user.copy()
 
     data_user = data_user.rename(columns={"user_score": "score"})
-    data_user = data_user.drop(columns=['naive_bo_score'])
+    data_user = data_user.drop(columns=["naive_bo_score"])
     data_user["user_or_naive"] = pd.Series(["user"] * len(data_user.index))
     # print("data_user:", data_user.columns)
 
     data_naive = data_naive.rename(columns={"naive_bo_score": "score"})
-    data_naive = data_naive.drop(columns=['user_score'])
+    data_naive = data_naive.drop(columns=["user_score"])
     data_naive["user_or_naive"] = pd.Series(["naive"] * len(data_user.index))
     # print("data_naive:", data_naive.columns)
 
@@ -851,21 +1009,28 @@ def two_way_anova_testing_user_vs_naive_bo(dataframe, criteria, plotting_folder,
     iterations = sorted(list(data["iteration"].unique()))
     anova_df_list = list()
     # 2-way ANOVA
-    formula = f'score ~ C(user_or_naive) + C({renamed_criteria}) + C(user_or_naive):C({renamed_criteria})'
+    formula = f"score ~ C(user_or_naive) + C({renamed_criteria}) + C(user_or_naive):C({renamed_criteria})"
     for iteration in iterations:
         data_iter = data[data["iteration"] == iteration]
         try:
             model = ols(formula, data_iter).fit()
         except Exception as e:
-            print(">>> ERROR:"
-                  "\n Columns:", list(data_iter.columns),
-                  "\n N Rows:", len(data_iter.index),
-                  "\n N Rows High:", len(data_iter[data_iter[renamed_criteria] == "high"].index),
-                  "\n N Rows Low:", len(data_iter[data_iter[renamed_criteria] == "low"].index),
-                  "\n Title:", title,
-                  "\n Formula:", formula,
-                  "\n Iteration:", iteration,
-                  )
+            print(
+                ">>> ERROR:" "\n Columns:",
+                list(data_iter.columns),
+                "\n N Rows:",
+                len(data_iter.index),
+                "\n N Rows High:",
+                len(data_iter[data_iter[renamed_criteria] == "high"].index),
+                "\n N Rows Low:",
+                len(data_iter[data_iter[renamed_criteria] == "low"].index),
+                "\n Title:",
+                title,
+                "\n Formula:",
+                formula,
+                "\n Iteration:",
+                iteration,
+            )
             raise e
         aov_table = statsmodels.stats.anova.anova_lm(model, typ=2)
 
@@ -895,10 +1060,7 @@ def two_way_anova_testing_user_vs_naive_bo(dataframe, criteria, plotting_folder,
     plt.xticks(iterations, [i + 1 for i in iterations])
     plt.title(f"2-way ANOVA p-value " + title)
     plt.tight_layout()
-    figure_path = os.path.join(
-        plotting_folder,
-        f"2v-ANOVA_pvalue__" + plot_filename
-    )
+    figure_path = os.path.join(plotting_folder, f"2v-ANOVA_pvalue__" + plot_filename)
     plt.savefig(figure_path)
     print("Plot completed:", figure_path)
     plt.close()
@@ -914,11 +1076,12 @@ def analyse_user_vs_naive_questionnaire(dataframe, plotting_folder, analysis_con
             config.INSTANCE_PATH,
             "dataset",
             analysis_config["dataset_name"],
-            "User questionnaire.csv")
+            "User questionnaire.csv",
+        )
     )
     # @questionnaire
     # We miss one data, the first user didn't insert the ID
-    questionnaire.loc[0, 'Conductor to fill: User ID'] = 0.0
+    questionnaire.loc[0, "Conductor to fill: User ID"] = 0.0
 
     # Print user 7
     # user_7_data = questionnaire[questionnaire['Conductor to fill: User ID'] == 2]
@@ -934,7 +1097,7 @@ def analyse_user_vs_naive_questionnaire(dataframe, plotting_folder, analysis_con
         questionnaire,
         how="left",  # Connect the questionnaire IDs to each row in the interaction dataset with the same ID
         left_on="user_id",  # ID on the interaction dataset
-        right_on='Conductor to fill: User ID'  # ID in the users' questionnaire
+        right_on="Conductor to fill: User ID",  # ID in the users' questionnaire
     )
 
     print("Skipping user ID 0: it was tested with a different script")
@@ -964,32 +1127,42 @@ def analyse_user_vs_naive_questionnaire(dataframe, plotting_folder, analysis_con
     #         dataframe.loc[dataframe["user_id"] == user, "is_steerer"] = [False] * len(
     #             dataframe[dataframe["user_id"] == user].index)
 
-    user_median_steering = dataframe.groupby("user_id").agg(
-        mean_abs_steering=("abs_scaled_steering", "mean"),
-    ).median().values[0]
+    user_median_steering = (
+        dataframe.groupby("user_id")
+        .agg(
+            mean_abs_steering=("abs_scaled_steering", "mean"),
+        )
+        .median()
+        .values[0]
+    )
 
     print("median", user_median_steering)
 
     mean_steering_df = dataframe.groupby("user_id").agg(
-        mean_abs_steering=("abs_scaled_steering", "mean"))
+        mean_abs_steering=("abs_scaled_steering", "mean")
+    )
 
-    mean_steering_df["steer_level"] = mean_steering_df["mean_abs_steering"].map(lambda x:
-                                                                                "very low (<1)" if x < 1 else (
-                                                                                    "low (< median)" if x < user_median_steering else (
-                                                                                        "high (> median)" if x < 35 else "very high (> 35)"
-                                                                                    )))
+    mean_steering_df["steer_level"] = mean_steering_df["mean_abs_steering"].map(
+        lambda x: "very low (<1)"
+        if x < 1
+        else (
+            "low (< median)"
+            if x < user_median_steering
+            else ("high (> median)" if x < 35 else "very high (> 35)")
+        )
+    )
     print("count", mean_steering_df.groupby("steer_level").count())
 
     dataframe = dataframe.merge(
         mean_steering_df,
         how="left",  # Connect the questionnaire IDs to each row in the interaction dataset with the same ID
         left_on="user_id",  # ID on the interaction dataset
-        right_on='user_id'  # ID in the users' questionnaire
+        right_on="user_id",  # ID in the users' questionnaire
     )
 
-    dataframe["gp_knowledge"] = dataframe["How much are you familiar with Gaussian Processes (GP)?"].map(
-        lambda x: "high" if x > 3 else "low"
-    )
+    dataframe["gp_knowledge"] = dataframe[
+        "How much are you familiar with Gaussian Processes (GP)?"
+    ].map(lambda x: "high" if x > 3 else "low")
 
     # Save dataset merged
     dataframe.to_csv(os.path.join(plotting_folder, "dataset_full.csv"))
@@ -1016,9 +1189,7 @@ def analyse_user_vs_naive_questionnaire(dataframe, plotting_folder, analysis_con
     exit()
 
     for study in study_id_series:
-        data_user_study_session = dataframe[
-            (dataframe["study_name"] == study)
-        ]
+        data_user_study_session = dataframe[(dataframe["study_name"] == study)]
 
         # Plot the data
         plot_averages_naive_vs_user(
@@ -1027,7 +1198,7 @@ def analyse_user_vs_naive_questionnaire(dataframe, plotting_folder, analysis_con
             plot_filename=f"user_vs_naive__BY_STUDY__avg__T{study}.pdf",
             title=f"AVG study T:{study}",
             fields=None,  # Automatically use user vs naive BO,
-            also_utility=False
+            also_utility=False,
         )
 
         # plot_averages(
@@ -1047,7 +1218,7 @@ def analyse_user_vs_naive_questionnaire(dataframe, plotting_folder, analysis_con
             # Select only a specific user and study, in each iteration
             data_user_study_session = dataframe[
                 (dataframe["study_name"] == study) & (dataframe["user_id"] == user_id)
-                ]
+            ]
 
             # Plot the data
             plot_averages_naive_vs_user(
@@ -1055,7 +1226,7 @@ def analyse_user_vs_naive_questionnaire(dataframe, plotting_folder, analysis_con
                 plotting_folder=plotting_folder,
                 plot_filename=f"user_vs_naive__BY_USER__avg__T{study}_U{user_id}.png",
                 title=f"AVG study T:{study} - User ID: {user_id}",
-                fields=None  # Automatically use user vs naive BO
+                fields=None,  # Automatically use user vs naive BO
             )
 
             plot_averages(
@@ -1063,7 +1234,7 @@ def analyse_user_vs_naive_questionnaire(dataframe, plotting_folder, analysis_con
                 plotting_folder=plotting_folder,
                 plot_filename=f"steer__BY_USER__avg__T{study}_U{user_id}.png",
                 title=f"AVG steer study T:{study} - User ID: {user_id}",
-                fields=["abs_scaled_steering"]
+                fields=["abs_scaled_steering"],
             )
     # >>> End loop: plot user vs naive BO, by user, by study
 
@@ -1072,31 +1243,33 @@ def analyse_user_vs_naive_questionnaire(dataframe, plotting_folder, analysis_con
     # -- Some averages --
     # -----* By study
     relevant_keys = [
-        '1. I understood well how the AI works',
-        '2. I could predict the next point the AI was going to query',
-        '3. I felt in control of affecting the AI choice of the following query point',
-        '4. At some iteration, I intentionally gave a feedback different from the actual function value',
-        '5. Giving the exact function value was helpful to achieve a better score',
-        'How much are you familiar with Gaussian Processes (GP)?',
-        "is_steerer"
+        "1. I understood well how the AI works",
+        "2. I could predict the next point the AI was going to query",
+        "3. I felt in control of affecting the AI choice of the following query point",
+        "4. At some iteration, I intentionally gave a feedback different from the actual function value",
+        "5. Giving the exact function value was helpful to achieve a better score",
+        "How much are you familiar with Gaussian Processes (GP)?",
+        "is_steerer",
     ]
 
     mean_steering = np.mean(dataframe["abs_scaled_steering"])
     for user in user_id_series:
-        if np.mean(dataframe[
-                       (dataframe["user_id"] == user)
-                   ]["abs_scaled_steering"]) > mean_steering:
+        if (
+            np.mean(dataframe[(dataframe["user_id"] == user)]["abs_scaled_steering"])
+            > mean_steering
+        ):
             dataframe.loc[dataframe["user_id"] == user, "is_steerer"] = [True] * len(
-                dataframe[dataframe["user_id"] == user].index)
+                dataframe[dataframe["user_id"] == user].index
+            )
         else:
             dataframe.loc[dataframe["user_id"] == user, "is_steerer"] = [False] * len(
-                dataframe[dataframe["user_id"] == user].index)
+                dataframe[dataframe["user_id"] == user].index
+            )
 
     # <<< Start loop: plot user vs naive BO, by user, by study, distinguishing answer high or low in the given keys
     for key in relevant_keys:
         # for study in ["study_10"]:
         for study in study_id_series:
-
             # data_user_study_session_anova = dataframe[dataframe["study_name"] == study]
             #
             # two_way_anova_testing_user_vs_naive_bo(
@@ -1108,15 +1281,23 @@ def analyse_user_vs_naive_questionnaire(dataframe, plotting_folder, analysis_con
 
             for val in ["high", "low"]:
                 if key == "is_steerer":
-                    filter_val = (lambda x: x is True) if val == "high" else (lambda x: x is False)
+                    filter_val = (
+                        (lambda x: x is True)
+                        if val == "high"
+                        else (lambda x: x is False)
+                    )
                     data_user_study_session = dataframe[
-                        (dataframe["study_name"] == study) & (filter_val(dataframe[key]))
-                        ]
+                        (dataframe["study_name"] == study)
+                        & (filter_val(dataframe[key]))
+                    ]
                 else:
-                    filter_val = (lambda x: x > 3) if val == "high" else (lambda x: x <= 3)
+                    filter_val = (
+                        (lambda x: x > 3) if val == "high" else (lambda x: x <= 3)
+                    )
                     data_user_study_session = dataframe[
-                        (dataframe["study_name"] == study) & (filter_val(dataframe[key]))
-                        ]
+                        (dataframe["study_name"] == study)
+                        & (filter_val(dataframe[key]))
+                    ]
 
                 # Plot the data
                 plot_averages_naive_vs_user(
@@ -1125,7 +1306,7 @@ def analyse_user_vs_naive_questionnaire(dataframe, plotting_folder, analysis_con
                     plot_filename=f"user_vs_naive__BY_QUEST__avg__T{study}_{key}_{val}.png",
                     title=f"AVG study T:{study}:{short_title(key, 15)}:{val}",
                     fields=None,  # Automatically use user vs naive BO
-                    also_utility=True
+                    also_utility=True,
                 )
 
                 plot_averages(
@@ -1133,7 +1314,7 @@ def analyse_user_vs_naive_questionnaire(dataframe, plotting_folder, analysis_con
                     plotting_folder=plotting_folder,
                     plot_filename=f"steer__BY_QUEST__avg__T{study}_{key}_{val}.png",
                     title=f"AVG steer study T:{study}:{short_title(key, 30)}:{val}",
-                    fields=["abs_scaled_steering"]
+                    fields=["abs_scaled_steering"],
                 )
     # >>> End loop: plot user vs naive BO, by user, by study, distinguishing answer high or low in the given keys
 
@@ -1142,7 +1323,9 @@ if __name__ == "__main__":
     import sys
 
     if len(sys.argv) != 2:
-        print("This script requires and only accepts one argument: a path to a yaml configuration file.")
+        print(
+            "This script requires and only accepts one argument: a path to a yaml configuration file."
+        )
         print("Example yaml file:\n")
         with open("data_analysis_config.yaml") as example:
             print(example.read())

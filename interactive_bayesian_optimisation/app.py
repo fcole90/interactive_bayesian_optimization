@@ -39,21 +39,24 @@ def create_app():
     app = Flask(__name__, instance_path=instance_path)
 
     # Logging utility setup
-    if app.config.get('ENV') == 'development' or app.config.get('DEBUG') is True:
+    if app.config.get("ENV") == "development" or app.config.get("DEBUG") is True:
         log_level = logging.DEBUG
     else:
         if hasattr(logging, config.DEBUG_LOG_LEVEL):
             log_level = getattr(logging, config.DEBUG_LOG_LEVEL)
         else:
             print(
-                "WARNING: log level value from config file is not a valid attribute: {}".format(config.DEBUG_LOG_LEVEL))
+                "WARNING: log level value from config file is not a valid attribute: {}".format(
+                    config.DEBUG_LOG_LEVEL
+                )
+            )
             print(f"Defaulting to '{logging.WARNING}")
             log_level = logging.WARNING
 
     logging.basicConfig(
-        format='[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+        format="[%(asctime)s] %(levelname)s in %(module)s: %(message)s",
         level=log_level,
-        filename=config.LOG_PATH
+        filename=config.LOG_PATH,
     )
 
     # Intercepts generic server errors and logs them
@@ -63,17 +66,20 @@ def create_app():
         return str(e), 500
 
     # Handles correct favicon
-    @app.route('/favicon.ico')
+    @app.route("/favicon.ico")
     def favicon():
-        return send_from_directory(os.path.join(app.root_path, 'static'),
-                                   'favicon.ico', mimetype='image/vnd.microsoft.icon')
+        return send_from_directory(
+            os.path.join(app.root_path, "static"),
+            "favicon.ico",
+            mimetype="image/vnd.microsoft.icon",
+        )
 
     # --------- #
     # Web pages #
     # --------- #
 
     # Root page
-    @app.route('/')
+    @app.route("/")
     def index():
         """Simple root page.
 
@@ -88,13 +94,13 @@ def create_app():
         -------
             html page
         """
-        return render_template('index.html')
+        return render_template("index.html")
 
-    @app.route('/test_drawing')
+    @app.route("/test_drawing")
     def test_drawing_page():
-        return render_template('test_drawing.html')
+        return render_template("test_drawing.html")
 
-    @app.route('/log', methods=['GET'])
+    @app.route("/log", methods=["GET"])
     def view_log():
         """Display the log"""
         if request.values.get("clear") == "True":
@@ -104,9 +110,9 @@ def create_app():
         print(request.values.get("clear"))
         with open(config.LOG_PATH) as log_file:
             log_text = log_file.read()
-        return render_template('log.html', log_text=log_text)
+        return render_template("log.html", log_text=log_text)
 
-    @app.route('/study_legacy')
+    @app.route("/study_legacy")
     def study_legacy():
         """Renders the study page.
 
@@ -115,9 +121,9 @@ def create_app():
             html page
 
         """
-        return render_template('study-legacy.html')
+        return render_template("study-legacy.html")
 
-    @app.route('/study')
+    @app.route("/study")
     def study():
         """Renders the study page.
 
@@ -126,13 +132,13 @@ def create_app():
         html page
 
         """
-        return render_template('study.html')
+        return render_template("study.html")
 
     # --------------------- #
     # API-related functions #
     # --------------------- #
 
-    @app.route('/api_initialise_gp_and_sample', methods=['GET', 'POST'])
+    @app.route("/api_initialise_gp_and_sample", methods=["GET", "POST"])
     def api_initialise_gp_and_sample():
         """Initialises a GP based on the given parameters.
 
@@ -154,7 +160,8 @@ def create_app():
 
         # Loads the settings file
         settings_file_name = interface_settings[
-            'settings_name']  # if 'settings_name' in interface_settings else 'default'
+            "settings_name"
+        ]  # if 'settings_name' in interface_settings else 'default'
         settings = io.load_settings(settings_file_name)
         logging.debug("File settings: {}".format(str(settings)))
 
@@ -165,36 +172,49 @@ def create_app():
 
         # Fail early and provide some error message when crucial data is missing.
         try:
-            utils.assert_required_data(
-                settings, ['x_limits', 'n_points', 'noise'])
+            utils.assert_required_data(settings, ["x_limits", "n_points", "noise"])
         except AssertionError as e:
             logging.error(str(e))
             logging.error("Provided keys: {}".format(settings.keys()))
             return str(e), 400  # BAD_REQUEST
 
         # Generate user and session IDs if not provided
-        user_id: int = settings['user_id'] if 'user_id' in settings else io.get_new_user_id(
-            study_name=settings_file_name)
-        settings['user_id'] = str(user_id)
+        user_id: int = (
+            settings["user_id"]
+            if "user_id" in settings
+            else io.get_new_user_id(study_name=settings_file_name)
+        )
+        settings["user_id"] = str(user_id)
 
         # Ensure save dir exists
         if not ("save" in settings and settings["save"] == False):
             io.ensure_savedir_exists(
-                study_name=settings_file_name, sub_path=str(user_id))
+                study_name=settings_file_name, sub_path=str(user_id)
+            )
 
-        session_id: int = settings['session_id'] if 'session_id' in settings else io.get_new_session_id(user_id,
-                                                                                                        study_name=settings_file_name)
-        settings['user_id'] = str(user_id)
-        settings['session_id'] = str(session_id)
+        session_id: int = (
+            settings["session_id"]
+            if "session_id" in settings
+            else io.get_new_session_id(user_id, study_name=settings_file_name)
+        )
+        settings["user_id"] = str(user_id)
+        settings["session_id"] = str(session_id)
 
         # Call GP data_gp_initialisation function
-        x, y_true, query_index, mean_vector, confidence_up, confidence_down = user_study_gp.data_gp_initialisation(
-            settings['x_limits'][0],
-            settings['x_limits'][1],
-            settings['n_points'],
-            settings['kernel'],
-            settings['kernel_args'],
-            settings['noise']
+        (
+            x,
+            y_true,
+            query_index,
+            mean_vector,
+            confidence_up,
+            confidence_down,
+        ) = user_study_gp.data_gp_initialisation(
+            settings["x_limits"][0],
+            settings["x_limits"][1],
+            settings["n_points"],
+            settings["kernel"],
+            settings["kernel_args"],
+            settings["noise"],
         )
 
         # Convert the data to JSON
@@ -203,12 +223,12 @@ def create_app():
             "iteration": 0,
             "new_point_index": query_index,  # index of new point to be queried
             "new_point_x": x[query_index],  # new point to be queried
-            'x_data': [],  # queried data points (initially empty)
+            "x_data": [],  # queried data points (initially empty)
             # values given by the user for the queried points (initially empty)
-            'y_data': [],
-            'y_data_actual': [],  # actual value of f(queried point)
-            'x_limits': settings['x_limits'],
-            'n_points': settings['n_points'],
+            "y_data": [],
+            "y_data_actual": [],  # actual value of f(queried point)
+            "x_limits": settings["x_limits"],
+            "n_points": settings["n_points"],
             "x": x,  # x points in the interval (linspace)
             "y": y_true,  # f(x) true values in the x points
             "mean": mean_vector,
@@ -217,25 +237,29 @@ def create_app():
 
         # Update session_id to match session, when running a full user study
         if "max_sessions" in settings:
-            if "update_session" in interface_settings and interface_settings["update_session"] == True:
+            if (
+                "update_session" in interface_settings
+                and interface_settings["update_session"] == True
+            ):
                 data["session"] = interface_settings["session"] + 1
             else:
                 data["session"] = 0
             session_id = data["session"]
 
         if "save" in settings and settings["save"] == False:
-            logging.debug(
-                "Not saving data because of settings[\"save\"] = False")
+            logging.debug('Not saving data because of settings["save"] = False')
         else:
-            io.save_data(data,
-                         study_name=settings_file_name,
-                         user_id=user_id,
-                         session_id=session_id,
-                         incremental=settings['save_split'])
+            io.save_data(
+                data,
+                study_name=settings_file_name,
+                user_id=user_id,
+                session_id=session_id,
+                incremental=settings["save_split"],
+            )
 
         return utils.remove_nan(json.dumps(data))
 
-    @app.route('/api_update_gp', methods=['GET', 'POST'])
+    @app.route("/api_update_gp", methods=["GET", "POST"])
     def api_update_gp():
         """Updates a GP based on the given parameters.
 
@@ -252,35 +276,47 @@ def create_app():
         logging.info("Called: api_update_gp")
         data = utils.get_response_and_log(request)
         try:
-            utils.assert_required_data(data,
-                                       [
-                                           'settings',  # settings of the user study
-                                           'x_data',  # queried data points
-                                           'y_data',  # values by the user for the queried points
-                                           "x_limits",  # beginning and end of the interval
-                                           "x",  # x points
-                                           "iteration"  # current iteration
-                                       ])
+            utils.assert_required_data(
+                data,
+                [
+                    "settings",  # settings of the user study
+                    "x_data",  # queried data points
+                    "y_data",  # values by the user for the queried points
+                    "x_limits",  # beginning and end of the interval
+                    "x",  # x points
+                    "iteration",  # current iteration
+                ],
+            )
         except AssertionError as e:
             logging.error(str(e))
             logging.error("Provided keys: {}".format(data.keys()))
             return str(e), 400  # BAD_REQUEST
 
-        if ("x_data" in data and "y_data" in data) and (len(data["x_data"]) >= 1 and len(data["y_data"]) >= 1):
-            logging.info("Received new data point: ({}, {}), updating..".format(
-                data["x_data"][-1],
-                data["y_data"][-1])
+        if ("x_data" in data and "y_data" in data) and (
+            len(data["x_data"]) >= 1 and len(data["y_data"]) >= 1
+        ):
+            logging.info(
+                "Received new data point: ({}, {}), updating..".format(
+                    data["x_data"][-1], data["y_data"][-1]
+                )
             )
 
-        settings = data['settings']
+        settings = data["settings"]
 
         # Update vanilla GP
-        query_index, mean_vector, upper_confidence, lower_confidence = user_study_gp.update(data["x"],
-                                                                                            settings["kernel"],
-                                                                                            settings["kernel_args"],
-                                                                                            data["x_data"],
-                                                                                            data["y_data"],
-                                                                                            settings["noise"])
+        (
+            query_index,
+            mean_vector,
+            upper_confidence,
+            lower_confidence,
+        ) = user_study_gp.update(
+            data["x"],
+            settings["kernel"],
+            settings["kernel_args"],
+            data["x_data"],
+            data["y_data"],
+            settings["noise"],
+        )
 
         # Update data
         data["new_point_index"] = query_index
@@ -291,15 +327,16 @@ def create_app():
 
         data_json = utils.remove_nan(json.dumps(data))
         if "save" in settings and settings["save"] == False:
-            logging.debug(
-                "Not saving data because of settings[\"save\"] = False")
+            logging.debug('Not saving data because of settings["save"] = False')
         else:
             logging.debug(f'Study name: {settings["settings_name"]}')
-            io.save_data(data,
-                         study_name=settings["settings_name"],
-                         user_id=settings['user_id'],
-                         session_id=settings['session_id'],
-                         incremental=settings['save_split'])
+            io.save_data(
+                data,
+                study_name=settings["settings_name"],
+                user_id=settings["user_id"],
+                session_id=settings["session_id"],
+                incremental=settings["save_split"],
+            )
         return data_json
 
     return app

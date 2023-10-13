@@ -23,12 +23,12 @@ def remove_nan(json_string):
         json string with 'null' strings in place of 'NaN' ones.
 
     """
-    return json_string.replace('NaN', 'null')
+    return json_string.replace("NaN", "null")
 
 
-def get_response_and_log(request, type='post'):
+def get_response_and_log(request, type="post"):
     """Parse a response and return it as a data dictionary
-    
+
     Parameters
     ----------
     request:
@@ -41,7 +41,7 @@ def get_response_and_log(request, type='post'):
         data dictionary of values
 
     """
-    res = request.values.get('ajax_data')
+    res = request.values.get("ajax_data")
 
     if res is not None:
         logging.info("Ajax data received")
@@ -67,7 +67,12 @@ def deprecated(deprecated_function):
     functools.wraps(deprecated_function)
 
     def wrapper(*args, **kwargs):
-        warnings.warn("Function {} is deprecated, and will be removed.".format(deprecated_function), DeprecationWarning)
+        warnings.warn(
+            "Function {} is deprecated, and will be removed.".format(
+                deprecated_function
+            ),
+            DeprecationWarning,
+        )
         return deprecated_function(*args, **kwargs)
 
     return wrapper
@@ -93,13 +98,17 @@ def assert_required_data(data, keys):
 
     """
     if data is None:
-        raise AssertionError("Values for data were required by the API but none were found."
-                             " Required: {}".format(keys))
+        raise AssertionError(
+            "Values for data were required by the API but none were found."
+            " Required: {}".format(keys)
+        )
 
     for val in keys:
         if not val in data.keys():
-            raise AssertionError("A value data['{}'] was required by the API but not found."
-                                 " Required: {}".format(val, keys))
+            raise AssertionError(
+                "A value data['{}'] was required by the API but not found."
+                " Required: {}".format(val, keys)
+            )
 
 
 # noinspection PyUnboundLocalVariable
@@ -132,10 +141,10 @@ def recreate_antisymmetric_matrix_from_list(el_list, size):
 
 
 def get_scaled_distance_from_true_f(
-        y_true: Union[np.ndarray, list],
-        y_1: Union[np.ndarray, list],
-        y_2: Union[np.ndarray, list]) \
-        -> Union[float, np.ndarray]:
+    y_true: Union[np.ndarray, list],
+    y_1: Union[np.ndarray, list],
+    y_2: Union[np.ndarray, list],
+) -> Union[float, np.ndarray]:
     """
     let y = this.model.get("y");
     let scaling_value = this.model.get("scaling_value");
@@ -153,8 +162,9 @@ def get_scaled_distance_from_true_f(
     return scaled_dist
 
 
-def get_score_from_x_index(x_index: Union[int, List[int], np.ndarray], y_true: Union[np.ndarray, list]) \
-        -> Union[float, np.ndarray]:
+def get_score_from_x_index(
+    x_index: Union[int, List[int], np.ndarray], y_true: Union[np.ndarray, list]
+) -> Union[float, np.ndarray]:
     """
     let y = this.model.get("y");
     let scaling_value = this.model.get("scaling_value");
@@ -167,8 +177,6 @@ def get_score_from_x_index(x_index: Union[int, List[int], np.ndarray], y_true: U
     """
     y_true = np.array(y_true)
     scaled_error = get_scaled_distance_from_true_f(
-        y_true=y_true,
-        y_1=y_true[x_index],
-        y_2=np.max(y_true)
+        y_true=y_true, y_1=y_true[x_index], y_2=np.max(y_true)
     )
     return 100 - scaled_error

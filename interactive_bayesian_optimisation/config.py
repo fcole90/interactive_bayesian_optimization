@@ -5,25 +5,29 @@ import os
 CONFIG_FILE_PATH = os.path.realpath(__file__)
 
 # Path to load_and_analyse app
-APP_FILE_PATH = os.path.realpath(os.path.join(os.path.dirname(CONFIG_FILE_PATH), "app.py"))
+APP_FILE_PATH = os.path.realpath(
+    os.path.join(os.path.dirname(CONFIG_FILE_PATH), "app.py")
+)
 
 # Main dir path
 MAIN_DIR_PATH = os.path.dirname(CONFIG_FILE_PATH)
 
 # Settings path
-SETTINGS_PATH = os.path.realpath(os.path.join(MAIN_DIR_PATH, os.pardir, "configurations"))
+SETTINGS_PATH = os.path.realpath(
+    os.path.join(MAIN_DIR_PATH, os.pardir, "configurations")
+)
 
 # Instance directory path
 INSTANCE_PATH = os.path.realpath(os.path.join(MAIN_DIR_PATH, os.pardir, "instance"))
 
 # Database path
-DATABASE_PATH = os.path.join(INSTANCE_PATH, 'app_data.sqlite')
+DATABASE_PATH = os.path.join(INSTANCE_PATH, "app_data.sqlite")
 
 # Log path
-LOG_PATH = os.path.join(INSTANCE_PATH, 'log.txt')
+LOG_PATH = os.path.join(INSTANCE_PATH, "log.txt")
 
 # Database secret key
-DB_SECRET_KEY = 'dev'
+DB_SECRET_KEY = "dev"
 
 # Debug level - values can be DEBUG, INFO, WARNING, ERROR
 DEBUG_LOG_LEVEL = "DEBUG"
@@ -47,7 +51,8 @@ def print_config():
     variables_list = globals().keys()
     for variable_name in variables_list:
         if not variable_name.startswith("__") and variable_name.isupper():
-            print("{0:25} \"{1}\"".format(variable_name + ":", globals()[variable_name]))
+            print('{0:25} "{1}"'.format(variable_name + ":", globals()[variable_name]))
+
 
 if __name__ == "__main__":
     print_config()

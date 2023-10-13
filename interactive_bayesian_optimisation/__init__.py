@@ -10,7 +10,7 @@ __FLASK_RUN_COMMAND__ = "python -m flask run --debug"
 def main():
     """Entry point for the application script"""
     current_path = os.path.abspath(os.path.dirname(__file__))
-    app_module = current_path + '.app'
+    app_module = current_path + ".app"
     os.environ["FLASK_APP"] = app_module
 
     # Use current python interpreter
@@ -22,5 +22,5 @@ def main():
     subprocess.run(command.split(" "), check=True)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

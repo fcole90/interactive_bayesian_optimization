@@ -29,7 +29,9 @@ def rbf_kernel(x, x_prime, sigma=1.0, theta=1.0):
         logging.warning("[rbf_kernel] x is not a numpy object: type={}".format(type(x)))
 
     if not isinstance(x_prime, (np.ndarray, np.generic)):
-        logging.warning("[rbf_kernel] x is not a numpy object: type={}".format(type(x_prime)))
+        logging.warning(
+            "[rbf_kernel] x is not a numpy object: type={}".format(type(x_prime))
+        )
 
     x_list = [x, x_prime]
     for i, x_ in enumerate(x_list):
@@ -47,6 +49,10 @@ def rbf_kernel(x, x_prime, sigma=1.0, theta=1.0):
     # logging.debug("[rbf_kernel_matrix] x: {}".format(x))
     # logging.debug("[rbf_kernel_matrix] x_prime shape: {}".format(x_prime.shape))
 
-    square_distance = np.sum(x ** 2, 1).reshape(-1, 1) + np.sum(x_prime ** 2, 1) - 2 * np.dot(x, x_prime.T)
+    square_distance = (
+        np.sum(x**2, 1).reshape(-1, 1)
+        + np.sum(x_prime**2, 1)
+        - 2 * np.dot(x, x_prime.T)
+    )
     # logging.info("[rbf_kernel_matrix] square_distance shape: {}".format(square_distance.shape))
     return sigma * np.exp(-square_distance / (2 * theta))
