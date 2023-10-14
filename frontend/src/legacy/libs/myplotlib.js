@@ -2,8 +2,8 @@
  * Simple library for plotting utilities resembling matplotlib.
  */
 
-import * as bs from './basic_utils.js'
 import { np } from './simple_numeric.js'
+import * as bs from './std.js'
 
 const TYPE_POINT = 'Point'
 const TYPE_RECTANGLE = 'Rectangle'

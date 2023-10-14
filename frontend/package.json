@@ -7,9 +7,11 @@
   "license": "MIT",
   "private": false,
   "scripts": {
+    "sync-jquery": "rm -rf  src/3rd/jquery && cp -r node_modules/jquery/ src/3rd/jquery",
     "lint": "eslint .",
-    "build": "tsc",
-    "dev": "tsc --watch"
+    "build": "yarn sync-jquery && tsc --build",
+    "dev": "yarn sync-jquery && tsc --watch",
+    "postinstall": "yarn sync-jquery"
   },
   "devDependencies": {
     "@types/jquery": "^3.5.22",

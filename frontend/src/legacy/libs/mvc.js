@@ -8,8 +8,9 @@
 // Write three classes that interact together.
 
 
-import * as bs from './basic_utils.js'
 import interface_elements from './interface_elements.js'
+import * as bs from './std.js'
+
 
 let mvc = {}
 

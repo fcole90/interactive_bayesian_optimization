@@ -7,12 +7,13 @@
 
 // Create here some instances of MVC to be used!
 
-import $ from 'jquery'
-import * as bs from './basic_utils.js'
 import { default as interface_elements, default as ui_el } from './interface_elements.js'
 import mvc from './mvc.js'
 import { plt } from './myplotlib.js'
 import np from './simple_numeric.js'
+import * as bs from './std.js'
+
+const ui: Record<string, unknown> = {}
 
 /**
  * Dictionary with ui elements names
@@ -1624,10 +1625,6 @@ class Application extends mvc.SimpleApplication {
 }
 
 ui.Application = Application
-
-const ui = {
-  Application,
-}
 
 
 export default ui

@@ -1,6 +1,6 @@
 // Numpy-like functions
 'use strict'
-import * as bs from './basic_utils.js'
+import * as bs from './std.js'
 
 
 let np = function () {

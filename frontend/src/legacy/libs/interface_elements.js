@@ -5,7 +5,7 @@
  * @module libs/interface_elements
  */
 
-import * as bs from './basic_utils.js'
+import * as bs from './std.js'
 
 let interface_elements = {}
 

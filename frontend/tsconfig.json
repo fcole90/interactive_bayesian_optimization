@@ -21,10 +21,17 @@
     "jsx": "preserve",
     "incremental": true,
   },
+  "baseUrl": ".",
+  "paths": {
+    "@jquery": [
+      "node_modules/jquery/src/jquery"
+    ],
+  },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    ".eslintrc.cjs"
+    ".eslintrc.cjs",
+    "src/legacy/libs/std.js"
   ],
   "exclude": [
     "node_modules"
