@@ -18,7 +18,7 @@ let mvc = {};
 class PreservingDictionary {
     /**
      * Create a new model from a data structure.
-     * @param {Dictionary} data_dict - Data dictionary to initialise the model.
+     * @param {bs.Dictionary | null} data_dict - Data dictionary to initialise the model.
      */
     constructor(data_dict = null) {
         this.data_dict = new bs.Dictionary();
@@ -35,7 +35,7 @@ class PreservingDictionary {
      */
     update_full_data(data_dict) {
         bs.assert_type(data_dict, bs.BSTYPE_DICT);
-        /** @type {Dictionary} */
+        /** @type {bs.Dictionary} */
         let keys = data_dict.keys();
         let keys_len = bs.len(keys);
         let current_keys = this.data_dict.keys();
@@ -43,7 +43,7 @@ class PreservingDictionary {
             if (bs.in(keys[i], current_keys)) {
                 let value = data_dict[keys[i]];
                 if (value === undefined) {
-                    throw new bs.ValueError(`Key '${key[i]}' has a value 'undefined' which is not acceptable.`);
+                    throw new bs.ValueError(`Key '${keys[i]}' has a value 'undefined' which is not acceptable.`);
                 }
                 else if (value === null) {
                     this.set_null(keys[i]);

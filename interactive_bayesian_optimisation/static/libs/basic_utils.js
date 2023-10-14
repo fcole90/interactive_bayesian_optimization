@@ -1,3 +1,5 @@
+// @ts-check
+
 /** Basic utils.
  *
  * Implements basic utilities to simplify everyday coding in JS while keeping it safe.
@@ -55,8 +57,8 @@ class CustomError extends Error {
 
     /**
      * Creates a custom error. This is an helper class aimed at creating custom errors.
-     * @param {string|String} name - Name of the custom error.
-     * @param [message] - Message to display
+     * @param {string} name - Name of the custom error.
+     * @param {string | null=} message - Message to display
      * @param params
      */
     constructor(name, message=null, ...params) {
@@ -71,7 +73,7 @@ class CustomError extends Error {
             this.name = name;
         }
 
-        if (bs.is_null_or_undefined(message)) {
+        if (message == null) {
             message = this.name;
         }
         else {
@@ -86,6 +88,16 @@ class CustomError extends Error {
 
 bs.CustomError = CustomError;
 
+/** @typedef {(message?: string | null, ...params: unknown[]) => void} ErrorConstructor*/
+
+class _Error extends bs.CustomError {
+    /** @type {ErrorConstructor} */
+    constructor(message=null, ...params) {
+        super("Error", message, ...params);
+    }
+}
+bs.Error = _Error;
+
 
 /**
  * AssertionError
@@ -93,6 +105,7 @@ bs.CustomError = CustomError;
  * Thrown when an assert statement fails.
  */
 class AssertionError extends bs.CustomError {
+    /** @type {ErrorConstructor} */
     constructor(message=null, ...params) {
         super("AssertionError", message, ...params);
     }
@@ -106,6 +119,7 @@ bs.AssertionError = AssertionError;
  * Thrown when a mapping (dictionary) key is not found in the set of existing keys.
  */
 class KeyError extends CustomError {
+    /** @type {ErrorConstructor} */
     constructor(message=null, ...params) {
         super("KeyError", message, ...params);
     }
@@ -120,6 +134,7 @@ bs.KeyError = KeyError;
  * The associated value is a string indicating what precisely went wrong.
  */
 class RuntimeError extends bs.CustomError {
+    /** @type {ErrorConstructor} */
     constructor(message=null, ...params) {
         super("RuntimeError", message, ...params);
     }
@@ -135,6 +150,7 @@ bs.RuntimeError = RuntimeError;
  * and the situation is not described by a more precise exception such as KeyError.
  */
 class ValueError extends bs.CustomError {
+    /** @type {ErrorConstructor} */
     constructor(message=null, ...params) {
         super("ValueError", message, ...params);
     }
@@ -164,7 +180,7 @@ class Dictionary {
                     [key_i, value_i] = init_seq[i];
 
                     if (bs.not_in(bs.type(key_i), [bs.TYPE_STRING, bs.TYPE_STRING_OBJECT])) {
-                        TypeError(`Element key [${i}] = ${key_i} should be a string but is of type ${type(key_i)}`);
+                        TypeError(`Element key [${i}] = ${key_i} should be a string but is of type ${bs.type(key_i)}`);
                     }
                     this[key_i] = value_i;
                 }
@@ -236,8 +252,8 @@ bs.print = console.log;
 /**
  * Convenient way to insert debugging assertions into a program.
  * @param {boolean} condition - Condition to test
- * @param {string} message - Message to display in case of failure
- * @param {ErrorConstructor} error_constructor - Type of error to display
+ * @param {string | null} message - Message to display in case of failure
+ * @param {bs.Error} error_constructor - Type of error to display
  */
 bs.assert = function(condition, message=null, error_constructor=bs.AssertionError) {
 
@@ -250,6 +266,12 @@ bs.assert = function(condition, message=null, error_constructor=bs.AssertionErro
     }
 };
 
+/**
+ * @param {*} obj 
+ * @param {number} expected_length 
+ * @param {string | null} message 
+ * @param {*} error_constructor 
+ */
 bs.assert_len = function(obj, expected_length, message=null, error_constructor=bs.AssertionError) {
     const obj_len = bs.len(obj);
     if (bs.is_null_or_undefined(message)) {
@@ -264,14 +286,14 @@ bs.assert_type = function (obj, expected_types) {
         bs.assert(
             obj_type === expected_types,
             `Expected type '${expected_types}' but found '${obj_type}' instead.`,
-            TypeError
+            bs.TypeError
         );
     }
     else if (bs.type(expected_types) === bs.TYPE_ARRAY) {
         bs.assert(
             bs.in(obj_type, expected_types),
             `Expected any of these types [${expected_types}] but found '${obj_type}' instead.`,
-            TypeError
+            bs.TypeError
         );
     }
     else {
@@ -296,7 +318,7 @@ bs.dict = function(init_seq) {
  * If an object is provided it checks against its values.
  *
  * @param {*} value - The value to check for membership
- * @param {Iterable.<*>} sequence - Sequence withing to search the value
+ * @param {Iterable.<*> & {length: number}} sequence - Sequence withing to search the value
  * @returns {boolean}
  */
 bs.in = function(value, sequence) {
@@ -314,7 +336,7 @@ bs.in = function(value, sequence) {
 /**
  * Checks that the value is not contained in the given sequence. Uses strict equality.
  * @param {*} value - The value to check for membership
- * @param {Iterable.<*>} sequence - Sequence withing to search the value
+ * @param {Iterable.<*> & {length: number}} sequence - Sequence withing to search the value
  * @returns {boolean}
  */
 bs.not_in = function(value, sequence) {
@@ -369,7 +391,7 @@ bs.module_path = function(path, module_name, extension="mjs") {
 
 
 bs.str = function(value) {
-    return String(value);
+    return `${value}`;
 };
 
 
@@ -467,8 +489,8 @@ function print_e() {
 
 
 // https://stackoverflow.com/a/18939803
-
 function set_logging() {
+    // @ts-ignore
     window.debug = {
         log: window.console.log.bind(window.console, '%s: %s'),
         error: window.console.error.bind(window.console, 'error: %s'),
