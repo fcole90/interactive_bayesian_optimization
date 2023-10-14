@@ -1,4 +1,8 @@
 {
+  "editor.codeActionsOnSave": [
+    "source.organizeImports",
+    "source.fixAll",
+  ],
   "editor.formatOnSave": true,
   "editor.autoIndent": "advanced",
   "editor.guides.indentation": true,
@@ -17,4 +21,7 @@
   "python.analysis.useLibraryCodeForTypes": true,
   "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python3",
   "python.languageServer": "Pylance",
+  "eslint.workingDirectories": [
+    "frontend"
+  ]
 }
