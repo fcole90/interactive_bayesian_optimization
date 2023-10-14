@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "dist",
+    "outDir": "../interactive_bayesian_optimisation/static/js/dist",
     "target": "es5",
     "lib": [
       "dom",

@@ -1,6 +1,7 @@
 // Main entrypoint
 
-console.log('All good here!')
+export const main = () => {
+  console.log('Loading typescript')
+}
 
 
-'' + 5
