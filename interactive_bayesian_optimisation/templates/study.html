@@ -10,12 +10,12 @@
     <link rel="stylesheet" href="static/style.css">
 
     <!--Import these scripts in this order until transition to modules is complete-->
-    <script src="static/3rd/jquery.js"></script>
-<!--    <script defer src="static/libs/numeric_dart/build/load_and_analyse.dart.js"></script>-->
+    <script src="static/js/3rd/jquery.js"></script>
     <script>console.warn("Importing JQuery globally." +
-    " This is currently necessary as it's not distributed yet as an ES6 module.");</script>
+            " This is currently necessary as it's not distributed yet as an ES6 module.");</script>
 
 </head>
+
 <body>
 
     <div id="output"></div>
@@ -27,17 +27,17 @@
     <div class="div_flexible_container">
 
 
-            <!-- Text to display a generic error message, with a link to view the log-->
-            <p id="log_view_message" class="error_msg hidden">An error occurred. See the
-                <a class="error_msg" href="/log" target="_blank">log</a>
-                to check why.
-            </p>
+        <!-- Text to display a generic error message, with a link to view the log-->
+        <p id="log_view_message" class="error_msg hidden">An error occurred. See the
+            <a class="error_msg" href="/log" target="_blank">log</a>
+            to check why.
+        </p>
 
-            <!-- Fake input form for storage purposes -->
-            <input type="hidden" id="f_data" value="null">
+        <!-- Fake input form for storage purposes -->
+        <input type="hidden" id="f_data" value="null">
 
-            <!-- Title text -->
-            <h1 id="text_title" class="hidden">A<span style="color: red">!</span> - PML User Study</h1>
+        <!-- Title text -->
+        <h1 id="text_title" class="hidden">A<span style="color: red">!</span> - PML User Study</h1>
 
 
         <div class="div_canvas_elements_container">
@@ -73,14 +73,15 @@
             <!-- Text to display the current session number and max sessions -->
             <p id="session_text" class="hidden inline_text bottom_text"></p>
         </div>
-            <!-- Button to begin the session -->
-            <button id="start_button" class="hidden custom_button">Start</button>
+        <!-- Button to begin the session -->
+        <button id="start_button" class="hidden custom_button">Start</button>
 
     </div>
 
     <div id="top_container" class="horizontal_box">
-                <!-- Asks a question to the user -->
-                <p id="question_field" class="question_message hidden">Please, push <em>Start</em> when you are ready to begin.</p>
+        <!-- Asks a question to the user -->
+        <p id="question_field" class="question_message hidden">Please, push <em>Start</em> when you are ready to begin.
+        </p>
     </div>
 
     <!--  Modal dialogue for alerts  -->
@@ -102,7 +103,7 @@
 
 
     <script type="module">
-        import {ui} from "./static/libs/ui.js";
+        import { ui } from "./static/js/libs/ui.js";
         let app = new ui.Application();
         app.exec();
     </script>
