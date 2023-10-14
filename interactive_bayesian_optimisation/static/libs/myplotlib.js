@@ -2,8 +2,8 @@
  * Simple library for plotting utilities resembling matplotlib.
  */
 
-import {bs} from "./basic_utils.js";
-import {np} from "./simple_numeric.js";
+import * as bs from "./basic_utils.js";
+import { np } from "./simple_numeric.js";
 
 const TYPE_POINT = "Point";
 const TYPE_RECTANGLE = "Rectangle";
@@ -481,7 +481,7 @@ function draw_line(ctx, start_x, start_y, end_x, end_y) {
  * @param {number|null} [diameter=8.0] - the thickness of the dot
  */
 function draw_dot(ctx, x, y, diameter = null) {
-    if (bs.is_null_or_undefined(diameter)) {diameter = 8.0}
+    if (bs.is_null_or_undefined(diameter)) { diameter = 8.0 }
     ctx.beginPath();
     ctx.arc(x, y, diameter / 2, 0, 2 * Math.PI);
     ctx.fill();
@@ -545,7 +545,7 @@ function super_plot(canvas, x_list, y_list, color = null, limit_box = null, prop
     if (bs.is_not_null_or_undefined(color)) bs.assert_type(color, bs.TYPE_STRING);
     if (bs.is_not_null_or_undefined(limit_box)) bs.assert_type(limit_box, TYPE_RECTANGLE);
     bs.assert_type(proportional, bs.TYPE_BOOLEAN);
-    bs.assert(bs.in(plot_type, ["dots", "lines", "poly", "vertical"]));
+    bs.assert(bs._in(plot_type, ["dots", "lines", "poly", "vertical"]));
     if (bs.is_not_null_or_undefined(line_style)) bs.assert_type(line_style, bs.TYPE_OBJECT);
 
     // Length assertions
@@ -638,7 +638,7 @@ function super_plot(canvas, x_list, y_list, color = null, limit_box = null, prop
             draw_line(ctx, canvas_x_list[i], cy[0], canvas_x_list[i], cy[1]);
             ctx.stroke();
         }
-    // Non recognised style.
+        // Non recognised style.
     } else {
         throw new bs.ValueError("Invalid value for 'linestyle': " + String(plot_type));
     }
@@ -792,7 +792,7 @@ function get_canvas_dict(name = null) {
     if (__CANVAS_DICT__[name] === undefined) {
         console.warn(`No canvas dict is open with name: ${name}.`)
     } else {
-        return  __CANVAS_DICT__[name];
+        return __CANVAS_DICT__[name];
     }
 }
 
@@ -837,7 +837,7 @@ function clear(name = null) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-function show(name = null, clear_before=true) {
+function show(name = null, clear_before = true) {
     if (name === null) {
         name = __DEFAULT_CANVAS_NAME__;
     }
@@ -861,7 +861,7 @@ function show(name = null, clear_before=true) {
     let canvas = canvas_dict.canvas;
     let ctx = canvas.getContext("2d");
 
-    if (clear_before === true) {ctx.clearRect(0, 0, canvas.width, canvas.height);}
+    if (clear_before === true) { ctx.clearRect(0, 0, canvas.width, canvas.height); }
 
     // Todo: merge lists to get the best limit square, now it uses the first list
     let x_0_list = canvas_dict.plot_list[0].kwargs.x_list;
@@ -916,7 +916,7 @@ function scatter(x, y, s = null, c = null, name = null) {
     bs.assert_len(x, bs.len(y));
     let linestyle = null;
     if (bs.is_null_or_undefined(s) === false) {
-        linestyle = {size: s}
+        linestyle = { size: s }
     }
     __CANVAS_DICT__[name].add_plot(
         "scatter",
@@ -935,10 +935,10 @@ function plot(x, y, s = null, c = null, name = null) {
     }
 
     let linesyle;
-    if (bs.is_null_or_undefined(s)) {linesyle = null}
-    else if (bs.type(s) === bs.TYPE_STRING) {linesyle = {"style": s}}
-    else if (typeof(s) === bs.TYPE_OBJECT) {linesyle = s}
-    else {throw new TypeError(`unrecognised type '${typeof s}' for parameter s.`)}
+    if (bs.is_null_or_undefined(s)) { linesyle = null }
+    else if (bs.type(s) === bs.TYPE_STRING) { linesyle = { "style": s } }
+    else if (typeof (s) === bs.TYPE_OBJECT) { linesyle = s }
+    else { throw new TypeError(`unrecognised type '${typeof s}' for parameter s.`) }
 
     __CANVAS_DICT__[name].add_plot(
         "plot",
@@ -966,7 +966,7 @@ function fill(x, y_1, y_2, s = null, c = null, name = null) {
         });
 }
 
-function vline(x, s = null, c=null, name = null) {
+function vline(x, s = null, c = null, name = null) {
     if (name === null) {
         name = __DEFAULT_CANVAS_NAME__
     }
@@ -1039,4 +1039,4 @@ plt.vline = vline;
 
 
 export default plt;
-export {plt};
+export { plt };

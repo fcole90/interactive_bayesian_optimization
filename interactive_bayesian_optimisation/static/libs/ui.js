@@ -9,7 +9,7 @@
 
 import mvc from "./mvc.js";
 import ui_el from "./interface_elements.js";
-import bs from "./basic_utils.js";
+import * as bs from "./basic_utils.js";
 import interface_elements from "./interface_elements.js";
 import { plt } from "./myplotlib.js";
 import np from "./simple_numeric.js";
@@ -348,7 +348,7 @@ class CustomAppController extends mvc.Controller {
             this.view.get(EL.text_session_score).show();
         }
         // Update and display text elements related to x prediction
-        else if (this.predictive_mode.is_off()){
+        else if (this.predictive_mode.is_off()) {
             this.switch_to_predictive_mode();
         }
 
@@ -595,8 +595,8 @@ class CustomAppController extends mvc.Controller {
                     `${this.get_session_number_text()} completed!\n` +
                     (
                         (this.model.get("settings")["session_score_as_max"] === true) ?
-                        `Session max score: ${this.model.get("max_session_score")}\n` :
-                        `Session score: ${this.model.get("session_score")}\n`
+                            `Session max score: ${this.model.get("max_session_score")}\n` :
+                            `Session score: ${this.model.get("session_score")}\n`
                     ) +
                     "Press <Enter> (or click OK) to proceed to next session."
                 )
@@ -630,8 +630,8 @@ class CustomAppController extends mvc.Controller {
                     `Final session completed!\n` +
                     (
                         (this.model.get("settings")["session_score_as_max"] === true) ?
-                        `Session max score: ${this.model.get("max_session_score")}\n` :
-                        `Session score: ${this.model.get("session_score")}\n`
+                            `Session max score: ${this.model.get("max_session_score")}\n` :
+                            `Session score: ${this.model.get("session_score")}\n`
                     ) +
                     MESSAGES.session_complete_text
                 )
@@ -1061,7 +1061,7 @@ class CustomAppController extends mvc.Controller {
             type: "POST",
             dataType: 'json',
             url: url,
-            data: {'ajax_data': JSON.stringify(ajax_data)},
+            data: { 'ajax_data': JSON.stringify(ajax_data) },
             success: $.proxy(inner_success_function, this),
             global: true
         });
@@ -1200,9 +1200,9 @@ class CustomAppController extends mvc.Controller {
             let y_min = np.list_min(y) - 0.8;
 
             // Makes a list of size n of elements of value val
-            let f_list = function(n, val) {
+            let f_list = function (n, val) {
                 let new_array = [];
-                for (let i = 0; i < n; i ++){ new_array.push(val) }
+                for (let i = 0; i < n; i++) { new_array.push(val) }
                 return new_array;
             };
 
@@ -1223,8 +1223,7 @@ class CustomAppController extends mvc.Controller {
             plt.vline(new_point_x, null, "orange");
         }
 
-        if (this.model.get("settings")["session_score_as_max"] === true)
-        {
+        if (this.model.get("settings")["session_score_as_max"] === true) {
             // Make a copy to avoid errors
             let y_data_actual = [...this.model.get("y_data_actual")];
             let new_point_index = this.model.get("new_point_index");
@@ -1574,10 +1573,10 @@ class Application extends mvc.SimpleApplication {
         window.removeEventListener("error", basic_listener);
         window.addEventListener("error",
             $.proxy(function () {
-                    view.get(EL.modal_dialogue).alert(
-                        "⚠️ An error occurred, check the console for more information. ⚠️"
-                    )
-                },
+                view.get(EL.modal_dialogue).alert(
+                    "⚠️ An error occurred, check the console for more information. ⚠️"
+                )
+            },
                 this)
         );
     }

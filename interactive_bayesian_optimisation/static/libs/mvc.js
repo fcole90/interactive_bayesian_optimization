@@ -8,7 +8,7 @@
 // Write three classes that interact together.
 
 
-import bs from "./basic_utils.js";
+import * as bs from "./basic_utils.js";
 import interface_elements from "./interface_elements.js"
 
 let mvc = {};
@@ -40,7 +40,7 @@ class PreservingDictionary {
         let keys_len = bs.len(keys);
         let current_keys = this.data_dict.keys();
         for (let i = 0; i < keys_len; i++) {
-            if (bs.in(keys[i], current_keys)) {
+            if (bs._in(keys[i], current_keys)) {
                 let value = data_dict[keys[i]];
                 if (value === undefined) {
                     throw new bs.ValueError(`Key '${keys[i]}' has a value 'undefined' which is not acceptable.`);
@@ -108,7 +108,7 @@ class PreservingDictionary {
      */
     exist(key) {
         bs.assert_type(key, [bs.TYPE_STRING, bs.TYPE_STRING_OBJECT]);
-        return bs.in(key, this.data_dict.keys());
+        return bs._in(key, this.data_dict.keys());
     }
 
     /**
@@ -117,7 +117,7 @@ class PreservingDictionary {
      * @param {boolean} fail
      * @returns {*}
      */
-    get(key, fail=true) {
+    get(key, fail = true) {
         if (fail === true) { this.assert_valid_data_key(key); }
         return this.data_dict[key];
     }
@@ -195,7 +195,7 @@ class View extends mvc.PreservingDictionary {
      * @param fail
      * @returns {interface_elements.BaseInterfaceElement}
      */
-    get(key, fail=true) {
+    get(key, fail = true) {
         return super.get(key, fail);
     }
 }
@@ -289,7 +289,7 @@ class Controller {
             type: "POST",
             dataType: 'json',
             url: url,
-            data: {'ajax_data': JSON.stringify(ajax_data)},
+            data: { 'ajax_data': JSON.stringify(ajax_data) },
             success: function (result) {
                 fun_to_run(result);
             },
@@ -298,14 +298,14 @@ class Controller {
     }
 
     save_model(hidden_form_id) {
-        bs.assert(bs.in(hidden_form_id, this.view.keys()));
+        bs.assert(bs._in(hidden_form_id, this.view.keys()));
         let hidden_form = this.view[hidden_form_id];
 
         hidden_form.save_json(this.model);
     }
 
     load_model(hidden_form_id) {
-        bs.assert(bs.in(hidden_form_id, this.view.keys()));
+        bs.assert(bs._in(hidden_form_id, this.view.keys()));
         let hidden_form = this.view[hidden_form_id];
         this.model = new mvc.Model(hidden_form.load_json());
     }
@@ -337,4 +337,4 @@ class SimpleApplication {
 mvc.SimpleApplication = SimpleApplication;
 
 export default mvc;
-export {mvc};
+export { mvc };

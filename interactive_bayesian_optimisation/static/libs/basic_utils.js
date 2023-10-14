@@ -7,12 +7,6 @@
  * @module libs/basic_utils
  */
 
-/* Define the butils namespace */
-let bs = {};
-
-
-
-
 //  -----------------------------------------------------
 //  ------------------- Definitions ---------------------
 //  -----------------------------------------------------
@@ -20,27 +14,27 @@ let bs = {};
 
 
 /* Basic types (recognised by typeof) */
-bs.TYPE_NUMBER = "number";
-bs.TYPE_STRING = "string";
-bs.TYPE_BOOLEAN = "boolean";
-bs.TYPE_BIGINT = "bigint";
-bs.TYPE_FUNCTION = "function";
-bs.TYPE_SYMBOL = "symbol";
-bs.TYPE_UNDEFINED = "undefined";
+export const TYPE_NUMBER = "number";
+export const TYPE_STRING = "string";
+export const TYPE_BOOLEAN = "boolean";
+export const TYPE_BIGINT = "bigint";
+export const TYPE_FUNCTION = "function";
+export const TYPE_SYMBOL = "symbol";
+export const TYPE_UNDEFINED = "undefined";
 
 /* Basic objects */
-bs.TYPE_OBJECT = "Object";
-bs.TYPE_ARRAY = "Array";
-bs.TYPE_STRING_OBJECT = "String";
-bs.TYPE_NULL = "null";
+export const TYPE_OBJECT = "Object";
+export const TYPE_ARRAY = "Array";
+export const TYPE_STRING_OBJECT = "String";
+export const TYPE_NULL = "null";
 
 /* Additional library objects */
-bs.BSTYPE_DICT = "Dictionary";
+export const BSTYPE_DICT = "Dictionary";
 
 /* Type aliases */
-bs.True = true;
-bs.False = false;
-bs.None = null;
+export const True = true;
+export const False = false;
+export const None = null;
 
 
 
@@ -53,7 +47,7 @@ bs.None = null;
 /**
  * Defines a CustomError
  */
-class CustomError extends Error {
+export class CustomError extends Error {
 
     /**
      * Creates a custom error. This is an helper class aimed at creating custom errors.
@@ -61,12 +55,12 @@ class CustomError extends Error {
      * @param {string | null=} message - Message to display
      * @param params
      */
-    constructor(name, message=null, ...params) {
+    constructor(name, message = null, ...params) {
         super(...params);
 
-        if (bs.in(bs.type(name), [bs.TYPE_STRING_OBJECT, bs.TYPE_STRING]) === false) {
+        if (_in(type(name), [TYPE_STRING_OBJECT, TYPE_STRING]) === false) {
             throw new TypeError(
-                `name is not a string. Type: ${bs.type(name)}`
+                `name is not a string. Type: ${type(name)}`
             )
         }
         else {
@@ -86,17 +80,16 @@ class CustomError extends Error {
 
 }
 
-bs.CustomError = CustomError;
 
 /** @typedef {(message?: string | null, ...params: unknown[]) => void} ErrorConstructor*/
 
-class _Error extends bs.CustomError {
+export class _Error extends CustomError {
     /** @type {ErrorConstructor} */
-    constructor(message=null, ...params) {
+    constructor(message = null, ...params) {
         super("Error", message, ...params);
     }
 }
-bs.Error = _Error;
+
 
 
 /**
@@ -104,13 +97,13 @@ bs.Error = _Error;
  *
  * Thrown when an assert statement fails.
  */
-class AssertionError extends bs.CustomError {
+export class AssertionError extends CustomError {
     /** @type {ErrorConstructor} */
-    constructor(message=null, ...params) {
+    constructor(message = null, ...params) {
         super("AssertionError", message, ...params);
     }
 }
-bs.AssertionError = AssertionError;
+
 
 
 /**
@@ -118,13 +111,13 @@ bs.AssertionError = AssertionError;
  *
  * Thrown when a mapping (dictionary) key is not found in the set of existing keys.
  */
-class KeyError extends CustomError {
+export class KeyError extends CustomError {
     /** @type {ErrorConstructor} */
-    constructor(message=null, ...params) {
+    constructor(message = null, ...params) {
         super("KeyError", message, ...params);
     }
 }
-bs.KeyError = KeyError;
+
 
 
 /**
@@ -133,14 +126,12 @@ bs.KeyError = KeyError;
  * Thrown when an error is detected that doesn’t fall in any of the other categories.
  * The associated value is a string indicating what precisely went wrong.
  */
-class RuntimeError extends bs.CustomError {
+export class RuntimeError extends CustomError {
     /** @type {ErrorConstructor} */
-    constructor(message=null, ...params) {
+    constructor(message = null, ...params) {
         super("RuntimeError", message, ...params);
     }
 }
-
-bs.RuntimeError = RuntimeError;
 
 
 /**
@@ -149,13 +140,12 @@ bs.RuntimeError = RuntimeError;
  * Thrown when an operation or function receives an argument that has the right type but an inappropriate value,
  * and the situation is not described by a more precise exception such as KeyError.
  */
-class ValueError extends bs.CustomError {
+export class ValueError extends CustomError {
     /** @type {ErrorConstructor} */
-    constructor(message=null, ...params) {
+    constructor(message = null, ...params) {
         super("ValueError", message, ...params);
     }
 }
-bs.ValueError = ValueError;
 
 
 
@@ -170,29 +160,29 @@ bs.ValueError = ValueError;
  *
  * TODO: continue implementation as https://docs.python.org/3.7/library/stdtypes.html#typesmapping
  */
-class Dictionary {
+export class Dictionary {
     constructor(init_seq) {
-        if (bs.is_null_or_undefined(init_seq) === false){
-            if (bs.type(init_seq) === bs.TYPE_ARRAY) {
+        if (is_null_or_undefined(init_seq) === false) {
+            if (type(init_seq) === TYPE_ARRAY) {
                 // If a proper list is provided, use it to initialise the dictionary
                 for (let i = 0; i < init_seq.length; i++) {
                     let key_i, value_i;
                     [key_i, value_i] = init_seq[i];
 
-                    if (bs.not_in(bs.type(key_i), [bs.TYPE_STRING, bs.TYPE_STRING_OBJECT])) {
-                        TypeError(`Element key [${i}] = ${key_i} should be a string but is of type ${bs.type(key_i)}`);
+                    if (not_in(type(key_i), [TYPE_STRING, TYPE_STRING_OBJECT])) {
+                        TypeError(`Element key [${i}] = ${key_i} should be a string but is of type ${type(key_i)}`);
                     }
                     this[key_i] = value_i;
                 }
             }
-            else if (!bs.is_null_or_undefined(Object.keys(init_seq))) {
+            else if (!is_null_or_undefined(Object.keys(init_seq))) {
                 let keys = Object.keys(init_seq);
                 for (let i = 0; i < keys.length; i++) {
                     this[keys[i]] = init_seq[keys[i]];
                 }
             }
             else {
-                throw new bs.ValueError(`the given argument of type '${init_seq}' cannot be converted to dictionary.`);
+                throw new ValueError(`the given argument of type '${init_seq}' cannot be converted to dictionary.`);
             }
         }
     }
@@ -205,14 +195,14 @@ class Dictionary {
     }
 
     del(key) {
-        if (bs.in(key, this.keys())) { delete this[key]; }
+        if (_in(key, this.keys())) { delete this[key]; }
     }
 
     keys() {
         return Object.keys(this);
     }
 
-    get(key, _default=null) {
+    get(key, _default = null) {
         let val = this[key];
 
         if (val === undefined) {
@@ -224,7 +214,6 @@ class Dictionary {
     }
 }
 
-bs.Dictionary = Dictionary;
 
 
 
@@ -237,7 +226,7 @@ bs.Dictionary = Dictionary;
 
 
 /** Simple alias */
-bs.print = console.log;
+export const print = console.log;
 
 
 
@@ -253,12 +242,12 @@ bs.print = console.log;
  * Convenient way to insert debugging assertions into a program.
  * @param {boolean} condition - Condition to test
  * @param {string | null} message - Message to display in case of failure
- * @param {bs.Error} error_constructor - Type of error to display
+ * @param {_Error} error_constructor - Type of error to display
  */
-bs.assert = function(condition, message=null, error_constructor=bs.AssertionError) {
+export const assert = function (condition, message = null, error_constructor = AssertionError) {
 
-    if (bs.is_null_or_undefined(error_constructor)) {
-        throw new bs.ValueError();
+    if (is_null_or_undefined(error_constructor)) {
+        throw new ValueError();
     }
 
     if (condition === false) {
@@ -270,34 +259,34 @@ bs.assert = function(condition, message=null, error_constructor=bs.AssertionErro
  * @param {*} obj 
  * @param {number} expected_length 
  * @param {string | null} message 
- * @param {*} error_constructor 
+ * @param {_Error} error_constructor 
  */
-bs.assert_len = function(obj, expected_length, message=null, error_constructor=bs.AssertionError) {
-    const obj_len = bs.len(obj);
-    if (bs.is_null_or_undefined(message)) {
+export const assert_len = function (obj, expected_length, message = null, error_constructor = AssertionError) {
+    const obj_len = len(obj);
+    if (is_null_or_undefined(message)) {
         message = `Expected length ${expected_length} but found ${obj_len} instead.`
     }
-    bs.assert(obj_len === expected_length, message, error_constructor);
+    assert(obj_len === expected_length, message, error_constructor);
 };
 
-bs.assert_type = function (obj, expected_types) {
-    let obj_type = bs.type(obj);
-    if (bs.in(bs.type(expected_types), [bs.TYPE_STRING, bs.TYPE_STRING_OBJECT])) {
-        bs.assert(
+export const assert_type = function (obj, expected_types) {
+    let obj_type = type(obj);
+    if (_in(type(expected_types), [TYPE_STRING, TYPE_STRING_OBJECT])) {
+        assert(
             obj_type === expected_types,
             `Expected type '${expected_types}' but found '${obj_type}' instead.`,
-            bs.TypeError
+            TypeError
         );
     }
-    else if (bs.type(expected_types) === bs.TYPE_ARRAY) {
-        bs.assert(
-            bs.in(obj_type, expected_types),
+    else if (type(expected_types) === TYPE_ARRAY) {
+        assert(
+            _in(obj_type, expected_types),
             `Expected any of these types [${expected_types}] but found '${obj_type}' instead.`,
-            bs.TypeError
+            TypeError
         );
     }
     else {
-        throw new TypeError(bs.type(expected_types));
+        throw new TypeError(type(expected_types));
     }
 };
 
@@ -307,7 +296,7 @@ bs.assert_type = function (obj, expected_types) {
  * @param {Iterable.<Iterable>} init_seq
  * @returns {Dictionary}
  */
-bs.dict = function(init_seq) {
+export const dict = function (init_seq) {
     return new Dictionary(init_seq);
 };
 
@@ -321,7 +310,7 @@ bs.dict = function(init_seq) {
  * @param {Iterable.<*> & {length: number}} sequence - Sequence withing to search the value
  * @returns {boolean}
  */
-bs.in = function(value, sequence) {
+export const _in = function (value, sequence) {
 
     sequence = Object.values(sequence);
 
@@ -339,8 +328,8 @@ bs.in = function(value, sequence) {
  * @param {Iterable.<*> & {length: number}} sequence - Sequence withing to search the value
  * @returns {boolean}
  */
-bs.not_in = function(value, sequence) {
-    return !bs.in(value, sequence);
+export const not_in = function (value, sequence) {
+    return !_in(value, sequence);
 };
 
 
@@ -349,13 +338,13 @@ bs.not_in = function(value, sequence) {
  * @param {*} obj - A variable.
  * @returns {boolean}
  */
-bs.is_null_or_undefined = function(obj) {
-    let obj_t = bs.type(obj);
-    return obj_t === bs.TYPE_NULL || obj_t === bs.TYPE_UNDEFINED;
+export const is_null_or_undefined = function (obj) {
+    let obj_t = type(obj);
+    return obj_t === TYPE_NULL || obj_t === TYPE_UNDEFINED;
 };
 
-bs.is_not_null_or_undefined = function(obj) {
-    return bs.is_null_or_undefined(obj) === false;
+export const is_not_null_or_undefined = function (obj) {
+    return is_null_or_undefined(obj) === false;
 };
 
 /**
@@ -363,19 +352,18 @@ bs.is_not_null_or_undefined = function(obj) {
  * @param obj
  * @returns {number}
  */
-function len(obj) {
+export function len(obj) {
     let len_value = obj.length;
-    if (bs.is_null_or_undefined(len_value)) {
-        throw new TypeError(`object of type '${bs.type(obj)}' has no length`);
+    if (is_null_or_undefined(len_value)) {
+        throw new TypeError(`object of type '${type(obj)}' has no length`);
     }
-    else if (bs.type(len_value) !== bs.TYPE_NUMBER) {
-        throw new TypeError(`object of type '${bs.type(obj)}' has length of type '${bs.type(len_value)}' instead of '${bs.TYPE_NUMBER}'`);
+    else if (type(len_value) !== TYPE_NUMBER) {
+        throw new TypeError(`object of type '${type(obj)}' has length of type '${type(len_value)}' instead of '${TYPE_NUMBER}'`);
     }
     else {
         return obj.length;
     }
 }
-bs.len = len;
 
 
 /**
@@ -385,12 +373,12 @@ bs.len = len;
  * @param extension
  * @returns {string}
  */
-bs.module_path = function(path, module_name, extension="mjs") {
+export const module_path = function (path, module_name, extension = "mjs") {
     return `${path}/${module_name}.${extension}`;
 };
 
 
-bs.str = function(value) {
+export const str = function (value) {
     return `${value}`;
 };
 
@@ -400,40 +388,32 @@ bs.str = function(value) {
  * @param {*} obj - Any kind of object.
  * @returns {string|*|"undefined"|"object"|"boolean"|"number"|"string"|"function"|"symbol"|"bigint"}
  */
-bs.type = function(obj) {
-  // Null object
-  if (obj === null) {
-      return "null";
-  }
+export const type = function (obj) {
+    // Null object
+    if (obj === null) {
+        return "null";
+    }
 
-  // Builtins
-  if (typeof obj !== "object"){
-      return typeof obj;
-  }
+    // Builtins
+    if (typeof obj !== "object") {
+        return typeof obj;
+    }
 
-  // Builtins objects
-  if (Object.prototype.toString.call(obj) !== "[object Object]")
-  {
-      return Object.prototype.toString.call(obj).slice(8, -1);
-  }
+    // Builtins objects
+    if (Object.prototype.toString.call(obj) !== "[object Object]") {
+        return Object.prototype.toString.call(obj).slice(8, -1);
+    }
 
-  // Constructed objects
-  if (obj.constructor.name !== "undefined") {
-      return obj.constructor.name;
-  }
+    // Constructed objects
+    if (obj.constructor.name !== "undefined") {
+        return obj.constructor.name;
+    }
 
-  return "object";
+    return "object";
 };
 
 
 
-
-//  -----------------------------------------------------
-//  ------------------ Final export ---------------------
-//  -----------------------------------------------------
-
-export default bs;
-export { bs };
 
 
 
@@ -458,29 +438,27 @@ Legacy functions. TODO: modernise or delete
  */
 
 function s_print() {
-  let str = s => String(s);
-  let sep = " ";
+    let str = s => String(s);
+    let sep = " ";
 
-  if (arguments.length === 0) {
-      return "";
-  }
+    if (arguments.length === 0) {
+        return "";
+    }
 
-  if (arguments.length === 1) {
-      return str(arguments[0]);
-  }
+    if (arguments.length === 1) {
+        return str(arguments[0]);
+    }
 
-  let print_str = "";
-  for (let i = 0; i < arguments.length - 1; i++) {
-      print_str += str(arguments[i]) + sep;
-  }
-  print_str += str(arguments[arguments.length - 1]);
-  return print_str;
+    let print_str = "";
+    for (let i = 0; i < arguments.length - 1; i++) {
+        print_str += str(arguments[i]) + sep;
+    }
+    print_str += str(arguments[arguments.length - 1]);
+    return print_str;
 }
 
-let _print = print;
-
-function print() {
-  console.log(s_print(arguments));
+export function _print() {
+    console.log(s_print(arguments));
 }
 
 function print_e() {
@@ -530,7 +508,7 @@ logging.warning = function () {
 
 logging.error = function () {
     if (logging.INFO >= logging.level)
-    console.log("INFO:" + s_print(arguments));
+        console.log("INFO:" + s_print(arguments));
 };
 
 logging.get_current_level = function () {
@@ -542,18 +520,11 @@ logging.get_current_level = function () {
 
 
 
-function raise(message) {
-  if (typeof Error !== "undefined") {
-          throw new Error(message);
-      }
-      throw message; // Fallback
-}
-
-function assert(condition, message) {
-  if (condition !== true) {
-      message = message || "Assertion failed";
-      raise(message);
-  }
+export function raise(message) {
+    if (typeof Error !== "undefined") {
+        throw new Error(message);
+    }
+    throw message; // Fallback
 }
 
 
