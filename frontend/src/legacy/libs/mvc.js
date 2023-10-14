@@ -9,7 +9,7 @@
 
 
 import * as bs from "./basic_utils.js";
-import interface_elements from "./interface_elements.js"
+import interface_elements from "./interface_elements.js";
 
 let mvc = {};
 

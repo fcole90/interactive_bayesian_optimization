@@ -21,6 +21,14 @@
   "python.analysis.useLibraryCodeForTypes": true,
   "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python3",
   "python.languageServer": "Pylance",
+  "javascript.format.enable": false,
+  "typescript.format.enable": false,
+  "[javascript]": {
+    "editor.tabSize": 2,
+  },
+  "[typescript]": {
+    "editor.tabSize": 2,
+  },
   "eslint.workingDirectories": [
     "frontend"
   ]
