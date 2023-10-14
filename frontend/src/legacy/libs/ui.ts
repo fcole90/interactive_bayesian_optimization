@@ -13,8 +13,6 @@ import { plt } from './myplotlib.js'
 import np from './simple_numeric.js'
 import * as bs from './std.js'
 
-const ui: Record<string, unknown> = {}
-
 /**
  * Dictionary with ui elements names
  */
@@ -1624,7 +1622,10 @@ class Application extends mvc.SimpleApplication {
   }
 }
 
-ui.Application = Application
+
+const ui = {
+  Application,
+}
 
 
 export default ui

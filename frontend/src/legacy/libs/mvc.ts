@@ -9,20 +9,18 @@
 
 
 import interface_elements from './interface_elements.js'
-import * as bs from './std.js'
-
-
-let mvc = {}
+import * as std from './std.js'
 
 
 /** Class representing a dictionary with more safeguards. */
 class PreservingDictionary {
+  data_dict: std.Dictionary
   /**
      * Create a new model from a data structure.
-     * @param {bs.Dictionary | null} data_dict - Data dictionary to initialise the model.
+     * @param {std.Dictionary | null} data_dict - Data dictionary to initialise the model.
      */
   constructor(data_dict = null) {
-    this.data_dict = new bs.Dictionary()
+    this.data_dict = new std.Dictionary()
 
     if (data_dict !== null) {
       this.update_full_data(data_dict)
@@ -35,16 +33,16 @@ class PreservingDictionary {
      *
      */
   update_full_data(data_dict) {
-    bs.assert_type(data_dict, bs.BSTYPE_DICT)
-    /** @type {bs.Dictionary} */
-    let keys = data_dict.keys()
-    let keys_len = bs.len(keys)
-    let current_keys = this.data_dict.keys()
+    std.assert_type(data_dict, std.BSTYPE_DICT)
+    /** @type {std.Dictionary} */
+    const keys = data_dict.keys()
+    const keys_len = std.len(keys)
+    const current_keys = this.data_dict.keys()
     for (let i = 0; i < keys_len; i++) {
-      if (bs._in(keys[i], current_keys)) {
-        let value = data_dict[keys[i]]
+      if (std._in(keys[i], current_keys)) {
+        const value = data_dict[keys[i]]
         if (value === undefined) {
-          throw new bs.ValueError(`Key '${keys[i]}' has a value 'undefined' which is not acceptable.`)
+          throw new std.ValueError(`Key '${keys[i]}' has a value 'undefined' which is not acceptable.`)
         }
         else if (value === null) {
           this.set_null(keys[i])
@@ -65,11 +63,11 @@ class PreservingDictionary {
      * @param {*} [value]
      */
   add(key, value = null) {
-    bs.assert_type(key, [bs.TYPE_STRING, bs.TYPE_STRING_OBJECT])
-    bs.assert(
-      bs.not_in(key, this.data_dict.keys()),
+    std.assert_type(key, [std.TYPE_STRING, std.TYPE_STRING_OBJECT])
+    std.assert(
+      std.not_in(key, this.data_dict.keys()),
       `Key '${key}' already exists.`,
-      bs.KeyError,
+      std.KeyError,
     )
     this.data_dict[key] = value
   }
@@ -81,11 +79,11 @@ class PreservingDictionary {
      */
   update(key, value) {
     this.assert_valid_data_key(key)
-    bs.assert(
-      bs.is_null_or_undefined(value) === false,
+    std.assert(
+      std.is_null_or_undefined(value) === false,
       `For key '${key}', ` +
             'value cannot be set to \'null\' in this way. Use function \'set_null\' instead.',
-      bs.ValueError)
+      std.ValueError)
     this.data_dict[key] = value
   }
 
@@ -96,8 +94,8 @@ class PreservingDictionary {
      */
   update_by_push(key, value) {
     this.assert_valid_data_key(key)
-    let array = this.data_dict[key]
-    bs.assert_type(array, bs.TYPE_ARRAY)
+    const array = this.data_dict[key]
+    std.assert_type(array, std.TYPE_ARRAY)
     array.push(value)
     this.data_dict[key] = array
   }
@@ -108,8 +106,8 @@ class PreservingDictionary {
      * @returns {boolean}
      */
   exist(key) {
-    bs.assert_type(key, [bs.TYPE_STRING, bs.TYPE_STRING_OBJECT])
-    return bs._in(key, this.data_dict.keys())
+    std.assert_type(key, [std.TYPE_STRING, std.TYPE_STRING_OBJECT])
+    return std._in(key, this.data_dict.keys())
   }
 
   /**
@@ -141,9 +139,9 @@ class PreservingDictionary {
      * @param {string|String} key
      */
   assert_valid_data_key(key) {
-    bs.assert_type(key, [bs.TYPE_STRING, bs.TYPE_STRING_OBJECT])
-    if (bs.not_in(key, this.data_dict.keys())) {
-      throw new bs.KeyError(key)
+    std.assert_type(key, [std.TYPE_STRING, std.TYPE_STRING_OBJECT])
+    if (std.not_in(key, this.data_dict.keys())) {
+      throw new std.KeyError(key)
     }
   }
 
@@ -151,7 +149,7 @@ class PreservingDictionary {
     return this.data_dict.keys()
   }
 }
-mvc.PreservingDictionary = PreservingDictionary
+
 
 /**
  * Holds a collection of data to regression_update the interface.
@@ -162,8 +160,6 @@ class Model extends PreservingDictionary {
     super(data_dict)
   }
 }
-
-mvc.Model = Model
 
 
 /**
@@ -177,7 +173,7 @@ class View extends mvc.PreservingDictionary {
 
   add(key, ui_element = null) {
     // If the value is already an element, add it
-    if (bs.type(ui_element.is_ui) === bs.TYPE_FUNCTION && ui_element.is_ui() === true) {
+    if (std.type(ui_element.is_ui) === std.TYPE_FUNCTION && ui_element.is_ui() === true) {
       super.add(key, ui_element)
     }
     // Else assume it's a constructor and try to instantiate it
@@ -196,7 +192,7 @@ class View extends mvc.PreservingDictionary {
     return super.get(key, fail)
   }
 }
-mvc.View = View
+
 
 /**
  * This holds the events connections and triggers view updates based on the model.
@@ -204,8 +200,8 @@ mvc.View = View
  */
 class Controller {
   constructor(model = null, view = null) {
-    if (bs.is_null_or_undefined(model)) model = new Model()
-    if (bs.is_null_or_undefined(view)) view = new View()
+    if (std.is_null_or_undefined(model)) model = new Model()
+    if (std.is_null_or_undefined(view)) view = new View()
     this.model = model
     this.view = view
     this.binding_values = {}
@@ -240,9 +236,9 @@ class Controller {
     this.view.assert_valid_data_key(key)
 
 
-    let model_key = this.binding_values[key]
-    let processing_function = this.binding_prep_functions[key]
-    let view_method = this.binding_methods[key]
+    const model_key = this.binding_values[key]
+    const processing_function = this.binding_prep_functions[key]
+    const view_method = this.binding_methods[key]
 
     this.model.assert_valid_data_key(key)
 
@@ -270,56 +266,55 @@ class Controller {
   }
 
   /**
-     * Send an AJAX request and runs a function on success.
-     *
-     * The data is sent as a dictionary with a single entry: 'ajax_data',
-     * which has as value a the ajax_data dictionary as a JSON string.
-     *
-     * @param {string} url - API url
-     * @param {Object} ajax_data - a dictionary of serializable data
-     * @param {function} fun_to_run - a function to run on success, it takes a single argument
-     * which is whatever the server replied, typically a JSON string.
-     */
-  send_ajax_and_run(url, ajax_data, fun_to_run) {
+   * Send an AJAX request and runs a function on success.
+   *
+   * The data is sent as a dictionary with a single entry: 'ajax_data',
+   * which has as value a the ajax_data dictionary as a JSON string.
+   *
+   * @param {string} url - API url
+   * @param {Object} ajax_data - a dictionary of serializable data
+   * @param {function} fun_to_run - a function to run on success, it takes a single argument
+   * which is whatever the server replied, typically a JSON string.
+   */
+  send_ajax_and_run(url: string, ajax_data: Record<string, unknown>, fun_to_run: (result: unknown) => void) {
     $.ajax({
       type: 'POST',
       dataType: 'json',
       url,
       data: { 'ajax_data': JSON.stringify(ajax_data) },
-      success: function (result) {
+      success: function (result: unknown) {
         fun_to_run(result)
       },
       global: true,
     })
   }
 
-  save_model(hidden_form_id) {
-    bs.assert(bs._in(hidden_form_id, this.view.keys()))
-    let hidden_form = this.view[hidden_form_id]
+  save_model(hidden_form_id: string) {
+    std.assert(std._in(hidden_form_id, this.view.keys()))
+    const hidden_form = this.view[hidden_form_id]
 
     hidden_form.save_json(this.model)
   }
 
-  load_model(hidden_form_id) {
-    bs.assert(bs._in(hidden_form_id, this.view.keys()))
-    let hidden_form = this.view[hidden_form_id]
+  load_model(hidden_form_id: string) {
+    std.assert(std._in(hidden_form_id, this.view.keys()))
+    const hidden_form = this.view[hidden_form_id]
     this.model = new mvc.Model(hidden_form.load_json())
   }
 }
-mvc.Controller = Controller
 
 
 class SimpleApplication {
   constructor(model = null, view = null, controller = null) {
-    if (bs.is_null_or_undefined(model)) {
+    if (std.is_null_or_undefined(model)) {
       model = new mvc.Model()
     }
 
-    if (bs.is_null_or_undefined(view)) {
+    if (std.is_null_or_undefined(view)) {
       view = new mvc.View()
     }
 
-    if (bs.is_null_or_undefined(controller)) {
+    if (std.is_null_or_undefined(controller)) {
       controller = new mvc.Controller()
     }
 
@@ -329,7 +324,14 @@ class SimpleApplication {
   }
 }
 
-mvc.SimpleApplication = SimpleApplication
+
+const mvc = {
+  Model,
+  View,
+  Controller,
+  SimpleApplication,
+  PreservingDictionary,
+}
 
 export default mvc
 export { mvc }
