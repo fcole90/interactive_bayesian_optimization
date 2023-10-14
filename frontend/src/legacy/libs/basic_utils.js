@@ -14,29 +14,27 @@
 
 
 /* Basic types (recognised by typeof) */
-export const TYPE_NUMBER = "number";
-export const TYPE_STRING = "string";
-export const TYPE_BOOLEAN = "boolean";
-export const TYPE_BIGINT = "bigint";
-export const TYPE_FUNCTION = "function";
-export const TYPE_SYMBOL = "symbol";
-export const TYPE_UNDEFINED = "undefined";
+export const TYPE_NUMBER = 'number'
+export const TYPE_STRING = 'string'
+export const TYPE_BOOLEAN = 'boolean'
+export const TYPE_BIGINT = 'bigint'
+export const TYPE_FUNCTION = 'function'
+export const TYPE_SYMBOL = 'symbol'
+export const TYPE_UNDEFINED = 'undefined'
 
 /* Basic objects */
-export const TYPE_OBJECT = "Object";
-export const TYPE_ARRAY = "Array";
-export const TYPE_STRING_OBJECT = "String";
-export const TYPE_NULL = "null";
+export const TYPE_OBJECT = 'Object'
+export const TYPE_ARRAY = 'Array'
+export const TYPE_STRING_OBJECT = 'String'
+export const TYPE_NULL = 'null'
 
 /* Additional library objects */
-export const BSTYPE_DICT = "Dictionary";
+export const BSTYPE_DICT = 'Dictionary'
 
 /* Type aliases */
-export const True = true;
-export const False = false;
-export const None = null;
-
-
+export const True = true
+export const False = false
+export const None = null
 
 
 //  -----------------------------------------------------
@@ -48,48 +46,44 @@ export const None = null;
  * Defines a CustomError
  */
 export class CustomError extends Error {
-
-    /**
+  /**
      * Creates a custom error. This is an helper class aimed at creating custom errors.
      * @param {string} name - Name of the custom error.
      * @param {string | null=} message - Message to display
      * @param params
      */
-    constructor(name, message = null, ...params) {
-        super(...params);
+  constructor(name, message = null, ...params) {
+    super(...params)
 
-        if (_in(type(name), [TYPE_STRING_OBJECT, TYPE_STRING]) === false) {
-            throw new TypeError(
-                `name is not a string. Type: ${type(name)}`
-            )
-        }
-        else {
-            this.name = name;
-        }
-
-        if (message == null) {
-            message = this.name;
-        }
-        else {
-            message = `${this.name}: ${message}`;
-        }
-
-        this.message = message;
-
+    if (_in(type(name), [TYPE_STRING_OBJECT, TYPE_STRING]) === false) {
+      throw new TypeError(
+        `name is not a string. Type: ${type(name)}`,
+      )
+    }
+    else {
+      this.name = name
     }
 
+    if (message == null) {
+      message = this.name
+    }
+    else {
+      message = `${this.name}: ${message}`
+    }
+
+    this.message = message
+  }
 }
 
 
 /** @typedef {(message?: string | null, ...params: unknown[]) => void} ErrorConstructor*/
 
 export class _Error extends CustomError {
-    /** @type {ErrorConstructor} */
-    constructor(message = null, ...params) {
-        super("Error", message, ...params);
-    }
+  /** @type {ErrorConstructor} */
+  constructor(message = null, ...params) {
+    super('Error', message, ...params)
+  }
 }
-
 
 
 /**
@@ -98,12 +92,11 @@ export class _Error extends CustomError {
  * Thrown when an assert statement fails.
  */
 export class AssertionError extends CustomError {
-    /** @type {ErrorConstructor} */
-    constructor(message = null, ...params) {
-        super("AssertionError", message, ...params);
-    }
+  /** @type {ErrorConstructor} */
+  constructor(message = null, ...params) {
+    super('AssertionError', message, ...params)
+  }
 }
-
 
 
 /**
@@ -112,12 +105,11 @@ export class AssertionError extends CustomError {
  * Thrown when a mapping (dictionary) key is not found in the set of existing keys.
  */
 export class KeyError extends CustomError {
-    /** @type {ErrorConstructor} */
-    constructor(message = null, ...params) {
-        super("KeyError", message, ...params);
-    }
+  /** @type {ErrorConstructor} */
+  constructor(message = null, ...params) {
+    super('KeyError', message, ...params)
+  }
 }
-
 
 
 /**
@@ -127,10 +119,10 @@ export class KeyError extends CustomError {
  * The associated value is a string indicating what precisely went wrong.
  */
 export class RuntimeError extends CustomError {
-    /** @type {ErrorConstructor} */
-    constructor(message = null, ...params) {
-        super("RuntimeError", message, ...params);
-    }
+  /** @type {ErrorConstructor} */
+  constructor(message = null, ...params) {
+    super('RuntimeError', message, ...params)
+  }
 }
 
 
@@ -141,13 +133,11 @@ export class RuntimeError extends CustomError {
  * and the situation is not described by a more precise exception such as KeyError.
  */
 export class ValueError extends CustomError {
-    /** @type {ErrorConstructor} */
-    constructor(message = null, ...params) {
-        super("ValueError", message, ...params);
-    }
+  /** @type {ErrorConstructor} */
+  constructor(message = null, ...params) {
+    super('ValueError', message, ...params)
+  }
 }
-
-
 
 
 //  -----------------------------------------------------
@@ -161,61 +151,58 @@ export class ValueError extends CustomError {
  * TODO: continue implementation as https://docs.python.org/3.7/library/stdtypes.html#typesmapping
  */
 export class Dictionary {
-    constructor(init_seq) {
-        if (is_null_or_undefined(init_seq) === false) {
-            if (type(init_seq) === TYPE_ARRAY) {
-                // If a proper list is provided, use it to initialise the dictionary
-                for (let i = 0; i < init_seq.length; i++) {
-                    let key_i, value_i;
-                    [key_i, value_i] = init_seq[i];
+  constructor(init_seq) {
+    if (is_null_or_undefined(init_seq) === false) {
+      if (type(init_seq) === TYPE_ARRAY) {
+        // If a proper list is provided, use it to initialise the dictionary
+        for (let i = 0; i < init_seq.length; i++) {
+          let key_i, value_i;
+          [key_i, value_i] = init_seq[i]
 
-                    if (not_in(type(key_i), [TYPE_STRING, TYPE_STRING_OBJECT])) {
-                        TypeError(`Element key [${i}] = ${key_i} should be a string but is of type ${type(key_i)}`);
-                    }
-                    this[key_i] = value_i;
-                }
-            }
-            else if (!is_null_or_undefined(Object.keys(init_seq))) {
-                let keys = Object.keys(init_seq);
-                for (let i = 0; i < keys.length; i++) {
-                    this[keys[i]] = init_seq[keys[i]];
-                }
-            }
-            else {
-                throw new ValueError(`the given argument of type '${init_seq}' cannot be converted to dictionary.`);
-            }
+          if (not_in(type(key_i), [TYPE_STRING, TYPE_STRING_OBJECT])) {
+            TypeError(`Element key [${i}] = ${key_i} should be a string but is of type ${type(key_i)}`)
+          }
+          this[key_i] = value_i
         }
-    }
-
-    clear() {
-        let all_keys = this.keys();
-        for (let i = 0; i < all_keys.length; i++) {
-            delete this[all_keys[i]];
+      }
+      else if (!is_null_or_undefined(Object.keys(init_seq))) {
+        let keys = Object.keys(init_seq)
+        for (let i = 0; i < keys.length; i++) {
+          this[keys[i]] = init_seq[keys[i]]
         }
+      }
+      else {
+        throw new ValueError(`the given argument of type '${init_seq}' cannot be converted to dictionary.`)
+      }
     }
+  }
 
-    del(key) {
-        if (_in(key, this.keys())) { delete this[key]; }
+  clear() {
+    let all_keys = this.keys()
+    for (let i = 0; i < all_keys.length; i++) {
+      delete this[all_keys[i]]
     }
+  }
 
-    keys() {
-        return Object.keys(this);
+  del(key) {
+    if (_in(key, this.keys())) { delete this[key] }
+  }
+
+  keys() {
+    return Object.keys(this)
+  }
+
+  get(key, _default = null) {
+    let val = this[key]
+
+    if (val === undefined) {
+      return _default
     }
-
-    get(key, _default = null) {
-        let val = this[key];
-
-        if (val === undefined) {
-            return _default;
-        }
-        else {
-            return val;
-        }
+    else {
+      return val
     }
+  }
 }
-
-
-
 
 
 //  -----------------------------------------------------
@@ -226,8 +213,7 @@ export class Dictionary {
 
 
 /** Simple alias */
-export const print = console.log;
-
+export const print = console.log
 
 
 //  -----------------------------------------------------
@@ -245,15 +231,14 @@ export const print = console.log;
  * @param {_Error} error_constructor - Type of error to display
  */
 export const assert = function (condition, message = null, error_constructor = AssertionError) {
+  if (is_null_or_undefined(error_constructor)) {
+    throw new ValueError()
+  }
 
-    if (is_null_or_undefined(error_constructor)) {
-        throw new ValueError();
-    }
-
-    if (condition === false) {
-        throw new error_constructor(message);
-    }
-};
+  if (condition === false) {
+    throw new error_constructor(message)
+  }
+}
 
 /**
  * @param {*} obj 
@@ -262,33 +247,33 @@ export const assert = function (condition, message = null, error_constructor = A
  * @param {_Error} error_constructor 
  */
 export const assert_len = function (obj, expected_length, message = null, error_constructor = AssertionError) {
-    const obj_len = len(obj);
-    if (is_null_or_undefined(message)) {
-        message = `Expected length ${expected_length} but found ${obj_len} instead.`
-    }
-    assert(obj_len === expected_length, message, error_constructor);
-};
+  const obj_len = len(obj)
+  if (is_null_or_undefined(message)) {
+    message = `Expected length ${expected_length} but found ${obj_len} instead.`
+  }
+  assert(obj_len === expected_length, message, error_constructor)
+}
 
 export const assert_type = function (obj, expected_types) {
-    let obj_type = type(obj);
-    if (_in(type(expected_types), [TYPE_STRING, TYPE_STRING_OBJECT])) {
-        assert(
-            obj_type === expected_types,
-            `Expected type '${expected_types}' but found '${obj_type}' instead.`,
-            TypeError
-        );
-    }
-    else if (type(expected_types) === TYPE_ARRAY) {
-        assert(
-            _in(obj_type, expected_types),
-            `Expected any of these types [${expected_types}] but found '${obj_type}' instead.`,
-            TypeError
-        );
-    }
-    else {
-        throw new TypeError(type(expected_types));
-    }
-};
+  let obj_type = type(obj)
+  if (_in(type(expected_types), [TYPE_STRING, TYPE_STRING_OBJECT])) {
+    assert(
+      obj_type === expected_types,
+      `Expected type '${expected_types}' but found '${obj_type}' instead.`,
+      TypeError,
+    )
+  }
+  else if (type(expected_types) === TYPE_ARRAY) {
+    assert(
+      _in(obj_type, expected_types),
+      `Expected any of these types [${expected_types}] but found '${obj_type}' instead.`,
+      TypeError,
+    )
+  }
+  else {
+    throw new TypeError(type(expected_types))
+  }
+}
 
 
 /**
@@ -297,9 +282,8 @@ export const assert_type = function (obj, expected_types) {
  * @returns {Dictionary}
  */
 export const dict = function (init_seq) {
-    return new Dictionary(init_seq);
-};
-
+  return new Dictionary(init_seq)
+}
 
 
 /**
@@ -311,16 +295,15 @@ export const dict = function (init_seq) {
  * @returns {boolean}
  */
 export const _in = function (value, sequence) {
+  sequence = Object.values(sequence)
 
-    sequence = Object.values(sequence);
-
-    for (let i = 0; i < sequence.length; i++) {
-        if (sequence[i] === value) {
-            return true;
-        }
+  for (let i = 0; i < sequence.length; i++) {
+    if (sequence[i] === value) {
+      return true
     }
-    return false;
-};
+  }
+  return false
+}
 
 /**
  * Checks that the value is not contained in the given sequence. Uses strict equality.
@@ -329,8 +312,8 @@ export const _in = function (value, sequence) {
  * @returns {boolean}
  */
 export const not_in = function (value, sequence) {
-    return !_in(value, sequence);
-};
+  return !_in(value, sequence)
+}
 
 
 /**
@@ -339,13 +322,13 @@ export const not_in = function (value, sequence) {
  * @returns {boolean}
  */
 export const is_null_or_undefined = function (obj) {
-    let obj_t = type(obj);
-    return obj_t === TYPE_NULL || obj_t === TYPE_UNDEFINED;
-};
+  let obj_t = type(obj)
+  return obj_t === TYPE_NULL || obj_t === TYPE_UNDEFINED
+}
 
 export const is_not_null_or_undefined = function (obj) {
-    return is_null_or_undefined(obj) === false;
-};
+  return is_null_or_undefined(obj) === false
+}
 
 /**
  *
@@ -353,16 +336,16 @@ export const is_not_null_or_undefined = function (obj) {
  * @returns {number}
  */
 export function len(obj) {
-    let len_value = obj.length;
-    if (is_null_or_undefined(len_value)) {
-        throw new TypeError(`object of type '${type(obj)}' has no length`);
-    }
-    else if (type(len_value) !== TYPE_NUMBER) {
-        throw new TypeError(`object of type '${type(obj)}' has length of type '${type(len_value)}' instead of '${TYPE_NUMBER}'`);
-    }
-    else {
-        return obj.length;
-    }
+  let len_value = obj.length
+  if (is_null_or_undefined(len_value)) {
+    throw new TypeError(`object of type '${type(obj)}' has no length`)
+  }
+  else if (type(len_value) !== TYPE_NUMBER) {
+    throw new TypeError(`object of type '${type(obj)}' has length of type '${type(len_value)}' instead of '${TYPE_NUMBER}'`)
+  }
+  else {
+    return obj.length
+  }
 }
 
 
@@ -373,14 +356,14 @@ export function len(obj) {
  * @param extension
  * @returns {string}
  */
-export const module_path = function (path, module_name, extension = "mjs") {
-    return `${path}/${module_name}.${extension}`;
-};
+export const module_path = function (path, module_name, extension = 'mjs') {
+  return `${path}/${module_name}.${extension}`
+}
 
 
 export const str = function (value) {
-    return `${value}`;
-};
+  return `${value}`
+}
 
 
 /**
@@ -389,46 +372,28 @@ export const str = function (value) {
  * @returns {string|*|"undefined"|"object"|"boolean"|"number"|"string"|"function"|"symbol"|"bigint"}
  */
 export const type = function (obj) {
-    // Null object
-    if (obj === null) {
-        return "null";
-    }
+  // Null object
+  if (obj === null) {
+    return 'null'
+  }
 
-    // Builtins
-    if (typeof obj !== "object") {
-        return typeof obj;
-    }
+  // Builtins
+  if (typeof obj !== 'object') {
+    return typeof obj
+  }
 
-    // Builtins objects
-    if (Object.prototype.toString.call(obj) !== "[object Object]") {
-        return Object.prototype.toString.call(obj).slice(8, -1);
-    }
+  // Builtins objects
+  if (Object.prototype.toString.call(obj) !== '[object Object]') {
+    return Object.prototype.toString.call(obj).slice(8, -1)
+  }
 
-    // Constructed objects
-    if (obj.constructor.name !== "undefined") {
-        return obj.constructor.name;
-    }
+  // Constructed objects
+  if (obj.constructor.name !== 'undefined') {
+    return obj.constructor.name
+  }
 
-    return "object";
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  return 'object'
+}
 
 
 /* --- Legacy ----
@@ -438,94 +403,89 @@ Legacy functions. TODO: modernise or delete
  */
 
 function s_print() {
-    let str = s => String(s);
-    let sep = " ";
+  let str = s => String(s)
+  let sep = ' '
 
-    if (arguments.length === 0) {
-        return "";
-    }
+  if (arguments.length === 0) {
+    return ''
+  }
 
-    if (arguments.length === 1) {
-        return str(arguments[0]);
-    }
+  if (arguments.length === 1) {
+    return str(arguments[0])
+  }
 
-    let print_str = "";
-    for (let i = 0; i < arguments.length - 1; i++) {
-        print_str += str(arguments[i]) + sep;
-    }
-    print_str += str(arguments[arguments.length - 1]);
-    return print_str;
+  let print_str = ''
+  for (let i = 0; i < arguments.length - 1; i++) {
+    print_str += str(arguments[i]) + sep
+  }
+  print_str += str(arguments[arguments.length - 1])
+  return print_str
 }
 
 export function _print() {
-    console.log(s_print(arguments));
+  console.log(s_print(arguments))
 }
 
 function print_e() {
-    console.error(s_print(arguments));
+  console.error(s_print(arguments))
 }
 
 
 // https://stackoverflow.com/a/18939803
 function set_logging() {
-    // @ts-ignore
-    window.debug = {
-        log: window.console.log.bind(window.console, '%s: %s'),
-        error: window.console.error.bind(window.console, 'error: %s'),
-        info: window.console.info.bind(window.console, 'info: %s'),
-        warn: window.console.warn.bind(window.console, 'warn: %s')
-    };
+  // @ts-ignore
+  window.debug = {
+    log: window.console.log.bind(window.console, '%s: %s'),
+    error: window.console.error.bind(window.console, 'error: %s'),
+    info: window.console.info.bind(window.console, 'info: %s'),
+    warn: window.console.warn.bind(window.console, 'warn: %s'),
+  }
 }
 
 let logging = {
-    "DEBUG": 0,
-    "INFO": 1,
-    "WARNING": 2,
-    "ERROR": 3,
-    "values": ["DEBUG", "INFO", "WARNING", "ERROR"]
-};
+  'DEBUG': 0,
+  'INFO': 1,
+  'WARNING': 2,
+  'ERROR': 3,
+  'values': ['DEBUG', 'INFO', 'WARNING', 'ERROR'],
+}
 
 // Default logging level
-logging.level = logging.DEBUG;
+logging.level = logging.DEBUG
 
 logging.debug = function () {
-    if (logging.DEBUG >= logging.level) {
-        console.log("DEBUG:" + s_print(arguments));
-    }
-};
+  if (logging.DEBUG >= logging.level) {
+    console.log('DEBUG:' + s_print(arguments))
+  }
+}
 
 logging.info = function () {
-    if (logging.INFO >= logging.level) {
-        console.log("INFO:" + s_print(arguments));
-    }
-};
+  if (logging.INFO >= logging.level) {
+    console.log('INFO:' + s_print(arguments))
+  }
+}
 
 logging.warning = function () {
-    if (logging.WARNING >= logging.level) {
-        console.log("WARNING:" + s_print(arguments));
-    }
-};
+  if (logging.WARNING >= logging.level) {
+    console.log('WARNING:' + s_print(arguments))
+  }
+}
 
 logging.error = function () {
-    if (logging.INFO >= logging.level)
-        console.log("INFO:" + s_print(arguments));
-};
+  if (logging.INFO >= logging.level)
+    console.log('INFO:' + s_print(arguments))
+}
 
 logging.get_current_level = function () {
-    return logging.values[logging.level];
-};
-
-
-
-
+  return logging.values[logging.level]
+}
 
 
 export function raise(message) {
-    if (typeof Error !== "undefined") {
-        throw new Error(message);
-    }
-    throw message; // Fallback
+  if (typeof Error !== 'undefined') {
+    throw new Error(message)
+  }
+  throw message // Fallback
 }
-
 
 
