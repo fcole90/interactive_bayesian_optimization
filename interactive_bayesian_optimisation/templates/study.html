@@ -104,9 +104,6 @@
 
     <script type="module">
         import { main } from './static/js/dist/src/index.js'
-        import { ui } from './static/js/libs/ui.js';
-        main()
-        let app = new ui.Application();
-        app.exec();
+        main.bootstrap()
     </script>
 </body>
