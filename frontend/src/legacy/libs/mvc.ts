@@ -32,7 +32,7 @@ class PreservingDictionary {
      * @param {object} data_dict - Data dictionary to initialise the model.
      *
      */
-  update_full_data(data_dict) {
+  update_full_data(data_dict: std.Dictionary) {
     std.assert_type(data_dict, std.BSTYPE_DICT)
     /** @type {std.Dictionary} */
     const keys = data_dict.keys()
@@ -164,14 +164,13 @@ class Model extends PreservingDictionary {
 
 /**
  * Insert here the interface elements.
- * @type {mvc.View}
  */
-class View extends mvc.PreservingDictionary {
+class View extends PreservingDictionary {
   constructor(data_dict = null) {
     super(data_dict)
   }
 
-  add(key, ui_element = null) {
+  add(key: string, ui_element = null) {
     // If the value is already an element, add it
     if (std.type(ui_element.is_ui) === std.TYPE_FUNCTION && ui_element.is_ui() === true) {
       super.add(key, ui_element)
@@ -182,57 +181,50 @@ class View extends mvc.PreservingDictionary {
     }
   }
 
-  /**
-     *
-     * @param key
-     * @param fail
-     * @returns {interface_elements.BaseInterfaceElement}
-     */
-  get(key, fail = true) {
+  get(key: string, fail = true) {
     return super.get(key, fail)
   }
 }
 
 
+type ControllerPrepFunction = (args: unknown) => unknown
+type ControllerMethod = string
 /**
  * This holds the events connections and triggers view updates based on the model.
- * @type {mvc.Controller}
  */
 class Controller {
-  constructor(model = null, view = null) {
-    if (std.is_null_or_undefined(model)) model = new Model()
-    if (std.is_null_or_undefined(view)) view = new View()
-    this.model = model
-    this.view = view
+  view: View
+  model: Model
+  binding_values: Record<string, unknown>
+  binding_prep_functions: Record<string, ControllerPrepFunction>
+  binding_methods: Record<string, ControllerMethod | null>
+  constructor(
+    model: Model | null = null, 
+    view: View | null = null, 
+  ) {
+    this.model = model ?? new Model()
+    this.view = view ?? new View()
     this.binding_values = {}
     this.binding_prep_functions = {}
     this.binding_methods = {}
   }
 
   /**
-     * The views are updated upon any model change.
-     * @param view_key
-     * @param model_key
-     * @param view_element_method
-     * @param processing_function
-     */
-  bind_view_element_to_model_change(view_key, model_key, view_element_method = null, processing_function = null) {
-    if (processing_function === null) {
-      // Assign identity function
-      processing_function = (args) => args
-    }
-
-    if (view_element_method === null) {
-      view_element_method = 'html'
-    }
-
-
+   * The views are updated upon any model change.
+   */
+  bind_view_element_to_model_change(
+    view_key: string, 
+    model_key: string, 
+    view_element_method: ControllerMethod | null = null, 
+    processing_function: ControllerPrepFunction | null = null,
+  ) {
     this.binding_values[view_key] = model_key
-    this.binding_prep_functions[view_key] = processing_function
-    this.binding_methods[view_key] = view_element_method
+    // Assign identity function when null
+    this.binding_prep_functions[view_key] = processing_function ?? ((args: unknown) => args)
+    this.binding_methods[view_key] = view_element_method ?? 'html'
   }
 
-  update_view_element(key) {
+  update_view_element(key: string) {
     this.view.assert_valid_data_key(key)
 
 
@@ -258,7 +250,7 @@ class Controller {
 
   }
 
-  update_model_data_value(key, value, trigger_update = true) {
+  update_model_data_value(key: string, value: unknown, trigger_update = true) {
     this.model.update(key, value)
     if (trigger_update === true) {
       this.update_view()
@@ -305,22 +297,18 @@ class Controller {
 
 
 class SimpleApplication {
-  constructor(model = null, view = null, controller = null) {
-    if (std.is_null_or_undefined(model)) {
-      model = new mvc.Model()
-    }
+  model: Model
+  view: View
+  controller: Controller
 
-    if (std.is_null_or_undefined(view)) {
-      view = new mvc.View()
-    }
-
-    if (std.is_null_or_undefined(controller)) {
-      controller = new mvc.Controller()
-    }
-
-    this.model = model
-    this.view = view
-    this.controller = controller
+  constructor(
+    model: Model | null = null, 
+    view: View | null = null, 
+    controller: Controller | null = null,
+  ) {
+    this.model = model ?? new mvc.Model()
+    this.view = view ?? new mvc.View()
+    this.controller = controller ?? new mvc.Controller()
   }
 }
 

@@ -142,7 +142,7 @@ class TimedSwitch extends Switch {
  * Its methods are divided in categories and are in alphabetical order within each category. *
  */
 class CustomAppController extends mvc.Controller {
-  constructor(model = null, view = null) {
+  constructor(model: mvc.Model = null, view = null) {
     super(model, view)
     // Keep a version of the initial model so it can reset to it when needed
     this.initial_model = new mvc.Model(model.data_dict)
