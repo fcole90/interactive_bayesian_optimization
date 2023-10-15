@@ -5,16 +5,16 @@
  * @module libs/interface_elements
  */
 
-import * as bs from './std.js'
+import * as py from './python.js'
 
 let interface_elements = {}
 
 class BaseInterfaceElement{
   constructor(id) {
-    bs.assert_type(id, [bs.TYPE_STRING, bs.TYPE_STRING_OBJECT])
+    py.assert_type(id, [py.TYPE_STRING, py.TYPE_STRING_OBJECT])
     this.jq_reference = $(`#${id}`)
     this.element_id = id
-    bs.assert(
+    py.assert(
       this.jq_reference.length === 1,
       `Expecting only 1 element with id '${id}', found ${this.jq_reference.length} instead.`)
   }
@@ -36,7 +36,7 @@ class BaseInterfaceElement{
   }
 
   set_HTML_content(html_value) {
-    this.get_jq_element().html(bs.str(html_value))
+    this.get_jq_element().html(py.str(html_value))
   }
 
   on(...args) {
@@ -82,7 +82,7 @@ class BaseInterfaceElement{
 
   disable_cursor() {this.get_jq_element().css('cursor', 'none')}
   enable_cursor(type='auto') {
-    bs.assert_type(type, bs.TYPE_STRING)
+    py.assert_type(type, py.TYPE_STRING)
     this.get_jq_element().css('cursor', type)
   }
 
@@ -114,8 +114,8 @@ class Button extends BaseInterfaceElement {
   }
 
   set_text(value) {
-    bs.assert_type(value, [bs.TYPE_STRING])
-    this.get_jq_element().text(bs.str(value))
+    py.assert_type(value, [py.TYPE_STRING])
+    this.get_jq_element().text(py.str(value))
   }
 }
 interface_elements.Button = Button
@@ -199,11 +199,11 @@ class ModalDialogue extends Container{
     this.is_in_focus = true
     const modal_paragraph_id = 'modal_alert_text'
 
-    if (bs.is_null_or_undefined(on_ok)){
+    if (py.is_null_or_undefined(on_ok)){
       on_ok = function () {}
     }
     else {
-      bs.assert_type(on_ok, bs.TYPE_FUNCTION)
+      py.assert_type(on_ok, py.TYPE_FUNCTION)
     }
 
     this.content.get_jq_element().html(
@@ -235,18 +235,18 @@ class ModalDialogue extends Container{
     const input_el_id = 'modal_prompt_input'
     const modal_paragraph_id = 'modal_prompt_text'
 
-    if (bs.is_null_or_undefined(on_ok)){
+    if (py.is_null_or_undefined(on_ok)){
       on_ok = () => {}
     }
     else {
-      bs.assert_type(on_ok, bs.TYPE_FUNCTION)
+      py.assert_type(on_ok, py.TYPE_FUNCTION)
     }
 
-    if (bs.is_null_or_undefined(on_cancel)){
+    if (py.is_null_or_undefined(on_cancel)){
       on_cancel = () => {}
     }
     else {
-      bs.assert_type(on_cancel, bs.TYPE_FUNCTION)
+      py.assert_type(on_cancel, py.TYPE_FUNCTION)
     }
 
     // Set the content
@@ -313,13 +313,13 @@ class Text extends BaseInterfaceElement {
   }
 
   set_text(value) {
-    bs.assert_type(value, [bs.TYPE_STRING])
-    this.get_jq_element().text(bs.str(value))
+    py.assert_type(value, [py.TYPE_STRING])
+    this.get_jq_element().text(py.str(value))
   }
 
   set_rich_text(value) {
-    bs.assert_type(value, [bs.TYPE_STRING])
-    this.get_jq_element().html(bs.str(value))
+    py.assert_type(value, [py.TYPE_STRING])
+    this.get_jq_element().html(py.str(value))
   }
 
   blink(n=1) {

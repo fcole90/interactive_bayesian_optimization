@@ -8,19 +8,18 @@
 // Write three classes that interact together.
 
 
-import interface_elements from './interface_elements.js'
-import * as std from './std.js'
+import * as py from './python.js'
 
 
 /** Class representing a dictionary with more safeguards. */
 class PreservingDictionary {
-  data_dict: std.Dictionary
+  data_dict: py.Dictionary
   /**
      * Create a new model from a data structure.
-     * @param {std.Dictionary | null} data_dict - Data dictionary to initialise the model.
+     * @param {py.Dictionary | null} data_dict - Data dictionary to initialise the model.
      */
   constructor(data_dict = null) {
-    this.data_dict = new std.Dictionary()
+    this.data_dict = new py.Dictionary()
 
     if (data_dict !== null) {
       this.update_full_data(data_dict)
@@ -32,17 +31,17 @@ class PreservingDictionary {
      * @param {object} data_dict - Data dictionary to initialise the model.
      *
      */
-  update_full_data(data_dict: std.Dictionary) {
-    std.assert_type(data_dict, std.BSTYPE_DICT)
-    /** @type {std.Dictionary} */
+  update_full_data(data_dict: py.Dictionary) {
+    py.assert_type(data_dict, py.BSTYPE_DICT)
+    /** @type {py.Dictionary} */
     const keys = data_dict.keys()
-    const keys_len = std.len(keys)
+    const keys_len = py.len(keys)
     const current_keys = this.data_dict.keys()
     for (let i = 0; i < keys_len; i++) {
-      if (std._in(keys[i], current_keys)) {
+      if (py._in(keys[i], current_keys)) {
         const value = data_dict[keys[i]]
         if (value === undefined) {
-          throw new std.ValueError(`Key '${keys[i]}' has a value 'undefined' which is not acceptable.`)
+          throw new py.ValueError(`Key '${keys[i]}' has a value 'undefined' which is not acceptable.`)
         }
         else if (value === null) {
           this.set_null(keys[i])
@@ -63,11 +62,11 @@ class PreservingDictionary {
      * @param {*} [value]
      */
   add(key, value = null) {
-    std.assert_type(key, [std.TYPE_STRING, std.TYPE_STRING_OBJECT])
-    std.assert(
-      std.not_in(key, this.data_dict.keys()),
+    py.assert_type(key, [py.TYPE_STRING, py.TYPE_STRING_OBJECT])
+    py.assert(
+      !py._in(key, this.data_dict.keys()),
       `Key '${key}' already exists.`,
-      std.KeyError,
+      py.KeyError,
     )
     this.data_dict[key] = value
   }
@@ -79,11 +78,11 @@ class PreservingDictionary {
      */
   update(key, value) {
     this.assert_valid_data_key(key)
-    std.assert(
-      std.is_null_or_undefined(value) === false,
+    py.assert(
+      py.is_null_or_undefined(value) === false,
       `For key '${key}', ` +
             'value cannot be set to \'null\' in this way. Use function \'set_null\' instead.',
-      std.ValueError)
+      py.ValueError)
     this.data_dict[key] = value
   }
 
@@ -95,7 +94,7 @@ class PreservingDictionary {
   update_by_push(key, value) {
     this.assert_valid_data_key(key)
     const array = this.data_dict[key]
-    std.assert_type(array, std.TYPE_ARRAY)
+    py.assert_type(array, py.TYPE_ARRAY)
     array.push(value)
     this.data_dict[key] = array
   }
@@ -106,8 +105,8 @@ class PreservingDictionary {
      * @returns {boolean}
      */
   exist(key) {
-    std.assert_type(key, [std.TYPE_STRING, std.TYPE_STRING_OBJECT])
-    return std._in(key, this.data_dict.keys())
+    py.assert_type(key, [py.TYPE_STRING, py.TYPE_STRING_OBJECT])
+    return py._in(key, this.data_dict.keys())
   }
 
   /**
@@ -139,9 +138,9 @@ class PreservingDictionary {
      * @param {string|String} key
      */
   assert_valid_data_key(key) {
-    std.assert_type(key, [std.TYPE_STRING, std.TYPE_STRING_OBJECT])
-    if (std.not_in(key, this.data_dict.keys())) {
-      throw new std.KeyError(key)
+    py.assert_type(key, [py.TYPE_STRING, py.TYPE_STRING_OBJECT])
+    if (!py._in(key, this.data_dict.keys())) {
+      throw new py.KeyError(key)
     }
   }
 
@@ -172,7 +171,7 @@ class View extends PreservingDictionary {
 
   add(key: string, ui_element = null) {
     // If the value is already an element, add it
-    if (std.type(ui_element.is_ui) === std.TYPE_FUNCTION && ui_element.is_ui() === true) {
+    if (py.type(ui_element.is_ui) === py.TYPE_FUNCTION && ui_element.is_ui() === true) {
       super.add(key, ui_element)
     }
     // Else assume it's a constructor and try to instantiate it
@@ -282,14 +281,14 @@ class Controller {
   }
 
   save_model(hidden_form_id: string) {
-    std.assert(std._in(hidden_form_id, this.view.keys()))
+    py.assert(py._in(hidden_form_id, this.view.keys()))
     const hidden_form = this.view[hidden_form_id]
 
     hidden_form.save_json(this.model)
   }
 
   load_model(hidden_form_id: string) {
-    std.assert(std._in(hidden_form_id, this.view.keys()))
+    py.assert(py._in(hidden_form_id, this.view.keys()))
     const hidden_form = this.view[hidden_form_id]
     this.model = new mvc.Model(hidden_form.load_json())
   }

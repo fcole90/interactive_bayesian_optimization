@@ -1,9 +1,9 @@
 // Numpy-like functions
-'use strict'
-import * as bs from './std.js'
+
+import * as py from './python.js'
 
 
-let np = function () {
+let numpy = function () {
   function linspace(start, end, n) {
     let lin_list = []
     let interval = end - start
@@ -20,10 +20,10 @@ let np = function () {
   }
 
   function list_argmax(a_list) {
-    let list_len = bs.len(a_list)
-    bs.assert(
+    let list_len = py.len(a_list)
+    py.assert(
       list_len > 0,
-      `The given list have length > 0. Found length=${bs.len(a_list)} instead.`)
+      `The given list have length > 0. Found length=${py.len(a_list)} instead.`)
     if (list_len === 1) { return 0 }
     let argmax_index = 0
     let max_value = a_list[0]
@@ -95,5 +95,5 @@ let np = function () {
   }
 }()
 
-export default np
-export { np }
+export default numpy
+export { numpy }

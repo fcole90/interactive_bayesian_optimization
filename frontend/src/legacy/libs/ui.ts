@@ -10,8 +10,8 @@
 import { default as interface_elements, default as ui_el } from './interface_elements.js'
 import mvc from './mvc.js'
 import { plt } from './myplotlib.js'
-import np from './simple_numeric.js'
-import * as bs from './std.js'
+import { numpy as np } from './numpy.js'
+import * as py from './python.js'
 
 /**
  * Dictionary with ui elements names
@@ -63,30 +63,30 @@ class Switch {
   fun_event_off: SwitchFunEvent | null
 
   constructor(initial_value = false) {
-    bs.assert_type(initial_value, bs.TYPE_BOOLEAN)
+    py.assert_type(initial_value, py.TYPE_BOOLEAN)
     this.__SWITCH_STATE__ = initial_value
     this.fun_event_off = null
     this.fun_event_on = null
   }
 
   assign_event_on(fun_event: SwitchFunEvent) {
-    bs.assert_type(fun_event, bs.TYPE_FUNCTION)
+    py.assert_type(fun_event, py.TYPE_FUNCTION)
     this.fun_event_on = fun_event
   }
 
   assign_event_off(fun_event: SwitchFunEvent) {
-    bs.assert_type(fun_event, bs.TYPE_FUNCTION)
+    py.assert_type(fun_event, py.TYPE_FUNCTION)
     this.fun_event_off = fun_event
   }
 
   turn_on() {
-    bs.assert(this.is_off(), 'Attempting to turn on, but was already on!')
+    py.assert(this.is_off(), 'Attempting to turn on, but was already on!')
     this.__SWITCH_STATE__ = true
     this.fun_event_on?.()
   }
 
   turn_off() {
-    bs.assert(this.is_on(), 'Attempting to turn off, but was already off!')
+    py.assert(this.is_on(), 'Attempting to turn off, but was already off!')
     this.__SWITCH_STATE__ = false
     this.fun_event_off?.()
   }
@@ -251,7 +251,7 @@ class CustomAppController extends mvc.Controller {
     console.error('Response error:', jqXHR.responseText)
     // noinspection JSUnresolvedFunction
     console.error('Full response:', jqXHR.getAllResponseHeaders())
-    throw new bs.RuntimeError('Something went wrong with server\'s AJAX response.')
+    throw new py.RuntimeError('Something went wrong with server\'s AJAX response.')
   }
 
   /**
@@ -270,7 +270,7 @@ class CustomAppController extends mvc.Controller {
                  */
   handle_api_sample_success_response(response) {
     // Update the model from the response
-    const response_dict = new bs.Dictionary(response)
+    const response_dict = new py.Dictionary(response)
     this.model.update_full_data(response_dict)
     this.model.update('current_score', 0)
     this.model.update('session_score', 0)
@@ -285,11 +285,11 @@ class CustomAppController extends mvc.Controller {
     // Log the received data
     console.log('Received the following data:')
     for (const key of this.model.keys()) {
-      console.log(`'${key}' - type: ${bs.type(this.model.get(key))}`)
+      console.log(`'${key}' - type: ${py.type(this.model.get(key))}`)
     }
     const model_settings = this.model.get('settings')
     for (const key of Object.keys(model_settings)) {
-      console.log(`settings: '${key}' - type: ${bs.type(model_settings[key])}`)
+      console.log(`settings: '${key}' - type: ${py.type(model_settings[key])}`)
     }
 
     // Show canvas
@@ -387,7 +387,7 @@ class CustomAppController extends mvc.Controller {
                  */
   handle_api_update_gp_success_response(response) {
     // Update the full model using the new data from the server
-    const response_dict = new bs.Dictionary(response)
+    const response_dict = new py.Dictionary(response)
     this.model.update_full_data(response_dict)
 
     // Update model for properties to be computed
@@ -475,7 +475,7 @@ class CustomAppController extends mvc.Controller {
                  * See more on https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent
                  */
   handle_canvas_mouse_move(event) {
-    if (bs.is_null_or_undefined(event)) {
+    if (py.is_null_or_undefined(event)) {
       console.warn('Received null event, likely no mousemove has been done')
       return
     }
@@ -490,9 +490,9 @@ class CustomAppController extends mvc.Controller {
     const new_top = event.pageY - (cursor_line_left.height() / 2)
     const new_left = event.pageX - (cursor_line_top.width() / 2)
 
-    bs.assert(new_top > 0, 'Cursor top lower than 0')
-    bs.assert(new_top !== undefined, 'Cursor top is undefined')
-    bs.assert(Number.isNaN(new_top) === false, 'Cursor top is NaN')
+    py.assert(new_top > 0, 'Cursor top lower than 0')
+    py.assert(new_top !== undefined, 'Cursor top is undefined')
+    py.assert(Number.isNaN(new_top) === false, 'Cursor top is NaN')
 
     cursor_line_left.css('top', new_top)
     cursor_line_right.css('top', new_top)
@@ -563,7 +563,7 @@ class CustomAppController extends mvc.Controller {
 
     this.view.get(EL.canvas_plot).enable_cursor()
 
-    const is_study_complete = (bs.is_null_or_undefined(this.model.get('settings')['max_sessions']) === false &&
+    const is_study_complete = (py.is_null_or_undefined(this.model.get('settings')['max_sessions']) === false &&
             this.model.get('session') >= this.model.get('settings')['max_sessions'] - 1)
 
 
@@ -770,7 +770,7 @@ class CustomAppController extends mvc.Controller {
     const farthest_distance = Math.abs(max_y - min_y) * scaling_value
     const scaled_error = error / farthest_distance * 100
     const score = Math.round(100 - scaled_error)
-    bs.assert(
+    py.assert(
       Number.isNaN(score) === false,
       'Error value is Nan. Involved variables:\n' +
             `y: ${y}, ` +
@@ -804,7 +804,7 @@ class CustomAppController extends mvc.Controller {
     const farthest_distance = Math.abs(max_y - min_y) * scaling_value
     const scaled_error = error / farthest_distance * 100
     const score = Math.round(100 - scaled_error)
-    bs.assert(
+    py.assert(
       Number.isNaN(score) === false,
       'Error value is Nan. Involved variables:\n' +
             `scaling_value: ${scaling_value}, ` +
@@ -843,17 +843,17 @@ class CustomAppController extends mvc.Controller {
                  */
   get_last_error_compute_from_data() {
     const y_max = np.list_max(this.model.get('y'))
-    bs.assert(Number.isNaN(y_max) === false)
+    py.assert(Number.isNaN(y_max) === false)
     const y_data_actual = this.model.get('y_data_actual')
-    if (bs.len(y_data_actual) === 0) return Number.POSITIVE_INFINITY
-    const y_user_last = y_data_actual[bs.len(y_data_actual) - 1]
-    bs.assert(Number.isNaN(y_user_last) === false)
+    if (py.len(y_data_actual) === 0) return Number.POSITIVE_INFINITY
+    const y_user_last = y_data_actual[py.len(y_data_actual) - 1]
+    py.assert(Number.isNaN(y_user_last) === false)
     const scaling_value = this.model.get('scaling_value')
-    bs.assert(Number.isNaN(scaling_value) === false)
+    py.assert(Number.isNaN(scaling_value) === false)
     const scaled_y_max = y_max * scaling_value
     const scaled_y_user_last = y_user_last * scaling_value
     const error = scaled_y_max - scaled_y_user_last
-    bs.assert(
+    py.assert(
       Number.isNaN(error) === false,
       'Error value is Nan. Involved variables:\n' +
             `y_max: ${y_max}, ` +
@@ -910,15 +910,15 @@ class CustomAppController extends mvc.Controller {
     const new_point_index = this.model.get('new_point_index')
     const y = this.model.get('y')
     const y_max = np.list_max(y)
-    bs.assert(Number.isNaN(y_max) === false)
+    py.assert(Number.isNaN(y_max) === false)
     const y_user_max = np.list_max(this.model.get('y_data_actual').concat(y[new_point_index]))
-    bs.assert(Number.isNaN(y_user_max) === false)
+    py.assert(Number.isNaN(y_user_max) === false)
     const scaling_value = this.model.get('scaling_value')
-    bs.assert(Number.isNaN(scaling_value) === false)
+    py.assert(Number.isNaN(scaling_value) === false)
     const scaled_y_max = y_max * scaling_value
     const scaled_y_user_max = y_user_max * scaling_value
     const error = scaled_y_max - scaled_y_user_max
-    bs.assert(
+    py.assert(
       Number.isNaN(error) === false,
       'Error value is Nan. Involved variables:\n' +
             `y_max: ${y_max}, ` +
@@ -944,7 +944,7 @@ class CustomAppController extends mvc.Controller {
                  */
   get_text_value_of_max_value(value, max_value = null) {
     let value_str = `${value}`
-    if (bs.is_null_or_undefined(max_value) === false) {
+    if (py.is_null_or_undefined(max_value) === false) {
       value_str += ` of ${max_value}`
     }
     return value_str
@@ -1056,7 +1056,7 @@ class CustomAppController extends mvc.Controller {
                  */
   show_explore_or_exploit_text() {
     // If exploration session is defined, check if it's appropriate to show it
-    if (bs.is_null_or_undefined(this.model.get('settings')['exploration_sessions']) === false) {
+    if (py.is_null_or_undefined(this.model.get('settings')['exploration_sessions']) === false) {
       if (this.model.get('session') < this.model.get('settings')['exploration_sessions']) {
         /**
                                                                  * @type interface_elements.Text
@@ -1166,7 +1166,7 @@ class CustomAppController extends mvc.Controller {
     plt.plot(x, mean, 'dashed', 'blue')
 
     // Look-ahead visualisations
-    if (bs.is_not_null_or_undefined(this.model.get('settings')['show_lookahead']) &&
+    if (py.is_not_null_or_undefined(this.model.get('settings')['show_lookahead']) &&
             this.model.get('settings')['show_lookahead'] === true) {
       const look_ahead_upper_confidence = this.model.get('look_ahead_upper_confidence')
       const look_ahead_lower_confidence = this.model.get('look_ahead_lower_confidence')
@@ -1189,8 +1189,8 @@ class CustomAppController extends mvc.Controller {
       plt.plot(x, look_ahead_upper_confidence, 'dashed', 'green')
       plt.plot(x, look_ahead_lower_confidence, 'dashed', 'green')
       plt.plot(x, mean_lookahead, null, 'green')
-      plt.scatter(upboosted_points, f_list(bs.len(upboosted_points), y_max), null, '#58D68D')
-      plt.scatter(downboosted_points, f_list(bs.len(downboosted_points), y_min), null, '#FF5733')
+      plt.scatter(upboosted_points, f_list(py.len(upboosted_points), y_max), null, '#58D68D')
+      plt.scatter(downboosted_points, f_list(py.len(downboosted_points), y_min), null, '#FF5733')
       if (look_ahead_query_index !== -1) {
         plt.vline(x[look_ahead_query_index], null, '#0d7814')
       }
@@ -1208,7 +1208,7 @@ class CustomAppController extends mvc.Controller {
       const new_point_index = this.model.get('new_point_index')
       y_data_actual.push(y[new_point_index])
       // It's always true but we keep it for possible future modifications
-      if (bs.len(y_data_actual) > 0) {
+      if (py.len(y_data_actual) > 0) {
         const max_y_data_actual_index = np.list_argmax(y_data_actual)
         // Make a copy to avoid errors
         const x_data_plus_new = [...this.model.get('x_data')]
@@ -1250,7 +1250,7 @@ class CustomAppController extends mvc.Controller {
     const left_canvas_offset = this.view.get(EL.canvas_plot).get_jq_element().offset()['left']
     const top_canvas_offset = this.view.get(EL.canvas_plot).get_jq_element().offset()['top']
     console.log('Left canvas offset:', left_canvas_offset)
-    bs.assert_type(left_canvas_offset, bs.TYPE_NUMBER)
+    py.assert_type(left_canvas_offset, py.TYPE_NUMBER)
     if (left_canvas_offset === 0) console.warn('Canvas left offset found to be 0!')
     console.log('Left canvas offset:', left_canvas_offset)
 
@@ -1264,7 +1264,7 @@ class CustomAppController extends mvc.Controller {
       [this.model.get('new_point_x')],
       limit_square.x_min(),
       limit_square.x_max())[0]
-    bs.assert_type(relative_new_x, bs.TYPE_NUMBER)
+    py.assert_type(relative_new_x, py.TYPE_NUMBER)
 
 
     // Set the initial position and sizes for the line cursors
@@ -1282,11 +1282,11 @@ class CustomAppController extends mvc.Controller {
 
     // Compute the function maximum and move the max indicator
     const fun_argmax = np.list_argmax(this.model.get('y'))
-    bs.assert_type(fun_argmax, bs.TYPE_NUMBER)
+    py.assert_type(fun_argmax, py.TYPE_NUMBER)
     const x_max = this.model.get('x')[fun_argmax]
-    bs.assert_type(x_max, bs.TYPE_NUMBER)
+    py.assert_type(x_max, py.TYPE_NUMBER)
     const relative_x_max = plt.cx(usable_width, [x_max], limit_square.x_min(), limit_square.x_max())[0]
-    bs.assert_type(relative_x_max, bs.TYPE_NUMBER)
+    py.assert_type(relative_x_max, py.TYPE_NUMBER)
 
     max_indicator_jq.css('margin-left', relative_x_max - ((max_indicator_jq.width() / 2)))
   }
@@ -1356,7 +1356,7 @@ class CustomAppController extends mvc.Controller {
       study_settings_name = this.model.get('settings')['settings_name']
     } else {
       study_settings_name = input_dialogue_value
-      if (bs.is_null_or_undefined(study_settings_name) || study_settings_name === '') {
+      if (py.is_null_or_undefined(study_settings_name) || study_settings_name === '') {
         // The user pressed cancel, do not start the session
         console.log('Input dialog value was null or undefined or an empty string.')
         if (study_settings_name === '') {

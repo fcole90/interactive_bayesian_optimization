@@ -2,8 +2,8 @@
  * Simple library for plotting utilities resembling matplotlib.
  */
 
-import { np } from './simple_numeric.js'
-import * as bs from './std.js'
+import { numpy as np } from './numpy.js'
+import * as py from './python.js'
 
 const TYPE_POINT = 'Point'
 const TYPE_RECTANGLE = 'Rectangle'
@@ -34,10 +34,10 @@ class Point {
      * p.update_from_points_list([1, 2]);
      */
   update_from_points_list(points_list) {
-    bs.assert(bs.len(points_list) === 2,
-      `Argument needs to have 2 elements, found ${bs.len(points_list)} instead`)
-    bs.assert_type(points_list[0], bs.TYPE_NUMBER)
-    bs.assert_type(points_list[1], bs.TYPE_NUMBER)
+    py.assert(py.len(points_list) === 2,
+      `Argument needs to have 2 elements, found ${py.len(points_list)} instead`)
+    py.assert_type(points_list[0], py.TYPE_NUMBER)
+    py.assert_type(points_list[1], py.TYPE_NUMBER)
     this.x = points_list[0]
     this.y = points_list[1]
   }
@@ -88,16 +88,16 @@ class Rectangle {
      * @param {Array<Number>|Array<Point>} data_list - List of either points or coordinates.
      */
   update_from_list(data_list) {
-    const data_element_type = bs.type(data_list[0])
-    if (data_element_type === bs.TYPE_NUMBER) {
+    const data_element_type = py.type(data_list[0])
+    if (data_element_type === py.TYPE_NUMBER) {
       this.update_from_coordinates_list(data_list)
     }
     else if (data_element_type === TYPE_POINT) {
       this.update_from_points_list(data_list)
     } else {
-      throw new bs.ValueError(
+      throw new py.ValueError(
         `Argument needs to contain elements of type
-                 '${bs.TYPE_NUMBER}' or '${TYPE_POINT}', found '${data_element_type}' instead.`,
+                 '${py.TYPE_NUMBER}' or '${TYPE_POINT}', found '${data_element_type}' instead.`,
       )
     }
   }
@@ -111,15 +111,15 @@ class Rectangle {
      * @param {Array<Number>} coordinates_list - Coordinates x1, x2, y1, y2.
      */
   update_from_coordinates_list(coordinates_list) {
-    bs.assert(bs.len(coordinates_list) === 4,
-      `Argument needs to have 4 elements, found ${bs.len(coordinates_list)} instead`)
+    py.assert(py.len(coordinates_list) === 4,
+      `Argument needs to have 4 elements, found ${py.len(coordinates_list)} instead`)
     for (let i = 0; i < coordinates_list.length; i++) {
-      bs.assert_type(coordinates_list[i], bs.TYPE_NUMBER)
+      py.assert_type(coordinates_list[i], py.TYPE_NUMBER)
     }
 
     const [x1, x2, y1, y2] = coordinates_list
-    bs.assert(x1 <= x2, 'Impossible coordinates, x1 found to be greater than x2')
-    bs.assert(y1 <= y2, 'Impossible coordinates, y1 found to be greater than y2')
+    py.assert(x1 <= x2, 'Impossible coordinates, x1 found to be greater than x2')
+    py.assert(y1 <= y2, 'Impossible coordinates, y1 found to be greater than y2')
     this.bl = new Point([x1, y1])
     this.br = new Point([x2, y1])
     this.tl = new Point([x1, y2])
@@ -133,21 +133,21 @@ class Rectangle {
      */
   update_from_points_list(points_list) {
     const [bl, br, tl, tr] = [0, 1, 2, 3]
-    bs.assert(bs.len(points_list) === 4,
-      `Argument needs to have 4 elements, found ${bs.len(points_list)} instead`)
+    py.assert(py.len(points_list) === 4,
+      `Argument needs to have 4 elements, found ${py.len(points_list)} instead`)
     for (let i = 0; i < points_list.length; i++) {
-      bs.assert_type(points_list[i], TYPE_POINT)
+      py.assert_type(points_list[i], TYPE_POINT)
     }
 
     // Checks for proper valid points for a rectangle
-    bs.assert(points_list[bl].x === points_list[tl].x, 'Left x points have not the same value.')
-    bs.assert(points_list[br].x === points_list[tr].x, 'Right x points have not the same value.')
-    bs.assert(points_list[bl].y === points_list[br].y, 'Bottom y points have not the same value.')
-    bs.assert(points_list[tl].y === points_list[tr].y, 'Top y points have not the same value.')
+    py.assert(points_list[bl].x === points_list[tl].x, 'Left x points have not the same value.')
+    py.assert(points_list[br].x === points_list[tr].x, 'Right x points have not the same value.')
+    py.assert(points_list[bl].y === points_list[br].y, 'Bottom y points have not the same value.')
+    py.assert(points_list[tl].y === points_list[tr].y, 'Top y points have not the same value.')
 
-    bs.assert(points_list[bl].x <= points_list[br].x,
+    py.assert(points_list[bl].x <= points_list[br].x,
       'Impossible coordinates, x1 found to be greater than x2')
-    bs.assert(points_list[bl].y <= points_list[tl].y,
+    py.assert(points_list[bl].y <= points_list[tl].y,
       'Impossible coordinates, y1 found to be greater than y2')
 
     this.bl = points_list[bl]
@@ -190,7 +190,7 @@ class Rectangle {
      * @returns {string}
      */
   toString() {
-    return `${bs.type(this)}: ${bs.str(this.as_list())}}`
+    return `${py.type(this)}: ${py.str(this.as_list())}}`
   }
 
   /**
@@ -283,17 +283,17 @@ class Rectangle {
  */
 function convert_to_box_coordinates(dimension_size, values_list, min_limit = null, max_limit = null, inverted = false) {
   // Type assertion
-  bs.assert_type(dimension_size, bs.TYPE_NUMBER)
-  bs.assert_type(values_list, bs.TYPE_ARRAY)
+  py.assert_type(dimension_size, py.TYPE_NUMBER)
+  py.assert_type(values_list, py.TYPE_ARRAY)
 
   // Assignments and assertions for optional parameters
-  if (bs.is_null_or_undefined(min_limit)) min_limit = np.list_min(values_list)
-  else bs.assert_type(max_limit, bs.TYPE_NUMBER)
+  if (py.is_null_or_undefined(min_limit)) min_limit = np.list_min(values_list)
+  else py.assert_type(max_limit, py.TYPE_NUMBER)
 
-  if (bs.is_null_or_undefined(max_limit)) max_limit = np.list_max(values_list)
-  else bs.assert_type(max_limit, bs.TYPE_NUMBER)
+  if (py.is_null_or_undefined(max_limit)) max_limit = np.list_max(values_list)
+  else py.assert_type(max_limit, py.TYPE_NUMBER)
 
-  bs.assert_type(inverted, bs.TYPE_BOOLEAN)
+  py.assert_type(inverted, py.TYPE_BOOLEAN)
 
   // Actual function work
   let canvas_list = []
@@ -301,7 +301,7 @@ function convert_to_box_coordinates(dimension_size, values_list, min_limit = nul
   const resize_factor = dimension_size / (max_limit - min_limit)
 
   // Compute for each value.
-  for (let i = 0; i < bs.len(values_list); i++) {
+  for (let i = 0; i < py.len(values_list); i++) {
     let new_val = (values_list[i] + shift) * resize_factor
     if (inverted === false) {
       canvas_list.push(new_val)
@@ -407,10 +407,10 @@ function get_proportioned_canvas(canvas, best_box) {
  * @returns {Rectangle} - the plot best box
  */
 function get_best_box(x_list, y_list, x_margin = 0, y_margin = 0) {
-  bs.assert_type(x_list, bs.TYPE_ARRAY)
-  bs.assert_type(y_list, bs.TYPE_ARRAY)
-  bs.assert_type(x_margin, bs.TYPE_NUMBER)
-  bs.assert_type(y_margin, bs.TYPE_NUMBER)
+  py.assert_type(x_list, py.TYPE_ARRAY)
+  py.assert_type(y_list, py.TYPE_ARRAY)
+  py.assert_type(x_margin, py.TYPE_NUMBER)
+  py.assert_type(y_margin, py.TYPE_NUMBER)
 
   const x_max = np.list_max(x_list)
   const x_min = np.list_min(x_list)
@@ -480,7 +480,7 @@ function draw_line(ctx, start_x, start_y, end_x, end_y) {
  * @param {number|null} [diameter=8.0] - the thickness of the dot
  */
 function draw_dot(ctx, x, y, diameter = null) {
-  if (bs.is_null_or_undefined(diameter)) { diameter = 8.0 }
+  if (py.is_null_or_undefined(diameter)) { diameter = 8.0 }
   ctx.beginPath()
   ctx.arc(x, y, diameter / 2, 0, 2 * Math.PI)
   ctx.fill()
@@ -497,9 +497,9 @@ function draw_dot(ctx, x, y, diameter = null) {
  * The y_top_bottom needs to be long exactly twice as the length of x.
  */
 function draw_filling_polygon(ctx, x, y_top_bottom) {
-  bs.assert_type(x, bs.TYPE_ARRAY)
-  bs.assert_type(x, bs.TYPE_ARRAY)
-  bs.assert_len(y_top_bottom, 2 * bs.len(x), null, bs.ValueError)
+  py.assert_type(x, py.TYPE_ARRAY)
+  py.assert_type(x, py.TYPE_ARRAY)
+  py.assert_len(y_top_bottom, 2 * py.len(x), null, py.ValueError)
 
   const y_top = y_top_bottom.slice(0, x.length) // Top part
   const y_bottom = y_top_bottom.slice(x.length, y_top_bottom.length) // Lower part
@@ -539,30 +539,30 @@ function draw_filling_polygon(ctx, x, y_top_bottom) {
  */
 function super_plot(canvas, x_list, y_list, color = null, limit_box = null, proportional = false, plot_type = 'lines', line_style = null) {
   // Initial assertions
-  bs.assert_type(x_list, bs.TYPE_ARRAY)
-  bs.assert_type(y_list, bs.TYPE_ARRAY)
-  if (bs.is_not_null_or_undefined(color)) bs.assert_type(color, bs.TYPE_STRING)
-  if (bs.is_not_null_or_undefined(limit_box)) bs.assert_type(limit_box, TYPE_RECTANGLE)
-  bs.assert_type(proportional, bs.TYPE_BOOLEAN)
-  bs.assert(bs._in(plot_type, ['dots', 'lines', 'poly', 'vertical']))
-  if (bs.is_not_null_or_undefined(line_style)) bs.assert_type(line_style, bs.TYPE_OBJECT)
+  py.assert_type(x_list, py.TYPE_ARRAY)
+  py.assert_type(y_list, py.TYPE_ARRAY)
+  if (py.is_not_null_or_undefined(color)) py.assert_type(color, py.TYPE_STRING)
+  if (py.is_not_null_or_undefined(limit_box)) py.assert_type(limit_box, TYPE_RECTANGLE)
+  py.assert_type(proportional, py.TYPE_BOOLEAN)
+  py.assert(py._in(plot_type, ['dots', 'lines', 'poly', 'vertical']))
+  if (py.is_not_null_or_undefined(line_style)) py.assert_type(line_style, py.TYPE_OBJECT)
 
   // Length assertions
   if (plot_type === 'poly') {
-    bs.assert_len(
+    py.assert_len(
       y_list,
-      2 * bs.len(x_list),
-      `Mismatching lengths: x_list=${bs.len(x_list)}, y_list=${bs.len(x_list)}.
+      2 * py.len(x_list),
+      `Mismatching lengths: x_list=${py.len(x_list)}, y_list=${py.len(x_list)}.
              y_list need to be double the length of x_list for type '${plot_type}'.`,
-      bs.ValueError,
+      py.ValueError,
     )
   } else {
-    bs.assert_len(
+    py.assert_len(
       x_list,
-      bs.len(y_list),
-      `Mismatching lengths: x_list=${bs.len(x_list)}, y_list=${bs.len(x_list)}.
+      py.len(y_list),
+      `Mismatching lengths: x_list=${py.len(x_list)}, y_list=${py.len(x_list)}.
              Need to be equal when using plot type '${plot_type}'.`,
-      bs.ValueError,
+      py.ValueError,
     )
   }
 
@@ -581,23 +581,23 @@ function super_plot(canvas, x_list, y_list, color = null, limit_box = null, prop
 
 
   // Set the color
-  if (bs.is_not_null_or_undefined(color)) {
+  if (py.is_not_null_or_undefined(color)) {
     ctx.strokeStyle = color
     ctx.fillStyle = color
   }
 
   // Set the line style
-  if (bs.is_not_null_or_undefined(line_style)) {
+  if (py.is_not_null_or_undefined(line_style)) {
     if (line_style.style === 'dashed') {
       console.log('Enabling dashed line')
       ctx.setLineDash([5, 5])
     }
-    else if (bs.is_not_null_or_undefined(line_style.size)) {
-      bs.assert_type(line_style.size, bs.TYPE_NUMBER)
+    else if (py.is_not_null_or_undefined(line_style.size)) {
+      py.assert_type(line_style.size, py.TYPE_NUMBER)
       ctx.lineWidth = line_style.size
     }
     else {
-      throw new bs.ValueError(
+      throw new py.ValueError(
         `Line style '${line_style.style}' is not a recognised style.
                 Only style:"dashed" and size:{number} are recognised.`)
     }
@@ -622,7 +622,7 @@ function super_plot(canvas, x_list, y_list, color = null, limit_box = null, prop
   // Scatter plot
   else if (plot_type === 'dots') {
     let dot_size = null
-    if (bs.is_not_null_or_undefined(line_style) && bs.is_not_null_or_undefined(line_style.size)) {
+    if (py.is_not_null_or_undefined(line_style) && py.is_not_null_or_undefined(line_style.size)) {
       dot_size = line_style.size
     }
     for (let i = 0; i < x_list.length; i++) {
@@ -639,7 +639,7 @@ function super_plot(canvas, x_list, y_list, color = null, limit_box = null, prop
     }
     // Non recognised style.
   } else {
-    throw new bs.ValueError('Invalid value for \'linestyle\': ' + String(plot_type))
+    throw new py.ValueError('Invalid value for \'linestyle\': ' + String(plot_type))
   }
   // Reset parameter to default
   ctx.setLineDash([])
@@ -696,10 +696,10 @@ class CanvasWrapper {
   }
 
   obtain_and_set_fixed_limit_square(list_list_x, list_list_y, x_margin = null, y_margin = null) {
-    if (bs.is_null_or_undefined(x_margin)) {
+    if (py.is_null_or_undefined(x_margin)) {
       x_margin = this.x_margin
     }
-    if (bs.is_null_or_undefined(y_margin)) {
+    if (py.is_null_or_undefined(y_margin)) {
       y_margin = this.y_margin
     }
 
@@ -757,7 +757,7 @@ function set_fixed_limit_square(limit_square, name = null) {
  * function open_canvas(document.getElementById("my_canvas"));
  */
 function open_canvas(canvas, name = null, limit_square = null) {
-  if (bs.is_null_or_undefined(name)) {
+  if (py.is_null_or_undefined(name)) {
     name = __DEFAULT_CANVAS_NAME__
   }
   if (__CANVAS_DICT__[name] !== undefined) {
@@ -804,7 +804,7 @@ function get_canvas_dict(name = null) {
  * function close();
  */
 function close(name = null) {
-  if (bs.is_null_or_undefined(name)) {
+  if (py.is_null_or_undefined(name)) {
     name = __DEFAULT_CANVAS_NAME__
   }
   if (__CANVAS_DICT__[name] === undefined) {
@@ -911,9 +911,9 @@ function scatter(x, y, s = null, c = null, name = null) {
   if (name === null) {
     name = __DEFAULT_CANVAS_NAME__
   }
-  bs.assert_len(x, bs.len(y))
+  py.assert_len(x, py.len(y))
   let linestyle = null
-  if (bs.is_null_or_undefined(s) === false) {
+  if (py.is_null_or_undefined(s) === false) {
     linestyle = { size: s }
   }
   __CANVAS_DICT__[name].add_plot(
@@ -933,9 +933,9 @@ function plot(x, y, s = null, c = null, name = null) {
   }
 
   let linesyle
-  if (bs.is_null_or_undefined(s)) { linesyle = null }
-  else if (bs.type(s) === bs.TYPE_STRING) { linesyle = { 'style': s } }
-  else if (typeof (s) === bs.TYPE_OBJECT) { linesyle = s }
+  if (py.is_null_or_undefined(s)) { linesyle = null }
+  else if (py.type(s) === py.TYPE_STRING) { linesyle = { 'style': s } }
+  else if (typeof (s) === py.TYPE_OBJECT) { linesyle = s }
   else { throw new TypeError(`unrecognised type '${typeof s}' for parameter s.`) }
 
   __CANVAS_DICT__[name].add_plot(
@@ -968,10 +968,10 @@ function vline(x, s = null, c = null, name = null) {
   if (name === null) {
     name = __DEFAULT_CANVAS_NAME__
   }
-  if (bs.type(x) === bs.TYPE_NUMBER) {
+  if (py.type(x) === py.TYPE_NUMBER) {
     x = [x]
   }
-  if (bs.is_null_or_undefined(s) === false) {
+  if (py.is_null_or_undefined(s) === false) {
     console.warn('Parameter \'s\' is not currently supported!')
   }
   __CANVAS_DICT__[name].add_plot(

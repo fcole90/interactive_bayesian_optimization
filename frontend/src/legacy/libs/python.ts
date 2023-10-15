@@ -12,23 +12,55 @@
 //  -----------------------------------------------------
 //  ---------------- Useful definitions. ----------------
 
+export const typing = {
+/* Basic types (recognised by typeof) */
+  TYPE_NUMBER: 'number',
+  TYPE_STRING: 'string',
+  TYPE_BOOLEAN: 'boolean',
+  TYPE_BIGINT: 'bigint',
+  TYPE_FUNCTION: 'function',
+  TYPE_SYMBOL: 'symbol',
+  TYPE_UNDEFINED: 'undefined',
+
+  /* Basic objects */
+  TYPE_OBJECT: 'Object',
+  TYPE_ARRAY: 'Array',
+  TYPE_STRING_OBJECT: 'String',
+  TYPE_NULL: 'null',
+
+  /* Additional library objects */
+  BSTYPE_DICT: 'Dictionary',
+} as const
+
 
 /* Basic types (recognised by typeof) */
+/** @deprecated use `typing` instead */
 export const TYPE_NUMBER = 'number'
+/** @deprecated use `typing` instead */
 export const TYPE_STRING = 'string'
+/** @deprecated use `typing` instead */
 export const TYPE_BOOLEAN = 'boolean'
+/** @deprecated use `typing` instead */
 export const TYPE_BIGINT = 'bigint'
+/** @deprecated use `typing` instead */
 export const TYPE_FUNCTION = 'function'
+/** @deprecated use `typing` instead */
 export const TYPE_SYMBOL = 'symbol'
+/** @deprecated use `typing` instead */
 export const TYPE_UNDEFINED = 'undefined'
 
 /* Basic objects */
+/** @deprecated use `typing` instead */
 export const TYPE_OBJECT = 'Object'
+/** @deprecated use `typing` instead */
 export const TYPE_ARRAY = 'Array'
+/** @deprecated use `typing` instead */
 export const TYPE_STRING_OBJECT = 'String'
+/** @deprecated use `typing` instead */
 export const TYPE_NULL = 'null'
 
 /* Additional library objects */
+/** @deprecated use `typing` instead */
 export const BSTYPE_DICT = 'Dictionary'
 
 /* Type aliases */
@@ -67,8 +99,6 @@ export class CustomError extends Error {
   }
 }
 
-
-type ErrorConstructor = (message?: ErrorConstructorMessage, ...params: ErrorConstructorOtherParams) => void
 export class _Error extends CustomError {
   constructor(
     message?: ErrorConstructorMessage, 
@@ -161,10 +191,10 @@ class DictionaryObject<T = unknown> {
     }
 
     // List init
-    if (type(init_sequence) === TYPE_ARRAY) {
+    if (type(init_sequence) === typing.TYPE_ARRAY) {
       // If a proper list is provided, use it to initialise the dictionary
       (init_sequence as DictInitList<T>).forEach(([key_i, value_i], i) => {
-        if (not_in(type(key_i), [TYPE_STRING, TYPE_STRING_OBJECT])) {
+        if (!_in(type(key_i), [typing.TYPE_STRING, typing.TYPE_STRING_OBJECT])) {
           TypeError(`Element key [${i}] = ${key_i} should be a string but is of type ${type(key_i)}`)
         }
         this.set(key_i, value_i)
@@ -174,7 +204,7 @@ class DictionaryObject<T = unknown> {
     
     // Object init
     if (!is_null_or_undefined(Object.keys(init_sequence))) {
-      Object.entries((init_sequence as DictInitObject<T>)).forEach(([key_i, value_i], i) => {
+      Object.entries((init_sequence as DictInitObject<T>)).forEach(([key_i, value_i]) => {
         this.set(key_i, value_i)
       })
       return
@@ -324,14 +354,6 @@ export const _in = <T=unknown>(value: T, sequence: Iterable<T>) => {
   }
   return false
 }
-
-/**
- * Checks that the value is not contained in the given sequence. Uses strict equality.
- * 
- * @param value - The value to check for membership
- * @param sequence withing to search the value
- */
-export const not_in = <T=unknown>(value: T, sequence: Iterable<T>) => !_in<T>(value, sequence)
 
 
 /**
