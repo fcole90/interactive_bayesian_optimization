@@ -9,6 +9,9 @@ build-fe:
 start: .venv build-fe
 	${PYTHON} ./start.py
 
+dev-fe:
+	cd frontend && yarn dev && cd ..
+
 install: .venv
 	${PYTHON} -m pip install -e .
 

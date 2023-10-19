@@ -8,8 +8,8 @@
 // Create here some instances of MVC to be used!
 
 import { default as interface_elements, default as ui_el } from './interface_elements.js'
+import { pyplot as plt } from './mathplotlib.js'
 import mvc from './mvc.js'
-import { plt } from './myplotlib.js'
 import { numpy as np } from './numpy.js'
 import * as py from './python.js'
 
@@ -63,19 +63,19 @@ class Switch {
   fun_event_off: SwitchFunEvent | null
 
   constructor(initial_value = false) {
-    py.assert_type(initial_value, py.TYPE_BOOLEAN)
+    py.assert_type(initial_value, py.typing.TYPE_BOOLEAN)
     this.__SWITCH_STATE__ = initial_value
     this.fun_event_off = null
     this.fun_event_on = null
   }
 
   assign_event_on(fun_event: SwitchFunEvent) {
-    py.assert_type(fun_event, py.TYPE_FUNCTION)
+    py.assert_type(fun_event, py.typing.TYPE_FUNCTION)
     this.fun_event_on = fun_event
   }
 
   assign_event_off(fun_event: SwitchFunEvent) {
-    py.assert_type(fun_event, py.TYPE_FUNCTION)
+    py.assert_type(fun_event, py.typing.TYPE_FUNCTION)
     this.fun_event_off = fun_event
   }
 
@@ -1250,7 +1250,7 @@ class CustomAppController extends mvc.Controller {
     const left_canvas_offset = this.view.get(EL.canvas_plot).get_jq_element().offset()['left']
     const top_canvas_offset = this.view.get(EL.canvas_plot).get_jq_element().offset()['top']
     console.log('Left canvas offset:', left_canvas_offset)
-    py.assert_type(left_canvas_offset, py.TYPE_NUMBER)
+    py.assert_type(left_canvas_offset, py.typing.TYPE_NUMBER)
     if (left_canvas_offset === 0) console.warn('Canvas left offset found to be 0!')
     console.log('Left canvas offset:', left_canvas_offset)
 
@@ -1264,7 +1264,7 @@ class CustomAppController extends mvc.Controller {
       [this.model.get('new_point_x')],
       limit_square.x_min(),
       limit_square.x_max())[0]
-    py.assert_type(relative_new_x, py.TYPE_NUMBER)
+    py.assert_type(relative_new_x, py.typing.TYPE_NUMBER)
 
 
     // Set the initial position and sizes for the line cursors
@@ -1282,11 +1282,11 @@ class CustomAppController extends mvc.Controller {
 
     // Compute the function maximum and move the max indicator
     const fun_argmax = np.list_argmax(this.model.get('y'))
-    py.assert_type(fun_argmax, py.TYPE_NUMBER)
+    py.assert_type(fun_argmax, py.typing.TYPE_NUMBER)
     const x_max = this.model.get('x')[fun_argmax]
-    py.assert_type(x_max, py.TYPE_NUMBER)
+    py.assert_type(x_max, py.typing.TYPE_NUMBER)
     const relative_x_max = plt.cx(usable_width, [x_max], limit_square.x_min(), limit_square.x_max())[0]
-    py.assert_type(relative_x_max, py.TYPE_NUMBER)
+    py.assert_type(relative_x_max, py.typing.TYPE_NUMBER)
 
     max_indicator_jq.css('margin-left', relative_x_max - ((max_indicator_jq.width() / 2)))
   }

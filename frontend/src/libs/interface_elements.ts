@@ -7,11 +7,16 @@
 
 import * as py from './python.js'
 
-let interface_elements = {}
+type JQueryElementRef = JQuery<HTMLElement>
+type JQueryElementOnClickHandler = JQuery.TypeEventHandler<HTMLElement, unknown, HTMLElement, HTMLElement, 'click'>
+
 
 class BaseInterfaceElement{
-  constructor(id) {
-    py.assert_type(id, [py.TYPE_STRING, py.TYPE_STRING_OBJECT])
+  jq_reference: NonNullable<JQueryElementRef>
+  element_id: string
+
+  constructor(id: string) {
+    py.assert_type(id, [py.typing.TYPE_STRING, py.typing.TYPE_STRING_OBJECT])
     this.jq_reference = $(`#${id}`)
     this.element_id = id
     py.assert(
@@ -35,76 +40,69 @@ class BaseInterfaceElement{
     return this.get_jq_element().html()
   }
 
-  set_HTML_content(html_value) {
+  set_HTML_content(html_value: unknown) {
     this.get_jq_element().html(py.str(html_value))
   }
 
-  on(...args) {
-    this.get_jq_element().on(...args)
+  
+  on(event: string, handler: () => void) {
+    return this.get_jq_element().on(event, handler)
   }
 
-  off(...args) {
-    this.get_jq_element().off(...args)
+  off(event?: string) {
+    if (event == null) {
+      return this.get_jq_element().off()
+    }
+
+    this.get_jq_element().off(event)
   }
 
   /**
-     *
-     * @param {number} mouse_x - the value of the absolute mouse position on the x axis
-     * @param {number} mouse_y - the value of the absolute mouse position on the y axis
-     * @param {boolean} invert_y - if true, inverts the y axis in the computation
-     * @returns {number[]} a list containing the relative mouse coordinates
-     */
-  get_mouse_relative_position(mouse_x, mouse_y, invert_y = false) {
-    /**
-
-         * mouse_x: int
-         *      the value of the absolute mouse position on the x axis
-         * mouse_y: int
-         *      the value of the absolute mouse position on the y axis
-         * invert_y: bool (optional)
-         *      if true, inverts the y axis in the computation
-         *
-         * returns {number[]}
-         *      a list containing the relative mouse coordinates
-         */
-    let offset = this.get_jq_element().offset()
-    let x = mouse_x - offset.left
+   * @param mouse_x - the value of the absolute mouse position on the x axis
+   * @param mouse_y - the value of the absolute mouse position on the y axis
+   * @param invert_y - if true, inverts the y axis in the computation
+   * @returns a list containing the relative mouse coordinates
+   */
+  get_mouse_relative_position(mouse_x: number, mouse_y: number, invert_y: boolean = false): number[] {
+    const offset = this.get_jq_element().offset()
+    if (offset == null) {
+      throw new py.ValueError(`Reference undefined for element ${this.element_id}`)
+    }
+    const x = mouse_x - offset.left
     let y = mouse_y - offset.top
-    // logging.info("Rel element:", rel_element.innerHeight(), "mouse y:", mouse_y, "offset:", offset.top);
     if (invert_y === true) {
-      y = this.get_jq_element().height() - y - 1
+      y = (this.get_jq_element().height() ?? 0) - y - 1
     }
     return [x, y]
   }
 
-  show(...args) {this.get_jq_element().show(...args)}
-  hide(...args) {this.get_jq_element().hide(...args)}
+  show(...args: Parameters<JQueryElementRef['show']>) {this.get_jq_element().show(...args)}
+  hide(...args: Parameters<JQueryElementRef['hide']>) {this.get_jq_element().hide(...args)}
 
   disable_cursor() {this.get_jq_element().css('cursor', 'none')}
   enable_cursor(type='auto') {
-    py.assert_type(type, py.TYPE_STRING)
+    py.assert_type(type, py.typing.TYPE_STRING)
     this.get_jq_element().css('cursor', type)
   }
 
-  fadeIn(...args) {
+  fadeIn(...args: Parameters<JQueryElementRef['fadeIn']>) {
     this.get_jq_element().fadeIn(...args)
   }
 
-  fadeOut(...args) {
+  fadeOut(...args: Parameters<JQueryElementRef['fadeOut']>) {
     this.get_jq_element().fadeOut(...args)
   }
 
   is_ui() {return true}
 }
-interface_elements.BaseInterfaceElement = BaseInterfaceElement
 
 
 class Button extends BaseInterfaceElement {
-  constructor(id) {
+  constructor(id: string) {
     super(id)
   }
 
-  on_click(custom_function) {
+  on_click(custom_function: JQueryElementOnClickHandler) {
     // Proxy keeps the 'this' environment
     this.get_jq_element().on('click', custom_function)
   }
@@ -113,48 +111,44 @@ class Button extends BaseInterfaceElement {
     return this.get_jq_element().text()
   }
 
-  set_text(value) {
-    py.assert_type(value, [py.TYPE_STRING])
+  set_text(value: unknown) {
+    py.assert_type(value, [py.typing.TYPE_STRING])
     this.get_jq_element().text(py.str(value))
   }
 }
-interface_elements.Button = Button
 
 
 class Canvas extends BaseInterfaceElement {
-  constructor(id) {
+  constructor(id: string) {
     super(id)
   }
 }
-interface_elements.Canvas = Canvas
 
 
 class Container extends BaseInterfaceElement {
-  constructor(id) {
+  constructor(id: string) {
     super(id)
   }
 }
-interface_elements.Container = Container
 
 
 class HiddenForm extends BaseInterfaceElement {
-  constructor(id) {
+  constructor(id: string) {
     super(id)
   }
 
-  save_json(data) {
+  save_json(data: unknown) {
     this.get_jq_element().val(JSON.stringify(data))
   }
 
   load_json() {
-    return JSON.parse(this.get_jq_element().val())
+    return JSON.parse(this.get_jq_element().val() as string)
   }
 }
-interface_elements.HiddenForm = HiddenForm
 
 
 class InputText extends BaseInterfaceElement {
-  constructor(id) {
+  constructor(id: string) {
     super(id)
   }
 
@@ -162,15 +156,20 @@ class InputText extends BaseInterfaceElement {
     return this.get_jq_element().val()
   }
 
-  set_value(value) {
+  set_value(value: string) {
     this.get_jq_element().val(value)
   }
 }
-interface_elements.InputText = InputText
 
 
 class ModalDialogue extends Container{
-  constructor(id, button_ok_id, button_cancel_id, div_modal_content_id) {
+  button_ok: Button
+  button_cancel: Button
+  content: Container
+  input_value: string | null
+  is_in_focus: boolean
+
+  constructor(id: string, button_ok_id: string, button_cancel_id: string, div_modal_content_id: string) {
     super(id)
     this.button_ok = new Button(button_ok_id)
     this.button_cancel = new Button(button_cancel_id)
@@ -195,25 +194,23 @@ class ModalDialogue extends Container{
     this.button_cancel.get_jq_element().click()
   }
 
-  alert(info_text, on_ok=null) {
+  alert(info_text: string, on_ok: (() => void) | null=null) {
     this.is_in_focus = true
     const modal_paragraph_id = 'modal_alert_text'
 
-    if (py.is_null_or_undefined(on_ok)){
-      on_ok = function () {}
+    if (on_ok != null) {
+      py.assert_type(on_ok, py.typing.TYPE_FUNCTION)
     }
-    else {
-      py.assert_type(on_ok, py.TYPE_FUNCTION)
-    }
+  
 
     this.content.get_jq_element().html(
       `<p id="${modal_paragraph_id}" class="modal_text"></p>`,
     )
     $(`#${modal_paragraph_id}`).text(info_text)
 
-    let ok_function = function () {
+    const ok_function = () => {
       this.hide()
-      on_ok()
+      on_ok?.()
       this.reset()
     }
 
@@ -228,25 +225,24 @@ class ModalDialogue extends Container{
     this.fadeIn(100)
   }
 
-  prompt(question, default_value, on_ok=null, on_cancel=null) {
+  prompt(
+    question: string, 
+    default_value: string, 
+    on_ok: ((value: string) => void) | null=null, 
+    on_cancel: ((value: string) => void) | null=null,
+  ) {
     this.is_in_focus = true
     // Delete any previous value
     this.input_value = null
     const input_el_id = 'modal_prompt_input'
     const modal_paragraph_id = 'modal_prompt_text'
 
-    if (py.is_null_or_undefined(on_ok)){
-      on_ok = () => {}
+    if (on_ok != null){
+      py.assert_type(on_ok, py.typing.TYPE_FUNCTION)
     }
-    else {
-      py.assert_type(on_ok, py.TYPE_FUNCTION)
-    }
-
-    if (py.is_null_or_undefined(on_cancel)){
-      on_cancel = () => {}
-    }
-    else {
-      py.assert_type(on_cancel, py.TYPE_FUNCTION)
+    
+    if (on_cancel != null){
+      py.assert_type(on_cancel, py.typing.TYPE_FUNCTION)
     }
 
     // Set the content
@@ -254,31 +250,31 @@ class ModalDialogue extends Container{
       `<p id="${modal_paragraph_id}" class="modal_text"></p>\n` +
             `<input id="${input_el_id}" class="modal_input" type="text" autofocus="autofocus">`,
     )
-    let input_element = new InputText(input_el_id)
+    const input_element = new InputText(input_el_id)
     $(`#${modal_paragraph_id}`).text(question)
     input_element.set_value(default_value)
-    input_element.get_jq_element().focus()
-    input_element.get_dom_element().select()
+    input_element.get_jq_element().trigger('focus')
+    input_element.get_dom_element().focus()
 
     // Define the behaviour of the functions
-    let ok_function = function () {
-      const value = input_element.get_value()
+    const ok_function = () => {
+      const value = input_element.get_value() as string
       console.log('Received value:', value)
       this.input_value = value
       this.hide()
       this.reset()
       console.log('Before calling \'on_ok()\'')
-      on_ok(value)
+      on_ok?.(value)
     }
 
-    let cancel_function = function () {
-      const value = input_element.get_value()
+    const cancel_function = () => {
+      const value = input_element.get_value() as string
       console.log('Received value:', value)
       this.input_value = value
       this.hide()
       this.reset()
       console.log('Before calling \'on_cancel()\'')
-      on_cancel(value)
+      on_cancel?.(value)
     }
 
     // Assign events
@@ -286,13 +282,10 @@ class ModalDialogue extends Container{
     // this.press_ok = ok_function;
     // this.press_cancel = cancel_function;
 
-    this.button_ok.on('click',
-      $.proxy(ok_function, this),
-    )
+    this.button_ok.on('click', ok_function)
 
-    this.button_cancel.on('click',
-      $.proxy(cancel_function, this),
-    )
+
+    this.button_cancel.on('click', cancel_function)
 
     // Show the buttons
     this.button_ok.show()
@@ -300,11 +293,10 @@ class ModalDialogue extends Container{
     this.fadeIn(200)
   }
 }
-interface_elements.ModalDialogue = ModalDialogue
 
 
 class Text extends BaseInterfaceElement {
-  constructor(id) {
+  constructor(id: string) {
     super(id)
   }
 
@@ -312,13 +304,13 @@ class Text extends BaseInterfaceElement {
     return this.get_jq_element().text()
   }
 
-  set_text(value) {
-    py.assert_type(value, [py.TYPE_STRING])
+  set_text(value: string) {
+    py.assert_type(value, [py.typing.TYPE_STRING])
     this.get_jq_element().text(py.str(value))
   }
 
-  set_rich_text(value) {
-    py.assert_type(value, [py.TYPE_STRING])
+  set_rich_text(value: string) {
+    py.assert_type(value, [py.typing.TYPE_STRING])
     this.get_jq_element().html(py.str(value))
   }
 
@@ -329,7 +321,18 @@ class Text extends BaseInterfaceElement {
     }
   }
 }
-interface_elements.Text = Text
+
+
+const interface_elements = {
+  BaseInterfaceElement,
+  Button,
+  Text,
+  ModalDialogue,
+  InputText,
+  HiddenForm,
+  Container,
+  Canvas,
+}
 
 
 export default interface_elements

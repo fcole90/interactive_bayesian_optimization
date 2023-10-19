@@ -31,7 +31,7 @@
     "next-env.d.ts",
     "**/*.ts",
     ".eslintrc.cjs",
-    "src/legacy/libs/python.ts"
+    "src/libs/python.ts"
   ],
   "exclude": [
     "node_modules"

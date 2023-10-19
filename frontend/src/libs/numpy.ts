@@ -1,6 +1,4 @@
 // Numpy-like functions
-
-
 const linspace = (start: number, end: number, n: number) => {
   const interval = end - start
   const step = interval / (n - 1)

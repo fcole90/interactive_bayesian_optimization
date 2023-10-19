@@ -8,6 +8,11 @@ import * as py from './python.js'
 const TYPE_POINT = 'Point'
 const TYPE_RECTANGLE = 'Rectangle'
 
+const typing = {
+  TYPE_POINT: 'Point',
+  TYPE_RECTANGLE: 'Rectangle',
+} as const
+
 /**
  * A point with two coordinates.
  */
@@ -36,8 +41,8 @@ class Point {
   update_from_points_list(points_list) {
     py.assert(py.len(points_list) === 2,
       `Argument needs to have 2 elements, found ${py.len(points_list)} instead`)
-    py.assert_type(points_list[0], py.TYPE_NUMBER)
-    py.assert_type(points_list[1], py.TYPE_NUMBER)
+    py.assert_type(points_list[0], py.typing.TYPE_NUMBER)
+    py.assert_type(points_list[1], py.typing.TYPE_NUMBER)
     this.x = points_list[0]
     this.y = points_list[1]
   }
@@ -89,7 +94,7 @@ class Rectangle {
      */
   update_from_list(data_list) {
     const data_element_type = py.type(data_list[0])
-    if (data_element_type === py.TYPE_NUMBER) {
+    if (data_element_type === py.typing.TYPE_NUMBER) {
       this.update_from_coordinates_list(data_list)
     }
     else if (data_element_type === TYPE_POINT) {
@@ -97,7 +102,7 @@ class Rectangle {
     } else {
       throw new py.ValueError(
         `Argument needs to contain elements of type
-                 '${py.TYPE_NUMBER}' or '${TYPE_POINT}', found '${data_element_type}' instead.`,
+                 '${py.typing.TYPE_NUMBER}' or '${TYPE_POINT}', found '${data_element_type}' instead.`,
       )
     }
   }
@@ -114,7 +119,7 @@ class Rectangle {
     py.assert(py.len(coordinates_list) === 4,
       `Argument needs to have 4 elements, found ${py.len(coordinates_list)} instead`)
     for (let i = 0; i < coordinates_list.length; i++) {
-      py.assert_type(coordinates_list[i], py.TYPE_NUMBER)
+      py.assert_type(coordinates_list[i], py.typing.TYPE_NUMBER)
     }
 
     const [x1, x2, y1, y2] = coordinates_list
@@ -283,26 +288,26 @@ class Rectangle {
  */
 function convert_to_box_coordinates(dimension_size, values_list, min_limit = null, max_limit = null, inverted = false) {
   // Type assertion
-  py.assert_type(dimension_size, py.TYPE_NUMBER)
-  py.assert_type(values_list, py.TYPE_ARRAY)
+  py.assert_type(dimension_size, py.typing.TYPE_NUMBER)
+  py.assert_type(values_list, py.typing.TYPE_ARRAY)
 
   // Assignments and assertions for optional parameters
   if (py.is_null_or_undefined(min_limit)) min_limit = np.list_min(values_list)
-  else py.assert_type(max_limit, py.TYPE_NUMBER)
+  else py.assert_type(max_limit, py.typing.TYPE_NUMBER)
 
   if (py.is_null_or_undefined(max_limit)) max_limit = np.list_max(values_list)
-  else py.assert_type(max_limit, py.TYPE_NUMBER)
+  else py.assert_type(max_limit, py.typing.TYPE_NUMBER)
 
-  py.assert_type(inverted, py.TYPE_BOOLEAN)
+  py.assert_type(inverted, py.typing.TYPE_BOOLEAN)
 
   // Actual function work
-  let canvas_list = []
+  const canvas_list = []
   const shift = -min_limit
   const resize_factor = dimension_size / (max_limit - min_limit)
 
   // Compute for each value.
   for (let i = 0; i < py.len(values_list); i++) {
-    let new_val = (values_list[i] + shift) * resize_factor
+    const new_val = (values_list[i] + shift) * resize_factor
     if (inverted === false) {
       canvas_list.push(new_val)
     } else {
@@ -407,10 +412,10 @@ function get_proportioned_canvas(canvas, best_box) {
  * @returns {Rectangle} - the plot best box
  */
 function get_best_box(x_list, y_list, x_margin = 0, y_margin = 0) {
-  py.assert_type(x_list, py.TYPE_ARRAY)
-  py.assert_type(y_list, py.TYPE_ARRAY)
-  py.assert_type(x_margin, py.TYPE_NUMBER)
-  py.assert_type(y_margin, py.TYPE_NUMBER)
+  py.assert_type(x_list, py.typing.TYPE_ARRAY)
+  py.assert_type(y_list, py.typing.TYPE_ARRAY)
+  py.assert_type(x_margin, py.typing.TYPE_NUMBER)
+  py.assert_type(y_margin, py.typing.TYPE_NUMBER)
 
   const x_max = np.list_max(x_list)
   const x_min = np.list_min(x_list)
@@ -497,8 +502,8 @@ function draw_dot(ctx, x, y, diameter = null) {
  * The y_top_bottom needs to be long exactly twice as the length of x.
  */
 function draw_filling_polygon(ctx, x, y_top_bottom) {
-  py.assert_type(x, py.TYPE_ARRAY)
-  py.assert_type(x, py.TYPE_ARRAY)
+  py.assert_type(x, py.typing.TYPE_ARRAY)
+  py.assert_type(x, py.typing.TYPE_ARRAY)
   py.assert_len(y_top_bottom, 2 * py.len(x), null, py.ValueError)
 
   const y_top = y_top_bottom.slice(0, x.length) // Top part
@@ -539,13 +544,13 @@ function draw_filling_polygon(ctx, x, y_top_bottom) {
  */
 function super_plot(canvas, x_list, y_list, color = null, limit_box = null, proportional = false, plot_type = 'lines', line_style = null) {
   // Initial assertions
-  py.assert_type(x_list, py.TYPE_ARRAY)
-  py.assert_type(y_list, py.TYPE_ARRAY)
-  if (py.is_not_null_or_undefined(color)) py.assert_type(color, py.TYPE_STRING)
+  py.assert_type(x_list, py.typing.TYPE_ARRAY)
+  py.assert_type(y_list, py.typing.TYPE_ARRAY)
+  if (py.is_not_null_or_undefined(color)) py.assert_type(color, py.typing.TYPE_STRING)
   if (py.is_not_null_or_undefined(limit_box)) py.assert_type(limit_box, TYPE_RECTANGLE)
-  py.assert_type(proportional, py.TYPE_BOOLEAN)
+  py.assert_type(proportional, py.typing.TYPE_BOOLEAN)
   py.assert(py._in(plot_type, ['dots', 'lines', 'poly', 'vertical']))
-  if (py.is_not_null_or_undefined(line_style)) py.assert_type(line_style, py.TYPE_OBJECT)
+  if (py.is_not_null_or_undefined(line_style)) py.assert_type(line_style, py.typing.TYPE_OBJECT)
 
   // Length assertions
   if (plot_type === 'poly') {
@@ -593,7 +598,7 @@ function super_plot(canvas, x_list, y_list, color = null, limit_box = null, prop
       ctx.setLineDash([5, 5])
     }
     else if (py.is_not_null_or_undefined(line_style.size)) {
-      py.assert_type(line_style.size, py.TYPE_NUMBER)
+      py.assert_type(line_style.size, py.typing.TYPE_NUMBER)
       ctx.lineWidth = line_style.size
     }
     else {
@@ -632,7 +637,7 @@ function super_plot(canvas, x_list, y_list, color = null, limit_box = null, prop
   // Vertical line
   else if (plot_type === 'vertical') {
     // Creates a vertical line at an x coordinate
-    let cy = [0, canvas.height]
+    const cy = [0, canvas.height]
     for (let i = 0; i < x_list.length; i++) {
       draw_line(ctx, canvas_x_list[i], cy[0], canvas_x_list[i], cy[1])
       ctx.stroke()
@@ -716,8 +721,8 @@ class CanvasWrapper {
      * @returns {number}
      */
   get_current_vertical_scaling_value_to_visual_space() {
-    let visual_0 = get_vertical_value_from_cordinates_to_visual_space(this.canvas, this.limit_square, 0.0)
-    let visual_1 = get_vertical_value_from_cordinates_to_visual_space(this.canvas, this.limit_square, 1.0)
+    const visual_0 = get_vertical_value_from_cordinates_to_visual_space(this.canvas, this.limit_square, 0.0)
+    const visual_1 = get_vertical_value_from_cordinates_to_visual_space(this.canvas, this.limit_square, 1.0)
     return Math.abs(visual_1 - visual_0)
   }
 
@@ -737,7 +742,7 @@ function set_fixed_limit_square(limit_square, name = null) {
      * Get the canvas
      * @type CanvasWrapper
      */
-  let canvas_dict = __CANVAS_DICT__[name]
+  const canvas_dict = __CANVAS_DICT__[name]
   if (canvas_dict === undefined) {
     Error(`Canvas ${name} was called but it was not open.`)
   }
@@ -810,7 +815,7 @@ function close(name = null) {
   if (__CANVAS_DICT__[name] === undefined) {
     console.warn(`Attepting to close context ${name} but it was not open.`)
   } else {
-    let canvas = __CANVAS_DICT__[name]
+    const canvas = __CANVAS_DICT__[name]
     __CANVAS_DICT__[name] = undefined
     return canvas
   }
@@ -825,14 +830,14 @@ function clear(name = null) {
      * Get the canvas
      * @type CanvasWrapper
      */
-  let canvas_dict = __CANVAS_DICT__[name]
+  const canvas_dict = __CANVAS_DICT__[name]
   if (canvas_dict === undefined) {
     Error(`Canvas ${name} was called but it was not open.`)
   }
 
   // Get the canvas and the context and clean it
-  let canvas = canvas_dict.canvas
-  let ctx = canvas.getContext('2d')
+  const canvas = canvas_dict.canvas
+  const ctx = canvas.getContext('2d')
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 }
 
@@ -845,7 +850,7 @@ function show(name = null, clear_before = true) {
      * Get the canvas
      * @type CanvasWrapper
      */
-  let canvas_dict = __CANVAS_DICT__[name]
+  const canvas_dict = __CANVAS_DICT__[name]
   if (canvas_dict === undefined) {
     Error(`Canvas ${name} was called but it was not open.`)
   }
@@ -857,14 +862,14 @@ function show(name = null, clear_before = true) {
   }
 
   // Get the canvas and the context and clean it
-  let canvas = canvas_dict.canvas
-  let ctx = canvas.getContext('2d')
+  const canvas = canvas_dict.canvas
+  const ctx = canvas.getContext('2d')
 
   if (clear_before === true) { ctx.clearRect(0, 0, canvas.width, canvas.height) }
 
   // Todo: merge lists to get the best limit square, now it uses the first list
-  let x_0_list = canvas_dict.plot_list[0].kwargs.x_list
-  let y_0_list = canvas_dict.plot_list[0].kwargs.y_list
+  const x_0_list = canvas_dict.plot_list[0].kwargs.x_list
+  const y_0_list = canvas_dict.plot_list[0].kwargs.y_list
 
   // Obtain limit square
   let limit_square
@@ -880,8 +885,8 @@ function show(name = null, clear_before = true) {
 
 
   for (let i = 0; i < canvas_dict.plot_list.length; i++) {
-    let current_plot = canvas_dict.plot_list[i]
-    let kwargs = current_plot.kwargs
+    const current_plot = canvas_dict.plot_list[i]
+    const kwargs = current_plot.kwargs
     super_plot(
       canvas,
       kwargs.x_list,
@@ -934,8 +939,8 @@ function plot(x, y, s = null, c = null, name = null) {
 
   let linesyle
   if (py.is_null_or_undefined(s)) { linesyle = null }
-  else if (py.type(s) === py.TYPE_STRING) { linesyle = { 'style': s } }
-  else if (typeof (s) === py.TYPE_OBJECT) { linesyle = s }
+  else if (py.type(s) === py.typing.TYPE_STRING) { linesyle = { 'style': s } }
+  else if (typeof (s) === py.typing.TYPE_OBJECT) { linesyle = s }
   else { throw new TypeError(`unrecognised type '${typeof s}' for parameter s.`) }
 
   __CANVAS_DICT__[name].add_plot(
@@ -968,7 +973,7 @@ function vline(x, s = null, c = null, name = null) {
   if (name === null) {
     name = __DEFAULT_CANVAS_NAME__
   }
-  if (py.type(x) === py.TYPE_NUMBER) {
+  if (py.type(x) === py.typing.TYPE_NUMBER) {
     x = [x]
   }
   if (py.is_null_or_undefined(s) === false) {
@@ -997,44 +1002,45 @@ function get_values_from_pixels_to_coordinates(point, name = null) {
      * Get the canvas
      * @type CanvasWrapper
      */
-  let canvas_dict = __CANVAS_DICT__[name]
+  const canvas_dict = __CANVAS_DICT__[name]
   if (canvas_dict === undefined) {
     Error(`Canvas ${name} was called but it was not open.`)
   }
 
-  let canvas = canvas_dict.canvas
-  let limit_square = canvas_dict.limit_square
-  let x = (point.x + 1) / canvas.width * limit_square.width() + limit_square.x_min()
-  let y = (point.y + 1) / canvas.height * limit_square.height() + limit_square.y_min()
+  const canvas = canvas_dict.canvas
+  const limit_square = canvas_dict.limit_square
+  const x = (point.x + 1) / canvas.width * limit_square.width() + limit_square.x_min()
+  const y = (point.y + 1) / canvas.height * limit_square.height() + limit_square.y_min()
   return new Point([x, y])
 }
 
 function get_vertical_value_from_cordinates_to_visual_space(canvas, limit_square, value) {
-  let visual_value = cy(canvas.height, [value], limit_square.y_min(), limit_square.y_max())[0]
+  const visual_value = cy(canvas.height, [value], limit_square.y_min(), limit_square.y_max())[0]
   return visual_value
 }
 
 // Export API
-const plt = {}
-plt.Point = Point
-plt.Rectangle = Rectangle
-plt.close = close
-plt.clear = clear
-plt.convert_to_box_coordinates = convert_to_box_coordinates
-plt.cx = cx
-plt.cy = cy
-plt.fill = fill
-plt.get_best_box_lists = get_best_box_lists
-plt.get_canvas_dict = get_canvas_dict
-plt.get_values_from_pixels_to_coordinates = get_values_from_pixels_to_coordinates
-plt.get_vertical_value_from_cordinates_to_visual_space = get_vertical_value_from_cordinates_to_visual_space
-plt.is_canvas_open = is_canvas_open
-plt.open_canvas = open_canvas
-plt.plot = plot
-plt.scatter = scatter
-plt.show = show
-plt.vline = vline
+const pyplot = {
+  Point,
+  Rectangle,
+  close,
+  clear,
+  convert_to_box_coordinates,
+  cx,
+  cy,
+  fill,
+  get_best_box_lists ,
+  get_canvas_dict ,
+  get_values_from_pixels_to_coordinates ,
+  get_vertical_value_from_cordinates_to_visual_space ,
+  is_canvas_open ,
+  open_canvas ,
+  plot ,
+  scatter ,
+  show,
+  vline,
+}
 
 
-export default plt
-export { plt }
+export { pyplot }
+

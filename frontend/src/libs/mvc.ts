@@ -12,8 +12,8 @@ import * as py from './python.js'
 
 
 /** Class representing a dictionary with more safeguards. */
-class PreservingDictionary {
-  data_dict: py.Dictionary
+class PreservingDictionary<T> {
+  data_dict: py.Dictionary<T>
   /**
      * Create a new model from a data structure.
      * @param {py.Dictionary | null} data_dict - Data dictionary to initialise the model.
@@ -62,7 +62,7 @@ class PreservingDictionary {
      * @param {*} [value]
      */
   add(key, value = null) {
-    py.assert_type(key, [py.TYPE_STRING, py.TYPE_STRING_OBJECT])
+    py.assert_type(key, [py.typing.TYPE_STRING, py.typing.TYPE_STRING_OBJECT])
     py.assert(
       !py._in(key, this.data_dict.keys()),
       `Key '${key}' already exists.`,
@@ -94,7 +94,7 @@ class PreservingDictionary {
   update_by_push(key, value) {
     this.assert_valid_data_key(key)
     const array = this.data_dict[key]
-    py.assert_type(array, py.TYPE_ARRAY)
+    py.assert_type(array, py.typing.TYPE_ARRAY)
     array.push(value)
     this.data_dict[key] = array
   }
@@ -105,7 +105,7 @@ class PreservingDictionary {
      * @returns {boolean}
      */
   exist(key) {
-    py.assert_type(key, [py.TYPE_STRING, py.TYPE_STRING_OBJECT])
+    py.assert_type(key, [py.typing.TYPE_STRING, py.typing.TYPE_STRING_OBJECT])
     return py._in(key, this.data_dict.keys())
   }
 
@@ -138,7 +138,7 @@ class PreservingDictionary {
      * @param {string|String} key
      */
   assert_valid_data_key(key) {
-    py.assert_type(key, [py.TYPE_STRING, py.TYPE_STRING_OBJECT])
+    py.assert_type(key, [py.typing.TYPE_STRING, py.typing.TYPE_STRING_OBJECT])
     if (!py._in(key, this.data_dict.keys())) {
       throw new py.KeyError(key)
     }
@@ -171,7 +171,7 @@ class View extends PreservingDictionary {
 
   add(key: string, ui_element = null) {
     // If the value is already an element, add it
-    if (py.type(ui_element.is_ui) === py.TYPE_FUNCTION && ui_element.is_ui() === true) {
+    if (py.type(ui_element.is_ui) === py.typing.TYPE_FUNCTION && ui_element.is_ui() === true) {
       super.add(key, ui_element)
     }
     // Else assume it's a constructor and try to instantiate it
