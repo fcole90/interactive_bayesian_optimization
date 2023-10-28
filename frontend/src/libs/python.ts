@@ -307,7 +307,7 @@ export const assert_len = (
   )
 }
 
-export const assert_type = (obj: unknown, expected_types: unknown | unknown[]) => {
+export const assert_type = <T>(obj: T | unknown, expected_types: unknown | unknown[]): obj is T => {
   const obj_type = type(obj)
   if (_in(type(expected_types), [TYPE_STRING, TYPE_STRING_OBJECT])) {
     assert(
@@ -315,6 +315,7 @@ export const assert_type = (obj: unknown, expected_types: unknown | unknown[]) =
       `Expected type '${expected_types}' but found '${obj_type}' instead.`,
       TypeError,
     )
+    return true
   }
   else if (type(expected_types) === TYPE_ARRAY) {
     assert(
@@ -322,6 +323,7 @@ export const assert_type = (obj: unknown, expected_types: unknown | unknown[]) =
       `Expected any of these types [${expected_types}] but found '${obj_type}' instead.`,
       TypeError,
     )
+    return true
   }
   else {
     throw new TypeError(type(expected_types))
@@ -359,12 +361,12 @@ export const _in = <T=unknown>(value: T, sequence: Iterable<T>) => {
 /**
  * Checks if a variable is null or undefined.
  */
-export const is_null_or_undefined = (obj: unknown) => obj == null
+export const is_null_or_undefined = (obj: unknown): obj is null => obj == null
 
 /**
  * Checks if a variable is not null or undefined.
  */
-export const is_not_null_or_undefined = (obj: unknown) => obj != null
+export const is_not_null_or_undefined = <T>(obj: unknown): obj is T => obj != null
 
 
 export const len = (obj: unknown) => {

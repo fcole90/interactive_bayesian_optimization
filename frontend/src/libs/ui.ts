@@ -1479,6 +1479,7 @@ class CustomAppController extends mvc.Controller {
                  */
   send_user_click_for_y_position(event, click_time) {
     // Get the current mouse position relatively to the canvas.
+    console.log('send_user_click_for_y_position', event)
     const [mouse_x, mouse_y] = this.view.get(EL.canvas_plot).get_mouse_relative_position(
       event.pageX,
       event.pageY,
