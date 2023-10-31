@@ -68,9 +68,8 @@ In the online demo the backend is run in a webworker which invokes a wasm python
 ### Frontend
 
 ```sh
-cd frontend
-yarn
-yarn dev
+make build-fe
+make dev-fe
 ```
 
 Leave it run in a terminal.
