@@ -63,15 +63,24 @@ the end of the script. It will produce plots under `instance/plots/`.
 
 In the online demo the backend is run in a webworker which invokes a wasm python interpreter using [Pyodide](https://pyodide.readthedocs.io/en/latest/index.html).
 
-#### Frontend
-
-The main file for the UI is `ui.js`, located under `ai_tom/static/libs/ui.js`.
-
-Libraries for the UI and other JS stuff is located under `ai_tom/static/libs/`.
-
 ## Development setup
 
+### Frontend
+
+```sh
+cd frontend
+yarn
+yarn dev
+```
+
+Leave it run in a terminal.
+
+### Backend
+
 Prepare your local environment:
+You need Python 3.10 minimum. If you don't have it, you can install it using [pyenv](https://github.com/pyenv/pyenv#how-it-works).
+
+Then `pyenv install 3.10 && pyenv local 3.10`.
 
 Create a virtual env:
 

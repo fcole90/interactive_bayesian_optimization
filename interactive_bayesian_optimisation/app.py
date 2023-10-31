@@ -5,12 +5,10 @@ import os
 
 import werkzeug
 import werkzeug.exceptions
-from flask import Flask, render_template, request, json, send_from_directory
+from flask import Flask, json, render_template, request, send_from_directory
 
 from interactive_bayesian_optimisation import config
-from interactive_bayesian_optimisation.libs import io
-from interactive_bayesian_optimisation.libs import user_study_gp
-from interactive_bayesian_optimisation.libs import utils
+from interactive_bayesian_optimisation.libs import io, user_study_gp, utils
 
 
 def create_app():
@@ -60,15 +58,22 @@ def create_app():
         filename=config.LOG_PATH,
     )
 
+    @app.errorhandler(404)
+    def handle_404(e: Exception):  # type: ignore
+        print("404", e)
+        return json.dumps({"error": str(e)}), 404
+
     @app.errorhandler(werkzeug.exceptions.HTTPException)
     def handle_errors(e: Exception):  # type: ignore
         """Intercepts generic server errors and logs them."""
+        print(e)
         logging.error(str(e))
-        return str(e), 500
+        return json.dumps({"error": str(e)}), 500
 
-    @app.route("/favicon.ico")
+    @app.route("/static/favicon.ico")
     def favicon():  # type: ignore
         """Handles correct favicon."""
+        print(app.root_path)
         return send_from_directory(
             os.path.join(app.root_path, "static"),
             "favicon.ico",
@@ -160,9 +165,7 @@ def create_app():
         logging.debug("Interface settings: {}".format(str(interface_settings)))
 
         # Loads the settings file
-        settings_file_name = interface_settings[
-            "settings_name"
-        ]
+        settings_file_name = interface_settings["settings_name"]
         settings = io.load_settings(settings_file_name)
         logging.debug("File settings: {}".format(str(settings)))
 

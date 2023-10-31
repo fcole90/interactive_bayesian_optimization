@@ -60,7 +60,7 @@ setup(
     entry_points={
         # You should be able to run the script with this command
         "console_scripts": [
-            "interactive-bo=interactive_bayesian_optimisation:main",
+            "interactive-bo=interactive_bayesian_optimisation.__init__:main",
         ],
     },
 )

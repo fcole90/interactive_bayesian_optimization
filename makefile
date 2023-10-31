@@ -4,11 +4,10 @@ PYTHON := ./.venv/bin/python
 	python -m venv ./.venv
 
 build-fe:
-	cd frontend && yarn build && cd ..
+	cd frontend && yarn && yarn build; cd ..
 
-start: .venv build-fe
-	${PYTHON} ./start.py
-
+start:
+	${PYTHON} ./start.py run --debug
 dev-fe:
 	cd frontend && yarn dev && cd ..
 
@@ -22,7 +21,7 @@ which: .venv
 	which ${PYTHON}
 
 install-dev: .venv
-	${PYTHON} install --upgrade pip black
+	${PYTHON} -m pip install --upgrade pip black
 
 
 .PHONY: start, install, lint, which, setup-dev, build-fe

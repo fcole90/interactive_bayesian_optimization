@@ -7,7 +7,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "sync-jquery": "rm -rf  src/3rd/jquery && cp -r node_modules/jquery/ src/3rd/jquery",
+    "sync-jquery": "rm -rf src/3rd/jquery && mkdir -p src/3rd/jquery && cp -r node_modules/jquery/ src/3rd/jquery",
     "lint": "eslint .",
     "build": "yarn sync-jquery && tsc --build",
     "dev": "yarn sync-jquery && tsc --watch",
