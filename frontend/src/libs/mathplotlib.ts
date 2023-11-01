@@ -484,8 +484,10 @@ function draw_line(ctx: CanvasRenderingContext2D, start_x: number, start_y: numb
  * @param y - the y point where to draw the dot
  * @param the thickness of the dot
  */
-function draw_dot(ctx: CanvasRenderingContext2D, x: number, y: number, diameter: number = 8.0) {
-  if (py.is_null_or_undefined(diameter)) { diameter = 8.0 }
+function draw_dot(ctx: CanvasRenderingContext2D, x: number, y: number, diameter: number | null = 8.0) {
+  if (py.is_null_or_undefined(diameter)) { 
+    diameter = 8.0 
+  }
   ctx.beginPath()
   ctx.arc(x, y, diameter / 2, 0, 2 * Math.PI)
   ctx.fill()
@@ -668,10 +670,6 @@ function super_plot(
     let dot_size = null
     if (py.is_not_null_or_undefined<LineStyle>(line_style) && py.is_not_null_or_undefined<number>(line_style.size)) {
       dot_size = line_style.size
-    } else {
-      throw new py.ValueError(
-        `Line style  is not a recognised style.
-                Only style:"dashed" and size:{number} are recognised.`)
     }
     for (let i = 0; i < x_list.length; i++) {
       draw_dot(ctx, canvas_x_list[i], canvas_y_list[i], dot_size)

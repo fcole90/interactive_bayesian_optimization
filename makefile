@@ -8,6 +8,7 @@ build-fe:
 
 start:
 	${PYTHON} ./start.py run --debug
+
 dev-fe:
 	cd frontend && yarn dev && cd ..
 
