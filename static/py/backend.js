@@ -244,11 +244,11 @@ def user_study_update(
 
 def api_initialise_gp_and_sample(config=None, ajax_data=None):
     # Generate user and session IDs if not provided
-    interface_settings = json.loads(ajax_data) if ajax_data else json.loads(request["ajax_data"])
+    interface_settings = json.loads(ajax_data) if ajax_data else json.loads(request.to_py()["ajax_data"])
     if "settings" in interface_settings:
         settings = interface_settings["settings"]
     else:
-        settings = json.loads(config) if config else json.loads(request["config"])
+        settings = json.loads(config) if config else json.loads(request.to_py()["config"])
 
     user_id: int = settings['user_id'] if 'user_id' in settings else 0
     session_id: int = settings['session_id'] if 'session_id' in settings else 0
@@ -315,7 +315,7 @@ def api_update_gp(data=None):
         JSON data
 
     """
-    data = json.loads(data) if data else json.loads(request["ajax_data"])
+    data = json.loads(data) if data else json.loads(request.to_py()["ajax_data"])
 
     if ("x_data" in data and "y_data" in data) and (len(data["x_data"]) >= 1 and len(data["y_data"]) >= 1):
         print("Received new data point: ({}, {}), updating..".format(
@@ -345,7 +345,7 @@ def api_update_gp(data=None):
 
 
 def js_main():
-    request_url = request["url"]
+    request_url = request.to_py()["url"]
     if request_url == "api_initialise_gp_and_sample":
         return api_initialise_gp_and_sample()
     elif request_url == "api_update_gp":
