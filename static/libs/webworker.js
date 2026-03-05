@@ -1,5 +1,4 @@
-self.languagePluginUrl = 'https://cdn.jsdelivr.net/pyodide/v0.16.1/full/';
-importScripts('https://cdn.jsdelivr.net/pyodide/v0.16.1/full/pyodide.js');
+importScripts('https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js');
 importScripts('../py/backend.js');
 
 function get_config(file_name="default") {
@@ -16,28 +15,24 @@ function get_config(file_name="default") {
   });
 }
 
+// Setup a global variable to hold the initialized pyodide instance
+let pyodideReadyPromise;
+
+async function initPyodide() {
+    console.log("Initializing Pyodide...");
+    let pyodide = await loadPyodide({
+        indexURL: "https://cdn.jsdelivr.net/pyodide/v0.25.1/full/"
+    });
+    
+    console.log("Loading math packages...");
+    // Explicitly load the packages your backend likely needs
+    await pyodide.loadPackage(['numpy', 'scipy']); 
+    
+    console.log("Pyodide is ready.");
+    return pyodide;
+}
+
 var onmessage = async function (e) {
-  const some_code = `
-  from js import request
-  import json
-  
-  def main():
-    print("url:", request["url"])
-    print("config:", json.loads(request["config"]).keys())
-    print("ajax_data:", request["ajax_data"])
-    print("__name__:", __name__)
-    return "OK PYTHON"
-
-  def js_main():
-      print(request)
-  
-  
-  if __name__ == "builtins":
-      js_main()
-
-  main()
-  `
-
   // Obtain the js parameters to run the code
   let data = e.data;
   if (data.url === "api_initialise_gp_and_sample") {
@@ -60,39 +55,24 @@ var onmessage = async function (e) {
     }
   }
 
-  languagePluginLoader.then(() => {
+  // Wait for the Pyodide instance to be ready
+  let pyodide = await pyodideReadyPromise;
+
+  try {
       // Create a python package named request
       self["request"] = data;
-
-      // ---> MR WOLF DIAGNOSTIC PATCH START <---
-      // We force a low recursion ceiling to see if Python catches the 
-      // depth issue before the Chrome WASM engine fatally crashes.
-      self.pyodide.runPython(`
-          import sys
-          sys.setrecursionlimit(150)
-      `);
-      // ---> MR WOLF DIAGNOSTIC PATCH END <---
-    
-      // Start the chain of promises
-      // self.pyodide.runPythonAsync(some_code, () => {})
-      self.pyodide.runPythonAsync(python_script, () => {})
-        .then((results) => {
-          console.log("Should post a message..");
-          self.postMessage({
-            success: {
-              results: results,
-              url: data.url
-            }
-          });
-        })
-        .catch((err) => {
-          // if you prefer messages with the error
-          // console.log("Something went wrong...");
-          // self.postMessage({error: err.message});
-          // if you prefer onerror events
-          setTimeout(() => { throw err; });
-        });
-    });
-  // });
+      
+      // Run the script
+      let results = await pyodide.runPythonAsync(python_script);
+      
+      console.log("Should post a message..");
+      self.postMessage({
+        success: {
+          results: results,
+          url: data.url
+        }
+      });
+  } catch (err) {
+      setTimeout(() => { throw err; });
+  }
 };
-
