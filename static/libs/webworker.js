@@ -63,6 +63,16 @@ var onmessage = async function (e) {
   languagePluginLoader.then(() => {
       // Create a python package named request
       self["request"] = data;
+
+      // ---> MR WOLF DIAGNOSTIC PATCH START <---
+      // We force a low recursion ceiling to see if Python catches the 
+      // depth issue before the Chrome WASM engine fatally crashes.
+      self.pyodide.runPython(`
+          import sys
+          sys.setrecursionlimit(150)
+      `);
+      // ---> MR WOLF DIAGNOSTIC PATCH END <---
+    
       // Start the chain of promises
       // self.pyodide.runPythonAsync(some_code, () => {})
       self.pyodide.runPythonAsync(python_script, () => {})
