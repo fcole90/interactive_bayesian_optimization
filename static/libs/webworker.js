@@ -1,5 +1,5 @@
-self.languagePluginUrl = 'https://cdn.jsdelivr.net/pyodide/v0.15.0/full/';
-importScripts('https://cdn.jsdelivr.net/pyodide/v0.15.0/full/pyodide.js');
+self.languagePluginUrl = 'https://cdn.jsdelivr.net/pyodide/v0.29.3/full/';
+importScripts('https://cdn.jsdelivr.net/pyodide/v0.29.3/full/pyodide.js');
 importScripts('../py/backend.js');
 
 function get_config(file_name="default") {
