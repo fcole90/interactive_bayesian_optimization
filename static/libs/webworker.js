@@ -15,9 +15,6 @@ function get_config(file_name="default") {
   });
 }
 
-// Setup a global variable to hold the initialized pyodide instance
-let pyodideReadyPromise;
-
 async function initPyodide() {
     console.log("Initializing Pyodide...");
     let pyodide = await loadPyodide({
@@ -31,6 +28,9 @@ async function initPyodide() {
     console.log("Pyodide is ready.");
     return pyodide;
 }
+
+// Setup a global variable to hold the initialized pyodide instance
+const pyodideReadyPromise = initPyodide();
 
 var onmessage = async function (e) {
   // Obtain the js parameters to run the code
